@@ -1,0 +1,2 @@
+# magicDB
+DB library
