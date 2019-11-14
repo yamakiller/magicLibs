@@ -1,2 +1,2 @@
-# magicDB
-DB library
+# magicLibs
+librarys
