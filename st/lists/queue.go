@@ -1,4 +1,4 @@
-package st
+package lists
 
 import (
 	"sync/atomic"
