@@ -7,12 +7,16 @@ import (
 	"reflect"
 	"strconv"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/yamakiller/magicWeb/util"
 )
 
 //MySQLValue desc
 //@struct MySQLValue desc mysql result value
 type MySQLValue struct {
 	v interface{}
+	t reflect.Type
 }
 
 //Print desc
@@ -280,13 +284,15 @@ type MySQLDB struct {
 //@param (int) mysql connection life time[util/sec]
 //@return (error) fail:return error, success: return nil
 func (slf *MySQLDB) Init(dsn string, maxConn int, maxIdleConn, lifeSec int) error {
-	slf.db, _ = sql.Open("mysql", dsn)
+	var err error
+	slf.db, err = sql.Open("mysql", dsn)
+	util.AssertEmpty(slf.db, fmt.Sprintf("mysql open fail:%+v", err))
 	slf.db.SetMaxOpenConns(maxConn)
 	slf.db.SetMaxIdleConns(maxIdleConn)
 	slf.db.SetConnMaxLifetime(time.Duration(lifeSec) * time.Second)
 	slf.dsn = dsn
 
-	err := slf.db.Ping()
+	err = slf.db.Ping()
 	if err != nil {
 		return err
 	}
@@ -326,6 +332,7 @@ func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, err
 		d := make([]MySQLValue, len(columns))
 		for i, col := range values {
 			d[i].v = col
+			d[i].t = reflect.TypeOf(col)
 		}
 		record.data = append(record.data, d...)
 		record.rows++
