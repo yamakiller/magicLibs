@@ -1,4 +1,4 @@
-package magicFiles
+package files
 
 import (
 	"io/ioutil"
@@ -7,6 +7,8 @@ import (
 	"sync/atomic"
 )
 
+//Files desc
+//@struct Files desc: files system
 type Files struct {
 	_dir        Directory
 	_cached     sync.Map
@@ -14,6 +16,14 @@ type Files struct {
 	_cacheMem   int64
 }
 
+//Initial desc
+//@method Initial desc: Initial files system
+func (slf *Files) Initial() {
+	slf._dir.Initial()
+}
+
+//Close desc
+//@method Close desc: Close System and clear data
 func (slf *Files) Close() {
 
 	var key []string
@@ -65,6 +75,13 @@ func (slf *Files) DeleteFile(fullPath string) error {
 	return nil
 }
 
+//GetRoot desc
+//@method GetRoot desc: Return root dir
+//@return (string) dir
+func (slf *Files) GetRoot() string {
+	return slf._dir.rootPath
+}
+
 //GetCacheFiles desc
 //@method GetCacheFiles desc: Return Cache file of number
 //@return (int) file of number
@@ -80,11 +97,25 @@ func (slf *Files) GetCacheMem() int64 {
 }
 
 //GetDataFromFile desc
-//@method GetDataFromFile desc: Use Cache or Read File Return data
+//@method GetDataFromFile desc: Retrun File data
+//@param  (string) full path and file name
+//@return ([]byte) file data
+//@return (error)
+func (slf *Files) GetDataFromFile(fullPath string) ([]byte, error) {
+	d, e := ioutil.ReadFile(fullPath)
+	if e != nil {
+		return nil, e
+	}
+
+	return d, nil
+}
+
+//GetDataFromCacheFile desc
+//@method GetDataFromCacheFile desc: Use Cache or Read File Return data
 //@param  (string) full path and file name
 //@return (*FileHandle) file handle
 //@return (error)
-func (slf *Files) GetDataFromFile(fullPath string) (*FileHandle, error) {
+func (slf *Files) GetDataFromCacheFile(fullPath string) (*FileHandle, error) {
 	h := slf.getCache(fullPath)
 	if h != nil {
 		return h, nil
@@ -105,6 +136,21 @@ func (slf *Files) GetDataFromFile(fullPath string) (*FileHandle, error) {
 	return h, nil
 }
 
+//WithRoot desc
+//@method WithRoot desc:setting system root dir
+//@param (string) path
+func (slf *Files) WithRoot(path string) {
+	slf._dir.WithRoot(path)
+}
+
+//GetFullPathForFilename desc
+//@method GetFullPathForFilename desc: Returns file full path and file name
+//@param  (string) file path
+//@return (string) full path and file name
+func (slf *Files) GetFullPathForFilename(filePath string) string {
+	return slf._dir.GetFullPathName(filePath)
+}
+
 //getCache desc
 //@method getCache desc: Return file cache
 //@return (*FileHandle) file cache handle
@@ -119,4 +165,21 @@ func (slf *Files) getCache(fullPath string) *FileHandle {
 		return nil
 	}
 	return h
+}
+
+var (
+	oneFiles    sync.Once
+	defaultFile *Files
+)
+
+//Instance desc
+//@method Instance desc: Files System instance
+//@return (*Files) Files System object
+func Instance() *Files {
+	oneFiles.Do(func() {
+		defaultFile = &Files{}
+		defaultFile.Initial()
+	})
+
+	return defaultFile
 }

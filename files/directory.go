@@ -1,4 +1,4 @@
-package magicFiles
+package files
 
 import (
 	"os"

@@ -1,4 +1,4 @@
-package pools
+package coroutine
 
 import (
 	"errors"
@@ -54,12 +54,27 @@ type coObject struct {
 	id    int
 }
 
+var (
+	oneCoroutinePool     sync.Once
+	defaultCoroutinePool *CoroutinePool
+)
+
+//Instance desc
+//@method Instance desc: coroutine pool instance
+//@return (*CoroutinePool)
+func Instance() *CoroutinePool {
+	oneCoroutinePool.Do(func() {
+		defaultCoroutinePool = &CoroutinePool{}
+	})
+	return defaultCoroutinePool
+}
+
 //CoroutinePool desc
 //@struct CoroutinePool desc: Coroutine pool
 type CoroutinePool struct {
-	TaskLimit int
-	MaxNum    int
-	MinNum    int
+	taskLimit int
+	maxNum    int
+	minNum    int
 
 	taskQueue chan task
 	runing    int32
@@ -97,7 +112,7 @@ func (slf *CoroutinePool) scheduer() {
 		time.Sleep(time.Millisecond * 1000)
 	}
 scheduer_end:
-	for i := 0; i < slf.MaxNum; i++ {
+	for i := 0; i < slf.maxNum; i++ {
 		if slf.cos[i].state != coDeath && slf.cos[i].state != coClosing {
 			atomic.StoreInt32(&slf.cos[i].state, coClosing)
 			close(slf.cos[i].q)
@@ -107,27 +122,34 @@ scheduer_end:
 
 //Start desc
 //@method Start desc: Start the coroutine pool
-func (slf *CoroutinePool) Start() {
-	if slf.MaxNum == 0 {
-		slf.MaxNum = 65535
+//@param (int) coroutine max of number
+//@param (int) coroutine min of number
+//@param (int) coroutine task max limit
+func (slf *CoroutinePool) Start(max int, min int, taskmax int) {
+	slf.maxNum = max
+	slf.minNum = min
+	slf.taskLimit = taskmax
+
+	if slf.maxNum == 0 {
+		slf.maxNum = 65535
 	}
 	atomic.StoreInt32(&slf.seq, 1)
 
 	now := time.Now().Unix()
-	slf.taskQueue = make(chan task, slf.TaskLimit)
-	slf.cos = make([]coObject, slf.MaxNum)
+	slf.taskQueue = make(chan task, slf.taskLimit)
+	slf.cos = make([]coObject, slf.maxNum)
 	for k, v := range slf.cos {
 		v.id = k + 1
 		v.state = coDeath
 		v.last = time.Duration(now)
 	}
 
-	if slf.MaxNum > 0 && slf.MaxNum > slf.MinNum {
+	if slf.maxNum > 0 && slf.maxNum > slf.minNum {
 		slf.wait.Add(1)
 		go slf.scheduer()
 	}
 
-	for i := 0; i < slf.MinNum; i++ {
+	for i := 0; i < slf.minNum; i++ {
 		slf.cos[i].state = coIdle
 		slf.startOne(i)
 	}
@@ -163,9 +185,9 @@ func (slf *CoroutinePool) Go(f func(params []interface{}), params ...interface{}
 	runing := atomic.LoadInt32(&slf.runing)
 	curr := atomic.LoadInt32(&slf.curr)
 
-	if runing >= curr && curr < int32(slf.MaxNum) {
-		for i := 0; i < slf.MaxNum; i++ {
-			hash := ((int32(i) + slf.seq) % int32(slf.MaxNum))
+	if runing >= curr && curr < int32(slf.maxNum) {
+		for i := 0; i < slf.maxNum; i++ {
+			hash := ((int32(i) + slf.seq) % int32(slf.maxNum))
 			if atomic.CompareAndSwapInt32(&slf.cos[hash].state, coDeath, coIdle) {
 				slf.seq = int32(hash) + slf.seq
 				slf.startOne(int(hash))
