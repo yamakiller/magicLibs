@@ -35,6 +35,8 @@ func (slf *Args) Parse() {
 		tmp = append(tmp, args)
 	}
 
+	tmp = tmp[1:]
+
 	idx := 0
 	for {
 		if idx >= len(tmp) {
@@ -44,20 +46,18 @@ func (slf *Args) Parse() {
 		cur := tmp[idx]
 		idx++
 		if strings.HasPrefix(cur, "-") {
-			if (idx + 1) >= len(tmp) {
+			if idx >= len(tmp) {
 				slf.m[cur] = true
 				break
 			}
 
-			next := tmp[idx+1]
+			next := tmp[idx]
 			if strings.HasPrefix(next, "-") {
-				slf.m[cur] = true
 				continue
 			}
 
 			slf.m[cur] = next
 			idx++
-			continue
 		}
 	}
 }

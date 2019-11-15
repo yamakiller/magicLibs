@@ -2,6 +2,10 @@ package coroutine
 
 import "math"
 
+const (
+	EnvKey = "coroutine pool"
+)
+
 //Deploy desc
 //@struct Deploy desc coroutine pool deploy informat (json)
 type Deploy struct {
@@ -13,5 +17,5 @@ type Deploy struct {
 //NewDefault desc
 //@method NewDefault desc: create default coroutine pool deploy informat
 func NewDefault() *Deploy {
-	return &Deploy{32, math.MaxInt16, 64}
+	return &Deploy{math.MaxInt16, 32, 64}
 }

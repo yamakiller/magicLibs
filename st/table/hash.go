@@ -3,7 +3,7 @@ package table
 import (
 	"errors"
 
-	"github.com/yamakiller/magicNet/st/comparator"
+	"github.com/yamakiller/magicLibs/st/comparator"
 )
 
 var (

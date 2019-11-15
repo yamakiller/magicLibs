@@ -102,6 +102,7 @@ func (slf *Files) GetCacheMem() int64 {
 //@return ([]byte) file data
 //@return (error)
 func (slf *Files) GetDataFromFile(fullPath string) ([]byte, error) {
+
 	d, e := ioutil.ReadFile(fullPath)
 	if e != nil {
 		return nil, e
