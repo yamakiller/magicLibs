@@ -22,7 +22,7 @@ type MySQLValue struct {
 //Print desc
 //@method Print desc:
 func (slf *MySQLValue) Print() {
-	fmt.Printf("%+v, %d, %+v\n", reflect.TypeOf(slf.v), len(slf.v.([]uint8)), slf.v)
+	fmt.Printf("%+v, %+v\n", slf.v, slf.t)
 }
 
 //IsEmpty desc
@@ -46,6 +46,10 @@ func (slf *MySQLValue) ToString() string {
 //@method ToUint desc: Return uint value
 //@return (uint) a value
 func (slf *MySQLValue) ToUint() uint {
+	if v, e := slf.getNumber(); e == nil {
+		return uint(v)
+	}
+
 	v, e := strconv.Atoi(slf.getString())
 	if e != nil {
 		return 0
@@ -58,6 +62,10 @@ func (slf *MySQLValue) ToUint() uint {
 //@method ToInt desc: Return int value
 //@return (int) a value
 func (slf *MySQLValue) ToInt() int {
+	if v, e := slf.getNumber(); e == nil {
+		return int(v)
+	}
+
 	v, e := strconv.Atoi(slf.getString())
 	if e != nil {
 		return 0
@@ -70,6 +78,10 @@ func (slf *MySQLValue) ToInt() int {
 //@method ToUint32 desc: Return uint32 value
 //@return (uint32) a value
 func (slf *MySQLValue) ToUint32() uint32 {
+	if v, e := slf.getNumber(); e == nil {
+		return uint32(v)
+	}
+
 	v, e := strconv.Atoi(slf.getString())
 	if e != nil {
 		return 0
@@ -82,6 +94,9 @@ func (slf *MySQLValue) ToUint32() uint32 {
 //@method ToInt32 desc: Return int32 value
 //@return (int32) a value
 func (slf *MySQLValue) ToInt32() int32 {
+	if v, e := slf.getNumber(); e == nil {
+		return int32(v)
+	}
 	v, e := strconv.Atoi(slf.getString())
 	if e != nil {
 		return 0
@@ -94,6 +109,10 @@ func (slf *MySQLValue) ToInt32() int32 {
 //@method ToUint64 desc: Return uint64 value
 //@return (uint64) a value
 func (slf *MySQLValue) ToUint64() uint64 {
+	if v, e := slf.getNumber(); e == nil {
+		return uint64(v)
+	}
+
 	v, e := strconv.ParseInt(slf.getString(), 10, 64)
 	if e != nil {
 		return 0
@@ -105,6 +124,10 @@ func (slf *MySQLValue) ToUint64() uint64 {
 //@method ToInt64 desc: Return int64 value
 //@return (int64) a value
 func (slf *MySQLValue) ToInt64() int64 {
+	if v, e := slf.getNumber(); e == nil {
+		return int64(v)
+	}
+
 	v, e := strconv.ParseInt(slf.getString(), 10, 64)
 	if e != nil {
 		return 0
@@ -116,6 +139,7 @@ func (slf *MySQLValue) ToInt64() int64 {
 //@method ToFloat desc: Return float32 value
 //@return (float32) a value
 func (slf *MySQLValue) ToFloat() float32 {
+
 	v, e := strconv.ParseFloat(slf.getString(), 32)
 	if e != nil {
 		return 0.0
@@ -179,6 +203,30 @@ func (slf *MySQLValue) ToDateTime() *time.Time {
 
 func (slf *MySQLValue) getString() string {
 	return string(slf.v.([]uint8))
+}
+
+func (slf *MySQLValue) getNumber() (int64, error) {
+
+	switch slf.t.Kind() {
+	case reflect.Int64:
+		return slf.v.(int64), nil
+	case reflect.Int32:
+		return int64(slf.v.(int32)), nil
+	case reflect.Int16:
+		return int64(slf.v.(int16)), nil
+	default:
+		return 0, fmt.Errorf("error: not number type")
+	}
+}
+
+func (slf *MySQLValue) getFloat() (float64, error) {
+	switch slf.t.Kind() {
+	case reflect.Float32:
+		return float64(slf.v.(float32)), nil 
+	case reflect.Float64:
+		return slf.v.(float64), nil 
+	default:
+		return 0, errors.New("error: not float type")
 }
 
 //MySQLReader desc
@@ -276,14 +324,14 @@ type MySQLDB struct {
 	db  *sql.DB
 }
 
-//Init desc
-//@method Init desc: initialization mysql DB
+//Initial desc
+//@method Initial desc: initialization mysql DB
 //@param (string) mysql connection dsn
 //@param (int) mysql connection max of number
 //@param (int) mysql connection idle of number
 //@param (int) mysql connection life time[util/sec]
 //@return (error) fail:return error, success: return nil
-func (slf *MySQLDB) Init(dsn string, maxConn int, maxIdleConn, lifeSec int) error {
+func (slf *MySQLDB) Initial(dsn string, maxConn int, maxIdleConn, lifeSec int) error {
 	var err error
 	slf.db, err = sql.Open("mysql", dsn)
 	util.AssertEmpty(slf.db, fmt.Sprintf("mysql open fail:%+v", err))
@@ -333,6 +381,7 @@ func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, err
 		for i, col := range values {
 			d[i].v = col
 			d[i].t = reflect.TypeOf(col)
+			fmt.Println(d[i].t)
 		}
 		record.data = append(record.data, d...)
 		record.rows++

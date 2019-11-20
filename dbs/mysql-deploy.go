@@ -19,5 +19,5 @@ type MySQLDeploy struct {
 //@param  (*MySQLDeploy) mysql config informat
 //@return (error) register mysql success/fail
 func DoMySQLDeploy(Db *MySQLDB, deploy *MySQLDeploy) error {
-	return Db.Init(deploy.DSN, deploy.Max, deploy.Idle, deploy.Life)
+	return Db.Initial(deploy.DSN, deploy.Max, deploy.Idle, deploy.Life)
 }

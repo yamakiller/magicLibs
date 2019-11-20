@@ -7,10 +7,10 @@ import (
 //NatsStreamClient desc
 //@struct NatsStreamClient
 type NatsStreamClient struct {
-	c          stan.Conn
-	isShutdown bool
-	clusterID  string
-	clientID   string
+	_c          stan.Conn
+	_isShutdown bool
+	_clusterID  string
+	_clientID   string
 
 	AutoReConnectLimt int
 	PingInterval      int
@@ -18,10 +18,14 @@ type NatsStreamClient struct {
 	ConnectTimeout    int
 }
 
-// Connect : xx
+//Connect desc
+//@method Connect desc: Connect to the NatsSteam server
+//@param (string) nats server cluster ID
+//@param (string) nats client ID
+//@return (error) nats connect fail error
 func (slf *NatsStreamClient) Connect(clusterID string, clientID string) error {
-	slf.clusterID = clusterID
-	slf.clientID = clientID
+	slf._clusterID = clusterID
+	slf._clientID = clientID
 	if slf.PingInterval == 0 {
 		slf.PingInterval = stan.DefaultPingInterval
 	}
