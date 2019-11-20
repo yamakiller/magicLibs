@@ -1,6 +1,8 @@
 package mq
 
 import (
+	"time"
+
 	stan "github.com/nats-io/go-nats-streaming"
 )
 
@@ -18,20 +20,27 @@ type INatSubCall interface {
 	onRecive(msg *stan.Msg)
 }
 
+//INatLostCall desc
+//@interface INatLostCall desc: nats stream connection lost Call function
+//@function onLost(stan.Conn, error)
+type INatLostCall interface {
+	onLost(stan.Conn, error)
+}
+
 //NatsStreamClient desc
 //@struct NatsStreamClient
 type NatsStreamClient struct {
 	_c          stan.Conn
 	_ack        INatPubAck
 	_sub        INatSubCall
+	_lost       INatLostCall
 	_isShutdown bool
 	_clusterID  string
 	_clientID   string
 
-	AutoReConnectLimt int
-	PingInterval      int
-	PingMaxOut        int
-	ConnectTimeout    int
+	PingInterval   int
+	PingMaxOut     int
+	ConnectTimeout int
 }
 
 //Connect desc
@@ -53,6 +62,18 @@ func (slf *NatsStreamClient) Connect(clusterID string, clientID string) error {
 	if slf.ConnectTimeout == 0 {
 		slf.ConnectTimeout = 2
 	}
+
+	c, e := stan.Connect(clusterID,
+		clientID,
+		stan.Pings(slf.PingInterval, slf.PingMaxOut),
+		stan.ConnectWait(time.Duration(slf.ConnectTimeout)*time.Millisecond),
+		stan.SetConnectionLostHandler(slf._lost.onLost))
+
+	if e != nil {
+		return e
+	}
+
+	slf._c = c
 
 	return nil
 }
@@ -80,6 +101,22 @@ func (slf *NatsStreamClient) PublishAsync(name string, data []byte) (string, err
 //@method Subscribe desc: Recvie message
 //@param (string) Subscription name
 //@param (...stan.SubscriptionOption) sub option
-func (slf *NatsStreamClient) Subscribe(name string, opts ...stan.SubscriptionOption) {
-	slf._c.Subscribe(name, slf._sub.onRecive, opts...)
+func (slf *NatsStreamClient) Subscribe(name string, opts ...stan.SubscriptionOption) (stan.Subscription, error) {
+	return slf._c.Subscribe(name, slf._sub.onRecive, opts...)
+}
+
+//QueueSubscribe desc
+//@method QueueSubscribe desc: Recvie Queue message
+//@param (string) Subscription name
+//@param (string) Subscription group name
+//@param (...stan.SubscriptionOption) sub option
+func (slf *NatsStreamClient) QueueSubscribe(name, qgroup string, opts ...stan.SubscriptionOption) (stan.Subscription, error) {
+	return slf._c.QueueSubscribe(name, qgroup, slf._sub.onRecive, opts...)
+}
+
+//Close desc
+//@method Close desc: Close connection
+//@return (error) close error returns
+func (slf *NatsStreamClient) Close() error {
+	return slf._c.Close()
 }
