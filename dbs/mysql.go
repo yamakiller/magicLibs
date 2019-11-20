@@ -2,6 +2,7 @@ package dbs
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -139,6 +140,9 @@ func (slf *MySQLValue) ToInt64() int64 {
 //@method ToFloat desc: Return float32 value
 //@return (float32) a value
 func (slf *MySQLValue) ToFloat() float32 {
+	if v, e := slf.getFloat(); e == nil {
+		return float32(v)
+	}
 
 	v, e := strconv.ParseFloat(slf.getString(), 32)
 	if e != nil {
@@ -151,6 +155,10 @@ func (slf *MySQLValue) ToFloat() float32 {
 //@method ToDouble desc: Return float64 value
 //@return (float64) a value
 func (slf *MySQLValue) ToDouble() float64 {
+	if v, e := slf.getFloat(); e == nil {
+		return v
+	}
+
 	v, e := strconv.ParseFloat(slf.getString(), 64)
 	if e != nil {
 		return 0.0
@@ -222,11 +230,12 @@ func (slf *MySQLValue) getNumber() (int64, error) {
 func (slf *MySQLValue) getFloat() (float64, error) {
 	switch slf.t.Kind() {
 	case reflect.Float32:
-		return float64(slf.v.(float32)), nil 
+		return float64(slf.v.(float32)), nil
 	case reflect.Float64:
-		return slf.v.(float64), nil 
+		return slf.v.(float64), nil
 	default:
 		return 0, errors.New("error: not float type")
+	}
 }
 
 //MySQLReader desc

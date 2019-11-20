@@ -17,7 +17,7 @@ func TestMySQL(t *testing.T) {
 		return
 	}
 
-	result, err := hsql.Query("select c1,c2,c3,c4 from test_1 where c1=?", 1)
+	result, err := hsql.Query("select c1,c2,c3,c4,c5,c6 from test_1 where c1=?", 1)
 	if err != nil {
 		fmt.Println("查询失败:", err)
 		hsql.Close()
@@ -29,10 +29,14 @@ func TestMySQL(t *testing.T) {
 		b, _ := result.GetValue(1)
 		c, _ := result.GetValue(2)
 		d, _ := result.GetValue(3)
+		e, _ := result.GetValue(4)
+		f, _ := result.GetValue(5)
 		a.Print()
 		b.Print()
 		c.Print()
 		d.Print()
+		e.Print()
+		f.Print()
 	}
 
 	result.Close()
