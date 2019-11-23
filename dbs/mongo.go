@@ -1,12 +1,12 @@
 package dbs
 
-import (
+/*import (
 	"context"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/yamakiller/magicWeb/util"
+	"github.com/yamakiller/magicLibs/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -545,4 +545,4 @@ func (slf *MongoDB) CountDocuments(name string, filter interface{}) (int64, erro
 	defer cancel()
 
 	return client.db.Collection(name).CountDocuments(ctx, filter)
-}
+}*/
