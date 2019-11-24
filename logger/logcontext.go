@@ -1,8 +1,11 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -62,7 +65,7 @@ func (slf *LogContext) SetHandle(v *logrus.Logger) {
 //@method SetMailMax desc: Setting log mail max
 //@param (int)
 func (slf *LogContext) SetMailMax(v int) {
-	slf._logMailMax = v
+	slf._logMailMax = int32(v)
 }
 
 //SetFormatter desc
@@ -84,7 +87,7 @@ func (slf *LogContext) Initial() {
 
 func (slf *LogContext) run() int {
 	select {
-	case <-slf.LogStop:
+	case <-slf._logStop:
 		return -1
 	case msg := <-slf._logMailbox:
 		slf.write(&msg)
@@ -94,25 +97,25 @@ func (slf *LogContext) run() int {
 }
 
 func (slf *LogContext) exit() {
-	slf.L_logWait.Done()
+	slf._logWait.Done()
 }
 
-func (slf *_logContext) write(msg *LogMessage) {
+func (slf *LogContext) write(msg *LogMessage) {
 	switch msg._level {
 	case uint32(logrus.ErrorLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Errorln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Errorln(msg._message)
 	case uint32(logrus.InfoLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Infoln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Infoln(msg._message)
 	case uint32(logrus.TraceLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Traceln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Traceln(msg._message)
 	case uint32(logrus.DebugLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Debugln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Debugln(msg._message)
 	case uint32(logrus.WarnLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Warningln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Warningln(msg._message)
 	case uint32(logrus.FatalLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Fatalln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Fatalln(msg._message)
 	case uint32(logrus.PanicLevel):
-		log._logHandle.WithFields(logrus.Fields{"prefix": msg.prefix}).Panicln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Panicln(msg._message)
 	}
 }
 
@@ -128,7 +131,7 @@ func (slf *LogContext) push(data LogMessage) {
 	case slf._logMailbox <- data:
 	}
 
-	atomic.AddInt32(&log._logMailNum, 1)
+	atomic.AddInt32(&slf._logMailNum, 1)
 }
 
 //Redirect desc
@@ -152,14 +155,13 @@ func (slf *LogContext) Redirect() {
 func (slf *LogContext) Mount() {
 	slf._logWait.Add(1)
 	go func() {
-		defer slf._logWait.Done()
 		for {
-			if slf.run()!=0 {
-				break 
+			if slf.run() != 0 {
+				break
 			}
 		}
 		slf.exit()
-	}
+	}()
 }
 
 //Close desc
@@ -188,7 +190,6 @@ func (slf *LogContext) Close() {
 //@param (...interface{}) args
 func (slf *LogContext) Error(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.ErrorLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
-
 }
 
 //Info desc
@@ -206,7 +207,7 @@ func (slf *LogContext) Info(owner uint32, fmrt string, args ...interface{}) {
 //@param (string) format
 //@param (...interface{}) args
 func (slf *LogContext) Warning(owner uint32, fmrt string, args ...interface{}) {
-	slf.push(spawnMessage{uint32(logrus.WarnLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)})
+	slf.push(spawnMessage(uint32(logrus.WarnLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Panic desc
@@ -215,7 +216,7 @@ func (slf *LogContext) Warning(owner uint32, fmrt string, args ...interface{}) {
 //@param (string) format
 //@param (...interface{}) args
 func (slf *LogContext) Panic(owner uint32, fmrt string, args ...interface{}) {
-	slf.push(spawnMessage{uint32(logrus.PanicLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
+	slf.push(spawnMessage(uint32(logrus.PanicLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Fatal desc
@@ -245,6 +246,6 @@ func (slf *LogContext) Trace(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.TraceLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-func spawnMessage(level uint32, prefix string, message string) LogContext {
+func spawnMessage(level uint32, prefix string, message string) LogMessage {
 	return LogMessage{_level: level, _prefix: prefix, _message: message}
 }

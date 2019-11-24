@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	//EnvKey Logger env key index
 	EnvKey = "log"
 )
 
