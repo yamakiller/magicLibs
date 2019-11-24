@@ -10,8 +10,8 @@ import (
 )
 
 type grpcIdleConn struct {
-	conn *grpc.ClientConn
-	t    time.Time
+	_c *grpc.ClientConn
+	_t time.Time
 }
 
 var (
@@ -23,49 +23,53 @@ var (
 
 // GRPCClientSet : GRPC 客户端集
 type GRPCClientSet struct {
-	mx          sync.Mutex
 	IdleTimeout time.Duration
 	MinConn     int
 	MaxConn     int
 	ConnTimeout time.Duration
-	conns       chan *grpcIdleConn
-	factory     func() (*grpc.ClientConn, error)
-	close       func(*grpc.ClientConn) error
+	_cs         chan *grpcIdleConn
+	_factory    func() (*grpc.ClientConn, error)
+	_close      func(*grpc.ClientConn) error
+	_mx         sync.Mutex
 }
 
-//Init : 初始化客户端集
-func (slf *GRPCClientSet) Init(target string, opts ...grpc.DialOption) error {
-	slf.conns = make(chan *grpcIdleConn, slf.MaxConn)
-	slf.factory = func() (*grpc.ClientConn, error) {
+//Initial desc
+//@method Initial desc:Initialization grpc client sets
+//@param (string) target address
+//@param (...grpc.DialOption) grpc client options
+func (slf *GRPCClientSet) Initial(target string, opts ...grpc.DialOption) error {
+	slf._cs = make(chan *grpcIdleConn, slf.MaxConn)
+	slf._factory = func() (*grpc.ClientConn, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), slf.ConnTimeout)
 		defer cancel()
 
 		return grpc.DialContext(ctx, target)
 	}
-	slf.close = func(c *grpc.ClientConn) error { return c.Close() }
+	slf._close = func(c *grpc.ClientConn) error { return c.Close() }
 
 	for i := 0; i < slf.MinConn; i++ {
-		conn, err := slf.factory()
+		conn, err := slf._factory()
 		if err != nil {
 			slf.Close()
 			return nil
 		}
 
-		slf.conns <- &grpcIdleConn{conn: conn, t: time.Now()}
+		slf._cs <- &grpcIdleConn{_c: conn, _t: time.Now()}
 	}
 
 	return nil
 }
 
-//Close : close set
+//Close desc
+//@method Close desc: Closing grpc client set
 func (slf *GRPCClientSet) Close() {
-	slf.mx.Lock()
-	conns := slf.conns
-	slf.conns = nil
-	slf.factory = nil
-	closeFun := slf.close
-	slf.close = nil
-	slf.mx.Unlock()
+	slf._mx.Lock()
+	conns := slf._cs
+	slf._cs = nil
+	slf._factory = nil
+	closeFun := slf._close
+	slf._close = nil
+	slf._mx.Unlock()
 
 	if conns == nil {
 		return
@@ -73,11 +77,12 @@ func (slf *GRPCClientSet) Close() {
 
 	close(conns) //？修改退出 未必可以全部删除
 	for wrapConn := range conns {
-		closeFun(wrapConn.conn)
+		closeFun(wrapConn._c)
 	}
 }
 
-// Invoke : 调用方法
+//Invoke desc
+//@method Invoke desc: Invoke grpc method
 func (slf *GRPCClientSet) Invoke(method string, args, reply interface{}) error { //优化参数设置
 	conn, err := slf.getConn()
 	if err != nil {
@@ -92,9 +97,9 @@ func (slf *GRPCClientSet) Invoke(method string, args, reply interface{}) error {
 }
 
 func (slf *GRPCClientSet) getConn() (*grpc.ClientConn, error) {
-	slf.mx.Lock()
-	conns := slf.conns
-	slf.mx.Unlock()
+	slf._mx.Lock()
+	conns := slf._cs
+	slf._mx.Unlock()
 
 	if conns == nil {
 		return nil, errGRPCSetClosed
@@ -107,15 +112,15 @@ func (slf *GRPCClientSet) getConn() (*grpc.ClientConn, error) {
 			}
 			//判断是否超时，超时则丢弃
 			if timeout := slf.IdleTimeout; timeout > 0 {
-				if wrapConn.t.Add(timeout).Before(time.Now()) {
+				if wrapConn._t.Add(timeout).Before(time.Now()) {
 					//丢弃并关闭该链接
-					slf.close(wrapConn.conn)
+					slf._close(wrapConn._c)
 					continue
 				}
 			}
-			return wrapConn.conn, nil
+			return wrapConn._c, nil
 		default:
-			conn, err := slf.factory()
+			conn, err := slf._factory()
 			if err != nil {
 				return nil, err
 			}
@@ -130,26 +135,28 @@ func (slf *GRPCClientSet) putConn(conn *grpc.ClientConn) error {
 		return errGRPCSetRejected
 	}
 
-	slf.mx.Lock()
-	defer slf.mx.Unlock()
+	slf._mx.Lock()
+	defer slf._mx.Unlock()
 
-	if slf.conns == nil {
-		return slf.close(conn)
+	if slf._cs == nil {
+		return slf._close(conn)
 	}
 
 	select {
-	case slf.conns <- &grpcIdleConn{conn: conn, t: time.Now()}:
+	case slf._cs <- &grpcIdleConn{_c: conn, _t: time.Now()}:
 		return nil
 	default:
 		//连接池已满，直接关闭该链接
-		return slf.close(conn)
+		return slf._close(conn)
 	}
 }
 
-// IdleCount : 空闲连接数
-func (slf *GRPCClientSet) IdleCount() int {
-	slf.mx.Lock()
-	conns := slf.conns
-	slf.mx.Unlock()
+//GetIdleCount desc
+//@method GetIdleCount desc: Number of idle connections
+//@return (int)
+func (slf *GRPCClientSet) GetIdleCount() int {
+	slf._mx.Lock()
+	conns := slf._cs
+	slf._mx.Unlock()
 	return len(conns)
 }
