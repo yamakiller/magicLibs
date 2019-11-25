@@ -11,5 +11,5 @@ type LogDeploy struct {
 //NewDefault desc
 //@method NewDefault desc: create default value Logger deploy informat
 func NewDefault() *LogDeploy {
-	return &LogDeploy{LogPath: "", LogSize: 512, LogLevel: PANICLEVEL}
+	return &LogDeploy{LogPath: "", LogSize: 512, LogLevel: DEBUGLEVEL}
 }

@@ -106,9 +106,11 @@ func Error(owner uint32, fmrt string, args ...interface{}) {
 //@param (string) format
 //@param (...interface{}) args
 func Info(owner uint32, fmrt string, args ...interface{}) {
+
 	if defaultHandle == nil {
 		return
 	}
+
 	defaultHandle.Info(owner, fmrt, args...)
 }
 

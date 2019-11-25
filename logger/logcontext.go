@@ -137,6 +137,7 @@ func (slf *LogContext) push(data LogMessage) {
 //Redirect desc
 //@method Redirect desc: Redirect log file
 func (slf *LogContext) Redirect() {
+
 	if slf._filPath == "" {
 		slf._logHandle.SetOutput(os.Stdout)
 		return
@@ -146,6 +147,7 @@ func (slf *LogContext) Redirect() {
 	if err != nil {
 		return
 	}
+
 	slf._filHandle = f
 	slf._logHandle.SetOutput(f)
 }

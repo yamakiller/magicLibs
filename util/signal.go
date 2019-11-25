@@ -15,13 +15,6 @@ type SignalWatch struct {
 	_f func()
 }
 
-//WithCall desc
-//@method WithCall desc: with signal response back call function
-//@param (func()) call function
-func (slf *SignalWatch) WithCall(f func()) {
-	slf._f = f
-}
-
 //Initial desc
 //@method Initial desc: Initialization signal watcher
 //@param (func()) Signal response back call function
