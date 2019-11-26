@@ -1,5 +1,13 @@
 package dbs
 
+import "go.mongodb.org/mongo-driver/mongo"
+
+type mongoClient struct {
+	_c       *mongo.Client
+	_db      *mongo.Database
+	_timeOut int
+}
+
 /*import (
 	"context"
 	"fmt"

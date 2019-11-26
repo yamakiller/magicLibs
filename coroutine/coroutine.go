@@ -27,20 +27,20 @@ type task struct {
 	params []interface{}
 }
 
-func (slf *coObject) run(cop *CoroutinePool) {
+func (slf *coObject) run(cop *CoPools) {
 	go func() {
-		defer cop.wait.Done()
+		defer cop._wait.Done()
 		for {
 			for {
 				select {
-				case <-slf.q:
-					slf.state = coDeath
+				case <-slf._q:
+					slf._state = coDeath
 					return
-				case t := <-cop.taskQueue:
-					atomic.CompareAndSwapInt32(&slf.state, coIdle, coRun)
+				case t := <-cop._taskQueue:
+					atomic.CompareAndSwapInt32(&slf._state, coIdle, coRun)
 					t.cb(t.params)
 					t.params = nil
-					atomic.CompareAndSwapInt32(&slf.state, coRun, coIdle)
+					atomic.CompareAndSwapInt32(&slf._state, coRun, coIdle)
 				}
 			}
 		}
@@ -48,63 +48,64 @@ func (slf *coObject) run(cop *CoroutinePool) {
 }
 
 type coObject struct {
-	state int32
-	last  time.Duration
-	q     chan int
-	id    int
+	_state int32
+	_last  time.Duration
+	_q     chan int
+	_id    int
 }
 
 var (
 	oneCoroutinePool     sync.Once
-	defaultCoroutinePool *CoroutinePool
+	defaultCoroutinePool *CoPools
 )
 
 //Instance desc
 //@method Instance desc: coroutine pool instance
 //@return (*CoroutinePool)
-func Instance() *CoroutinePool {
+func Instance() *CoPools {
 	oneCoroutinePool.Do(func() {
-		defaultCoroutinePool = &CoroutinePool{}
+		defaultCoroutinePool = &CoPools{}
 	})
 	return defaultCoroutinePool
 }
 
-//CoroutinePool desc
-//@struct CoroutinePool desc: Coroutine pool
-type CoroutinePool struct {
-	taskLimit int
-	maxNum    int
-	minNum    int
+//CoPools desc
+//@struct CoPools desc: Coroutine pool
+//@member (int) number of task limit
+type CoPools struct {
+	_taskLimit int
+	_maxNum    int
+	_minNum    int
 
-	taskQueue chan task
-	runing    int32
-	curr      int32
-	seq       int32
-	cos       []coObject
-	wait      sync.WaitGroup
-	quit      chan int
+	_taskQueue chan task
+	_runing    int32
+	_curr      int32
+	_seq       int32
+	_cos       []coObject
+	_wait      sync.WaitGroup
+	_quit      chan int
 }
 
-func (slf *CoroutinePool) scheduer() {
-	defer slf.wait.Done()
+func (slf *CoPools) scheduer() {
+	defer slf._wait.Done()
 	for {
 		select {
-		case <-slf.quit:
+		case <-slf._quit:
 			goto scheduer_end
 		default:
 		}
 
 		now := time.Now().Unix()
-		for _, v := range slf.cos {
-			if v.state == coRun ||
-				v.state == coDeath ||
-				v.state == coClosing {
+		for _, v := range slf._cos {
+			if v._state == coRun ||
+				v._state == coDeath ||
+				v._state == coClosing {
 				continue
 			}
 
-			if v.state == coIdle && ((time.Duration(now) - v.last) > time.Second*60) {
-				if atomic.CompareAndSwapInt32(&v.state, int32(coIdle), int32(coClosing)) {
-					close(v.q)
+			if v._state == coIdle && ((time.Duration(now) - v._last) > time.Second*60) {
+				if atomic.CompareAndSwapInt32(&v._state, int32(coIdle), int32(coClosing)) {
+					close(v._q)
 				}
 			}
 		}
@@ -112,10 +113,10 @@ func (slf *CoroutinePool) scheduer() {
 		time.Sleep(time.Millisecond * 1000)
 	}
 scheduer_end:
-	for i := 0; i < slf.maxNum; i++ {
-		if slf.cos[i].state != coDeath && slf.cos[i].state != coClosing {
-			atomic.StoreInt32(&slf.cos[i].state, coClosing)
-			close(slf.cos[i].q)
+	for i := 0; i < slf._maxNum; i++ {
+		if slf._cos[i]._state != coDeath && slf._cos[i]._state != coClosing {
+			atomic.StoreInt32(&slf._cos[i]._state, coClosing)
+			close(slf._cos[i]._q)
 		}
 	}
 }
@@ -125,49 +126,49 @@ scheduer_end:
 //@param (int) coroutine max of number
 //@param (int) coroutine min of number
 //@param (int) coroutine task max limit
-func (slf *CoroutinePool) Start(max int, min int, taskmax int) {
-	slf.maxNum = max
-	slf.minNum = min
-	slf.taskLimit = taskmax
+func (slf *CoPools) Start(max int, min int, taskmax int) {
+	slf._maxNum = max
+	slf._minNum = min
+	slf._taskLimit = taskmax
 
-	if slf.maxNum == 0 {
-		slf.maxNum = 65535
+	if slf._maxNum == 0 {
+		slf._maxNum = 65535
 	}
-	atomic.StoreInt32(&slf.seq, 1)
+	atomic.StoreInt32(&slf._seq, 1)
 
 	now := time.Now().Unix()
-	slf.taskQueue = make(chan task, slf.taskLimit)
-	slf.cos = make([]coObject, slf.maxNum)
-	for k, v := range slf.cos {
-		v.id = k + 1
-		v.state = coDeath
-		v.last = time.Duration(now)
+	slf._taskQueue = make(chan task, slf._taskLimit)
+	slf._cos = make([]coObject, slf._maxNum)
+	for k, v := range slf._cos {
+		v._id = k + 1
+		v._state = coDeath
+		v._last = time.Duration(now)
 	}
 
-	if slf.maxNum > 0 && slf.maxNum > slf.minNum {
-		slf.wait.Add(1)
+	if slf._maxNum > 0 && slf._maxNum > slf._minNum {
+		slf._wait.Add(1)
 		go slf.scheduer()
 	}
 
-	for i := 0; i < slf.minNum; i++ {
-		slf.cos[i].state = coIdle
+	for i := 0; i < slf._minNum; i++ {
+		slf._cos[i]._state = coIdle
 		slf.startOne(i)
 	}
 }
 
-func (slf *CoroutinePool) startOne(idx int) {
-	slf.wait.Add(1)
-	atomic.AddInt32(&slf.seq, 1)
-	atomic.AddInt32(&slf.curr, 1)
+func (slf *CoPools) startOne(idx int) {
+	slf._wait.Add(1)
+	atomic.AddInt32(&slf._seq, 1)
+	atomic.AddInt32(&slf._curr, 1)
 
-	slf.cos[idx].run(slf)
+	slf._cos[idx].run(slf)
 }
 
 //Stop desc
 //@method Stop desc: Stop the coroutine pool
-func (slf *CoroutinePool) Stop() {
-	close(slf.quit)
-	slf.wait.Wait()
+func (slf *CoPools) Stop() {
+	close(slf._quit)
+	slf._wait.Wait()
 }
 
 //Go desc
@@ -175,21 +176,21 @@ func (slf *CoroutinePool) Stop() {
 //@param  (func(params []interface{})) call function
 //@param  (...interface{}) call args
 //@return (error)
-func (slf *CoroutinePool) Go(f func(params []interface{}), params ...interface{}) error {
+func (slf *CoPools) Go(f func(params []interface{}), params ...interface{}) error {
 
 	select {
-	case <-slf.quit:
+	case <-slf._quit:
 		return ErrPoolStoped
 	default:
 	}
-	runing := atomic.LoadInt32(&slf.runing)
-	curr := atomic.LoadInt32(&slf.curr)
+	runing := atomic.LoadInt32(&slf._runing)
+	curr := atomic.LoadInt32(&slf._curr)
 
-	if runing >= curr && curr < int32(slf.maxNum) {
-		for i := 0; i < slf.maxNum; i++ {
-			hash := ((int32(i) + slf.seq) % int32(slf.maxNum))
-			if atomic.CompareAndSwapInt32(&slf.cos[hash].state, coDeath, coIdle) {
-				slf.seq = int32(hash) + slf.seq
+	if runing >= curr && curr < int32(slf._maxNum) {
+		for i := 0; i < slf._maxNum; i++ {
+			hash := ((int32(i) + slf._seq) % int32(slf._maxNum))
+			if atomic.CompareAndSwapInt32(&slf._cos[hash]._state, coDeath, coIdle) {
+				slf._seq = int32(hash) + slf._seq
 				slf.startOne(int(hash))
 				break
 			}
@@ -197,9 +198,9 @@ func (slf *CoroutinePool) Go(f func(params []interface{}), params ...interface{}
 	}
 
 	select {
-	case <-slf.quit:
+	case <-slf._quit:
 		return ErrPoolStoped
-	case slf.taskQueue <- task{f, params}:
+	case slf._taskQueue <- task{f, params}:
 		return nil
 	}
 }

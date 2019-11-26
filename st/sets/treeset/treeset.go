@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	rbt "github.com/yamakiller/magicNet/st/trees/redblacktree"
+	rbt "github.com/yamakiller/magicLibs/st/trees/redblacktree"
 )
 
 //Set desc
 //@struct Set desc: holds elements in a red-black tree
 type Set struct {
-	tree *rbt.Tree
+	_tree *rbt.Tree
 }
 
 //Push desc
@@ -18,7 +18,7 @@ type Set struct {
 //@param (...interface{}) elements
 func (s *Set) Push(es ...interface{}) {
 	for _, it := range es {
-		s.tree.Insert(it, struct{}{})
+		s._tree.Insert(it, struct{}{})
 	}
 }
 
@@ -26,10 +26,10 @@ func (s *Set) Push(es ...interface{}) {
 //@method PushAll desc: adds the st(set in element) to the set.
 //@param (*Set) sets
 func (s *Set) PushAll(st *Set) {
-	it := st.tree.Iterator()
+	it := st._tree.Iterator()
 	for i := 0; it.Next(); i++ {
 		if it.It() != nil {
-			s.tree.Insert(it.Key(), it.Value())
+			s._tree.Insert(it.Key(), it.Value())
 		}
 	}
 }
@@ -41,15 +41,15 @@ func (s *Set) Retain(eds ...interface{}) {
 	var vs []interface{}
 	var ic int
 	for _, it := range eds {
-		if _, ok := s.tree.Get(it); ok {
+		if _, ok := s._tree.Get(it); ok {
 			vs = append(vs, it)
 			ic++
 		}
 	}
 
-	s.tree.Clear()
+	s._tree.Clear()
 	for i := 0; i < ic; i++ {
-		s.tree.Insert(vs[i], struct{}{})
+		s._tree.Insert(vs[i], struct{}{})
 	}
 	vs = nil
 }
@@ -61,19 +61,19 @@ func (s *Set) RetainAll(st *Set) {
 	var vs []interface{}
 	var ic int
 
-	it := st.tree.Iterator()
+	it := st._tree.Iterator()
 	for i := 0; it.Next(); i++ {
 		if it.It() != nil {
-			if _, ok := s.tree.Get(it.Key()); ok {
+			if _, ok := s._tree.Get(it.Key()); ok {
 				vs = append(vs, it)
 				ic++
 			}
 		}
 	}
 
-	s.tree.Clear()
+	s._tree.Clear()
 	for i := 0; i < ic; i++ {
-		s.tree.Insert(vs[i], struct{}{})
+		s._tree.Insert(vs[i], struct{}{})
 	}
 	vs = nil
 }
@@ -83,7 +83,7 @@ func (s *Set) RetainAll(st *Set) {
 //@param (...interface{}) elements
 func (s *Set) Erase(es ...interface{}) {
 	for _, it := range es {
-		s.tree.Erase(it)
+		s._tree.Erase(it)
 	}
 }
 
@@ -91,10 +91,10 @@ func (s *Set) Erase(es ...interface{}) {
 //@method EraseAll desc: removes this st(set in element) from the set
 //@param (*Set) sets
 func (s *Set) EraseAll(st *Set) {
-	it := st.tree.Iterator()
+	it := st._tree.Iterator()
 	for i := 0; it.Next(); i++ {
 		if it.It() != nil {
-			s.tree.Erase(it.Key())
+			s._tree.Erase(it.Key())
 		}
 	}
 }
@@ -105,7 +105,7 @@ func (s *Set) EraseAll(st *Set) {
 //@return (bool)
 func (s *Set) Contains(es ...interface{}) bool {
 	for _, it := range es {
-		if _, cs := s.tree.Get(it); !cs {
+		if _, cs := s._tree.Get(it); !cs {
 			return false
 		}
 	}
@@ -116,7 +116,7 @@ func (s *Set) Contains(es ...interface{}) bool {
 //@method Size desc: Returns number of elements within the set.
 //@return (int) size
 func (s *Set) Size() int {
-	return s.tree.Size()
+	return s._tree.Size()
 }
 
 //IsEmpty desc
@@ -129,14 +129,14 @@ func (s *Set) IsEmpty() bool {
 //Clear desc
 //@method Clear desc: clears all values in the set.
 func (s *Set) Clear() {
-	s.tree.Clear()
+	s._tree.Clear()
 }
 
 //Values desc
 //@method Values desc: Returns all items in the set.
 //@return ([]interface{})
 func (s *Set) Values() []interface{} {
-	return s.tree.Keys()
+	return s._tree.Keys()
 }
 
 //String desc
@@ -144,7 +144,7 @@ func (s *Set) Values() []interface{} {
 func (s *Set) String() string {
 	str := "TreeSet\n"
 	items := []string{}
-	for _, v := range s.tree.Keys() {
+	for _, v := range s._tree.Keys() {
 		items = append(items, fmt.Sprintf("%v", v))
 	}
 	str += strings.Join(items, ", ")

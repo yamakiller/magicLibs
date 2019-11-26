@@ -29,8 +29,8 @@ func NewConsistentHash(replicas int) *Map {
 	if replicas <= 0 {
 		replicas = 20
 	}
-	return &Map{replicas: replicas,
-		circle: make(map[uint32]interface{})}
+	return &Map{_replicas: replicas,
+		_circle: make(map[uint32]interface{})}
 }
 
 //ErrEmptyCircle Return an empty
@@ -65,9 +65,9 @@ func (s uInt32Slice) Swap(i, j int) {
 //Map desc
 //@struct Map desc: Hash consistency load balancing
 type Map struct {
-	replicas     int
-	sortedHashes uInt32Slice
-	circle       map[uint32]interface{}
+	_replicas     int
+	_sortedHashes uInt32Slice
+	_circle       map[uint32]interface{}
 	sync.RWMutex
 }
 
@@ -76,8 +76,8 @@ type Map struct {
 //@param (string) key
 //@param (interface{}) element value
 func (m *Map) UnAdd(key string, v interface{}) {
-	for i := 0; i < m.replicas; i++ {
-		m.circle[getHash([]byte(strconv.Itoa(i)+key))] = v
+	for i := 0; i < m._replicas; i++ {
+		m._circle[getHash([]byte(strconv.Itoa(i)+key))] = v
 	}
 	m.updateSortedHashes()
 }
@@ -86,8 +86,8 @@ func (m *Map) UnAdd(key string, v interface{}) {
 //@method UnRemove desc: Delete an object, not locked
 //@param (string) key
 func (m *Map) UnRemove(key string) {
-	for i := 0; i < m.replicas; i++ {
-		delete(m.circle, getHash([]byte(strconv.Itoa(i)+key)))
+	for i := 0; i < m._replicas; i++ {
+		delete(m._circle, getHash([]byte(strconv.Itoa(i)+key)))
 	}
 	m.updateSortedHashes()
 }
@@ -98,34 +98,34 @@ func (m *Map) UnRemove(key string) {
 //@return (interface{}) element value
 //@return (error)
 func (m *Map) UnGet(name string) (interface{}, error) {
-	if len(m.circle) == 0 {
+	if len(m._circle) == 0 {
 		return "", ErrEmptyCircle
 	}
 
 	key := getHash([]byte(name))
 	i := m.sreach(key)
-	return m.circle[m.sortedHashes[i]], nil
+	return m._circle[m._sortedHashes[i]], nil
 }
 
 func (m *Map) sreach(key uint32) (i int) {
 	f := func(x int) bool {
-		return m.sortedHashes[x] > key
+		return m._sortedHashes[x] > key
 	}
-	i = sort.Search(len(m.sortedHashes), f)
-	if i >= len(m.sortedHashes) {
+	i = sort.Search(len(m._sortedHashes), f)
+	if i >= len(m._sortedHashes) {
 		i = 0
 	}
 	return
 }
 
 func (m *Map) updateSortedHashes() {
-	hashes := m.sortedHashes[:0]
-	if cap(m.sortedHashes)/(m.replicas*4) > len(m.circle) {
+	hashes := m._sortedHashes[:0]
+	if cap(m._sortedHashes)/(m._replicas*4) > len(m._circle) {
 		hashes = nil
 	}
-	for k := range m.circle {
+	for k := range m._circle {
 		hashes = append(hashes, k)
 	}
 	sort.Sort(hashes)
-	m.sortedHashes = hashes
+	m._sortedHashes = hashes
 }

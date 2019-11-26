@@ -8,8 +8,8 @@ import (
 //List desc
 //@struct List desc: holds the elements in a slice
 type List struct {
-	es   []interface{}
-	size int
+	_es   []interface{}
+	_size int
 }
 
 const (
@@ -35,8 +35,8 @@ func NewList(values ...interface{}) *List {
 func (list *List) Add(values ...interface{}) {
 	list.growBy(len(values))
 	for _, value := range values {
-		list.es[list.size] = value
-		list.size++
+		list._es[list._size] = value
+		list._size++
 	}
 }
 
@@ -51,7 +51,7 @@ func (list *List) Get(index int) (interface{}, bool) {
 		return nil, false
 	}
 
-	return list.es[index], true
+	return list._es[index], true
 }
 
 //Remove desc
@@ -63,9 +63,9 @@ func (list *List) Remove(index int) {
 		return
 	}
 
-	list.es[index] = nil                              // cleanup reference
-	copy(list.es[index:], list.es[index+1:list.size]) // shift to the left by one (slow operation, need ways to optimize this)
-	list.size--
+	list._es[index] = nil                                // cleanup reference
+	copy(list._es[index:], list._es[index+1:list._size]) // shift to the left by one (slow operation, need ways to optimize this)
+	list._size--
 
 	list.shrink()
 }
@@ -81,7 +81,7 @@ func (list *List) Contains(values ...interface{}) bool {
 
 	for _, searchValue := range values {
 		found := false
-		for _, element := range list.es {
+		for _, element := range list._es {
 			if element == searchValue {
 				found = true
 				break
@@ -98,8 +98,8 @@ func (list *List) Contains(values ...interface{}) bool {
 //@method Values desc: returns all elements in the list.
 //@return ([]interface{})
 func (list *List) Values() []interface{} {
-	newElements := make([]interface{}, list.size, list.size)
-	copy(newElements, list.es[:list.size])
+	newElements := make([]interface{}, list._size, list._size)
+	copy(newElements, list._es[:list._size])
 	return newElements
 }
 
@@ -108,10 +108,10 @@ func (list *List) Values() []interface{} {
 //@param  (interface{}) element
 //@return (int) index
 func (list *List) IndexOf(value interface{}) int {
-	if list.size == 0 {
+	if list._size == 0 {
 		return -1
 	}
-	for index, element := range list.es {
+	for index, element := range list._es {
 		if element == value {
 			return index
 		}
@@ -123,21 +123,21 @@ func (list *List) IndexOf(value interface{}) int {
 //@method IsEmpty desc: returns true if list does not contain any elements.
 //@return (bool)
 func (list *List) IsEmpty() bool {
-	return list.size == 0
+	return list._size == 0
 }
 
 //Size desc
 //@method Size desc: returns number of elements within the list.
 //@return (int) size
 func (list *List) Size() int {
-	return list.size
+	return list._size
 }
 
 //Clear desc
 //@method Clear desc: removes all elements from the list.
 func (list *List) Clear() {
-	list.size = 0
-	list.es = []interface{}{}
+	list._size = 0
+	list._es = []interface{}{}
 }
 
 //Swap desc
@@ -146,7 +146,7 @@ func (list *List) Clear() {
 //@param (int)
 func (list *List) Swap(i, j int) {
 	if list.withinRange(i) && list.withinRange(j) {
-		list.es[i], list.es[j] = list.es[j], list.es[i]
+		list._es[i], list._es[j] = list._es[j], list._es[i]
 	}
 }
 
@@ -160,7 +160,7 @@ func (list *List) Insert(index int, values ...interface{}) {
 
 	if !list.withinRange(index) {
 		// Append
-		if index == list.size {
+		if index == list._size {
 			list.Add(values...)
 		}
 		return
@@ -168,9 +168,9 @@ func (list *List) Insert(index int, values ...interface{}) {
 
 	l := len(values)
 	list.growBy(l)
-	list.size += l
-	copy(list.es[index+l:], list.es[index:list.size-l])
-	copy(list.es[index:], values)
+	list._size += l
+	copy(list._es[index+l:], list._es[index:list._size-l])
+	copy(list._es[index:], values)
 }
 
 //Set desc
@@ -183,13 +183,13 @@ func (list *List) Set(index int, value interface{}) {
 
 	if !list.withinRange(index) {
 		// Append
-		if index == list.size {
+		if index == list._size {
 			list.Add(value)
 		}
 		return
 	}
 
-	list.es[index] = value
+	list._es[index] = value
 }
 
 //String desc
@@ -198,7 +198,7 @@ func (list *List) Set(index int, value interface{}) {
 func (list *List) String() string {
 	str := "ArrayList\n"
 	values := []string{}
-	for _, value := range list.es[:list.size] {
+	for _, value := range list._es[:list._size] {
 		values = append(values, fmt.Sprintf("%v", value))
 	}
 	str += strings.Join(values, ", ")
@@ -207,20 +207,20 @@ func (list *List) String() string {
 
 // Check that the index is within bounds of the list
 func (list *List) withinRange(index int) bool {
-	return index >= 0 && index < list.size
+	return index >= 0 && index < list._size
 }
 
 func (list *List) resize(cap int) {
 	newElements := make([]interface{}, cap, cap)
-	copy(newElements, list.es)
-	list.es = newElements
+	copy(newElements, list._es)
+	list._es = newElements
 }
 
 // Expand the array if necessary, i.e. capacity will be reached if we add n elements
 func (list *List) growBy(n int) {
 	// When capacity is reached, grow by a factor of growthFactor and add number of elements
-	currentCapacity := cap(list.es)
-	if list.size+n >= currentCapacity {
+	currentCapacity := cap(list._es)
+	if list._size+n >= currentCapacity {
 		newCapacity := int(growthFactor * float32(currentCapacity+n))
 		list.resize(newCapacity)
 	}
@@ -232,8 +232,8 @@ func (list *List) shrink() {
 		return
 	}
 	// Shrink when size is at shrinkFactor * capacity
-	currentCapacity := cap(list.es)
-	if list.size <= int(float32(currentCapacity)*shrinkFactor) {
-		list.resize(list.size)
+	currentCapacity := cap(list._es)
+	if list._size <= int(float32(currentCapacity)*shrinkFactor) {
+		list.resize(list._size)
 	}
 }

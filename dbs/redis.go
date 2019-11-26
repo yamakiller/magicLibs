@@ -13,9 +13,9 @@ import (
 //@member (string) redis address
 //@member (int)  redis db code
 type RedisDB struct {
-	c    *redis.Pool
-	host string
-	db   int
+	_c    *redis.Pool
+	_host string
+	_db   int
 }
 
 //Init desc
@@ -27,10 +27,10 @@ type RedisDB struct {
 //@param (int) redis connection idle time (unit/sec)
 //@return (error) if connecting fail return error ,success return nil
 func (slf *RedisDB) Init(host string, db int, maxIdle int, maxActive int, idleSec int) error {
-	slf.host = host
-	slf.db = db
+	slf._host = host
+	slf._db = db
 
-	slf.c = &redis.Pool{
+	slf._c = &redis.Pool{
 		MaxIdle:     maxIdle,
 		MaxActive:   maxActive,
 		IdleTimeout: time.Duration(idleSec) * time.Second,
@@ -57,7 +57,7 @@ func (slf *RedisDB) Init(host string, db int, maxIdle int, maxActive int, idleSe
 //@return (interface{}) execute result
 //@return (error) if execute fail return error, execute success return nil
 func (slf *RedisDB) Do(commandName string, args ...interface{}) (interface{}, error) {
-	c := slf.c.Get()
+	c := slf._c.Get()
 	defer c.Close()
 	return c.Do(commandName, args...)
 }
@@ -65,5 +65,5 @@ func (slf *RedisDB) Do(commandName string, args ...interface{}) (interface{}, er
 //Close desc
 //@method Close desc: close redis db operation
 func (slf *RedisDB) Close() {
-	slf.c.Close()
+	slf._c.Close()
 }

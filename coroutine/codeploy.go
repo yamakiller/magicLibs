@@ -3,6 +3,7 @@ package coroutine
 import "math"
 
 const (
+	//EnvKey desc: coroutine pool env name
 	EnvKey = "coroutine pool"
 )
 

@@ -2,9 +2,9 @@ package redblacktree
 
 // Iterator holding the iterator`s state
 type Iterator struct {
-	t *Tree
-	n *Node
-	p position
+	_t *Tree
+	_n *Node
+	_p position
 }
 
 type position byte
@@ -15,112 +15,112 @@ const (
 
 // Iterator returns a stateful iterator key/value pairs.
 func (tr *Tree) Iterator() Iterator {
-	return Iterator{t: tr, n: nil, p: begin}
+	return Iterator{_t: tr, _n: nil, _p: begin}
 }
 
 // Next moves the iterator to the next element
 func (it *Iterator) Next() bool {
-	if it.p == end {
+	if it._p == end {
 		goto end
 	}
 
-	if it.p == begin {
-		l := it.t.left()
+	if it._p == begin {
+		l := it._t.left()
 		if l == nil {
 			goto end
 		}
-		it.n = l
+		it._n = l
 		goto between
 	}
-	if it.n.right != nil {
-		it.n = it.n.right
-		for it.n.left != nil {
-			it.n = it.n.left
+	if it._n._right != nil {
+		it._n = it._n._right
+		for it._n._left != nil {
+			it._n = it._n._left
 		}
 		goto between
 	}
-	if it.n.parent != nil {
-		n := it.n
-		for it.n.parent != nil {
-			it.n = it.n.parent
-			if it.t.compare(n.key, it.n.key) >= 0 {
+	if it._n._parent != nil {
+		n := it._n
+		for it._n._parent != nil {
+			it._n = it._n._parent
+			if it._t._compare(n._key, it._n._key) >= 0 {
 				goto between
 			}
 		}
 	}
 end:
-	it.n = nil
-	it.p = end
+	it._n = nil
+	it._p = end
 	return false
 between:
-	it.p = between
+	it._p = between
 	return true
 }
 
 // Prev moves the iterator to the prev element
 func (it *Iterator) Prev() bool {
-	if it.p == begin {
+	if it._p == begin {
 		goto begin
 	}
-	if it.p == end {
-		r := it.t.right()
+	if it._p == end {
+		r := it._t.right()
 		if r == nil {
 			goto begin
 		}
-		it.n = r
+		it._n = r
 		goto between
 	}
-	if it.n.left != nil {
-		it.n = it.n.left
-		for it.n.right != nil {
-			it.n = it.n.right
+	if it._n._left != nil {
+		it._n = it._n._left
+		for it._n._right != nil {
+			it._n = it._n._right
 		}
 		goto between
 	}
-	if it.n.parent != nil {
-		n := it.n
-		for it.n.parent != nil {
-			it.n = it.n.parent
-			if it.t.compare(n.key, it.n.key) >= 0 {
+	if it._n._parent != nil {
+		n := it._n
+		for it._n._parent != nil {
+			it._n = it._n._parent
+			if it._t._compare(n._key, it._n._key) >= 0 {
 				goto between
 			}
 		}
 	}
 begin:
-	it.n = nil
-	it.p = begin
+	it._n = nil
+	it._p = begin
 	return false
 
 between:
-	it.p = between
+	it._p = between
 	return true
 }
 
 // It returns current Node
 func (it *Iterator) It() *Node {
-	return it.n
+	return it._n
 }
 
 // Value returns the current element`s value.
 func (it *Iterator) Value() interface{} {
-	return it.n.val
+	return it._n._val
 }
 
 // Key returns the current element`s key.
 func (it *Iterator) Key() interface{} {
-	return it.n.key
+	return it._n._key
 }
 
 // Begin resets the iterator to its start(one-before-first)
 func (it *Iterator) Begin() {
-	it.n = nil
-	it.p = begin
+	it._n = nil
+	it._p = begin
 }
 
 // End resets the iterator to its end (one-past-the-end)
 func (it *Iterator) End() {
-	it.n = nil
-	it.p = end
+	it._n = nil
+	it._p = end
 }
 
 // First moves the iterator to the first element

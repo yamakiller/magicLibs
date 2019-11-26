@@ -17,7 +17,7 @@ var (
 //JSStack desc
 //@struct JSStack desc: javascirpt virtual machine
 type JSStack struct {
-	state *otto.Otto
+	_state *otto.Otto
 }
 
 //MakeJSStack desc
@@ -31,7 +31,7 @@ func MakeJSStack() *JSStack {
 //@param (string) name
 //@param (int)    value
 func (slf *JSStack) SetInt(name string, val int) {
-	slf.state.Set(name, val)
+	slf._state.Set(name, val)
 }
 
 //SetFloat desc
@@ -39,7 +39,7 @@ func (slf *JSStack) SetInt(name string, val int) {
 //@param (string)     name
 //@param (float32)    value
 func (slf *JSStack) SetFloat(name string, val float32) {
-	slf.state.Set(name, val)
+	slf._state.Set(name, val)
 }
 
 //SetDouble desc
@@ -47,7 +47,7 @@ func (slf *JSStack) SetFloat(name string, val float32) {
 //@param (string)     name
 //@param (float64)    value
 func (slf *JSStack) SetDouble(name string, val float64) {
-	slf.state.Set(name, val)
+	slf._state.Set(name, val)
 }
 
 //SetBoolean desc
@@ -55,7 +55,7 @@ func (slf *JSStack) SetDouble(name string, val float64) {
 //@param (string)     name
 //@param (bool)       value
 func (slf *JSStack) SetBoolean(name string, val bool) {
-	slf.state.Set(name, val)
+	slf._state.Set(name, val)
 }
 
 //SetString desc
@@ -63,7 +63,7 @@ func (slf *JSStack) SetBoolean(name string, val bool) {
 //@param (string)     name
 //@param (string)       value
 func (slf *JSStack) SetString(name string, val string) {
-	slf.state.Set(name, val)
+	slf._state.Set(name, val)
 }
 
 //SetFunc desc
@@ -71,7 +71,7 @@ func (slf *JSStack) SetString(name string, val string) {
 //@param (string)       name
 //@param (interface{})  value
 func (slf *JSStack) SetFunc(name string, fun interface{}) {
-	slf.state.Set(name, fun)
+	slf._state.Set(name, fun)
 }
 
 //ExecuteScriptFile desc
@@ -90,5 +90,5 @@ func (slf *JSStack) ExecuteScriptFile(filename string) (otto.Value, error) {
 		return otto.Value{}, ErrJSNotFileData
 	}
 
-	return slf.state.Run(string(data.GetBytes()))
+	return slf._state.Run(string(data.GetBytes()))
 }

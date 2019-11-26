@@ -6,8 +6,8 @@ import (
 )
 
 type node struct {
-	next *node
-	val  interface{}
+	_next *node
+	_val  interface{}
 }
 
 //Queue desc
@@ -15,7 +15,7 @@ type node struct {
 //@member (*node) header
 //@member (*node) tail
 type Queue struct {
-	head, tail *node
+	_head, _tail *node
 }
 
 //NewQueue desc
@@ -24,8 +24,8 @@ type Queue struct {
 func NewQueue() *Queue {
 	q := &Queue{}
 	stub := &node{}
-	q.head = stub
-	q.tail = stub
+	q._head = stub
+	q._tail = stub
 	return q
 }
 
@@ -34,21 +34,21 @@ func NewQueue() *Queue {
 //@param  (interface{}) insert value
 func (slf *Queue) Push(t interface{}) {
 	n := new(node)
-	n.val = t
-	prev := (*node)(atomic.SwapPointer((*unsafe.Pointer)(unsafe.Pointer(&slf.head)), unsafe.Pointer(n)))
-	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&prev.next)), unsafe.Pointer(n))
+	n._val = t
+	prev := (*node)(atomic.SwapPointer((*unsafe.Pointer)(unsafe.Pointer(&slf._head)), unsafe.Pointer(n)))
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&prev._next)), unsafe.Pointer(n))
 }
 
 //Pop desc
 //@method Pop desc: An object pops up in the re-queue
 //@return (interface{}) pop header elements
 func (slf *Queue) Pop() interface{} {
-	tail := slf.tail
-	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail.next))))
+	tail := slf._tail
+	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail._next))))
 	if next != nil {
-		slf.tail = next
-		v := next.val
-		next.val = nil
+		slf._tail = next
+		v := next._val
+		next._val = nil
 		return v
 	}
 	return nil
@@ -58,7 +58,7 @@ func (slf *Queue) Pop() interface{} {
 //@method IsEmpty desc: Whether the queue is empty
 //@return (bool) null:true, not null:false
 func (slf *Queue) IsEmpty() bool {
-	tail := slf.tail
-	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail.next))))
+	tail := slf._tail
+	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail._next))))
 	return next == nil
 }

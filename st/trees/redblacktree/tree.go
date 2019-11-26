@@ -3,7 +3,7 @@ package redblacktree
 import (
 	"fmt"
 
-	"github.com/yamakiller/magicNet/st/comparator"
+	"github.com/yamakiller/magicLibs/st/comparator"
 )
 
 const (
@@ -17,49 +17,49 @@ const (
 // Node red-black Tree is Node
 type Node struct {
 	//node
-	parent, left, right *Node
+	_parent, _left, _right *Node
 	//property
-	key, val interface{}
-	color    bool
+	_key, _val interface{}
+	_color     bool
 }
 
 func (n *Node) grandparent() *Node {
-	if n != nil && n.parent != nil {
-		return n.parent.parent
+	if n != nil && n._parent != nil {
+		return n._parent._parent
 	}
 	return nil
 }
 
 func (n *Node) uncle() *Node {
-	if n == nil || n.parent == nil || n.parent.parent == nil {
+	if n == nil || n._parent == nil || n._parent._parent == nil {
 		return nil
 	}
 
-	return n.parent.sibling()
+	return n._parent.sibling()
 }
 
 func (n *Node) sibling() *Node {
-	if n == nil || n.parent == nil {
+	if n == nil || n._parent == nil {
 		return nil
 	}
-	if n == n.parent.left {
-		return n.parent.right
+	if n == n._parent._left {
+		return n._parent._right
 	}
-	return n.parent.left
+	return n._parent._left
 }
 
 func (n *Node) maximumNode() *Node {
 	if n == nil {
 		return nil
 	}
-	for n.right != nil {
-		n = n.right
+	for n._right != nil {
+		n = n._right
 	}
 	return n
 }
 
 func (n *Node) String() string {
-	return fmt.Sprintf("%v", n.key)
+	return fmt.Sprintf("%v", n._key)
 }
 
 // Alloter Tree alloter
@@ -70,30 +70,30 @@ type Alloter struct {
 
 // Tree red-black tree
 type Tree struct {
-	root    *Node
-	size    int
-	compare comparator.Comparator
-	alloter *Alloter
+	_root    *Node
+	_size    int
+	_compare comparator.Comparator
+	_alloter *Alloter
 }
 
 // NewTree instantiates a red-black tree with the custom comparator
 func NewTree(comparator comparator.Comparator, alloc *Alloter) *Tree {
-	return &Tree{compare: comparator, alloter: alloc}
+	return &Tree{_compare: comparator, _alloter: alloc}
 }
 
 // NewTreeIntComparator instantiates a red-black tree with the IntComparator, i.e. keys are of type int.
 func NewTreeIntComparator(alloc *Alloter) *Tree {
-	return &Tree{compare: comparator.IntComparator, alloter: alloc}
+	return &Tree{_compare: comparator.IntComparator, _alloter: alloc}
 }
 
 // NewTreeStringComparator instantiates a red-black tree with the IntComparator, i.e. keys are of type string.
 func NewTreeStringComparator(alloc *Alloter) *Tree {
-	return &Tree{compare: comparator.StringComparator, alloter: alloc}
+	return &Tree{_compare: comparator.StringComparator, _alloter: alloc}
 }
 
 var (
 	defaultAlloter = Alloter{A: func(k, v interface{}, c bool) *Node {
-		return &Node{key: k, val: v, color: c}
+		return &Node{_key: k, _val: v, _color: c}
 	},
 		F: func(p *Node) {
 
@@ -102,41 +102,41 @@ var (
 )
 
 func (t *Tree) newNode(k, v interface{}, c bool) *Node {
-	if t.alloter == nil {
+	if t._alloter == nil {
 		return defaultAlloter.A(k, v, c)
 	}
 
-	return t.alloter.A(k, v, c)
+	return t._alloter.A(k, v, c)
 }
 
 func (t *Tree) freeNode(n *Node) {
-	if t.alloter == nil {
+	if t._alloter == nil {
 		defaultAlloter.F(n)
 		return
 	}
 
-	t.alloter.F(n)
+	t._alloter.F(n)
 	return
 }
 
 func (t *Tree) isRed(n *Node) bool {
-	return n != nil && n.color
+	return n != nil && n._color
 }
 
 // Empty returns true if tree does not contain any nodes
 func (t *Tree) Empty() bool {
-	return (t.size == 0)
+	return (t._size == 0)
 }
 
 // Size returns number of nodes in the tree
 func (t *Tree) Size() int {
-	return t.size
+	return t._size
 }
 
 // Clear removes all nodes from the tree
 func (t *Tree) Clear() {
 	//! With memory management, nodes need to be released one by one
-	if t.alloter != nil {
+	if t._alloter != nil {
 		it := t.Iterator()
 		for i := 0; it.Next(); i++ {
 			if it.It() != nil {
@@ -145,27 +145,27 @@ func (t *Tree) Clear() {
 		}
 	}
 
-	t.root = nil
-	t.size = 0
+	t._root = nil
+	t._size = 0
 }
 
 func (t *Tree) String() string {
 	str := "RedBlackTree\n"
 	if !t.Empty() {
-		output(t.root, "", true, &str)
+		output(t._root, "", true, &str)
 	}
 	return str
 }
 
 func output(n *Node, prefix string, isTail bool, str *string) {
-	if n.right != nil {
+	if n._right != nil {
 		newPrefix := prefix
 		if isTail {
 			newPrefix += "│   "
 		} else {
 			newPrefix += "    "
 		}
-		output(n.right, newPrefix, false, str)
+		output(n._right, newPrefix, false, str)
 	}
 	*str += prefix
 	if isTail {
@@ -174,14 +174,14 @@ func output(n *Node, prefix string, isTail bool, str *string) {
 		*str += "┌── "
 	}
 	*str += n.String() + "\n"
-	if n.left != nil {
+	if n._left != nil {
 		newPrefix := prefix
 		if isTail {
 			newPrefix += "    "
 		} else {
 			newPrefix += "│   "
 		}
-		output(n.left, newPrefix, true, str)
+		output(n._left, newPrefix, true, str)
 	}
 }
 
@@ -192,12 +192,12 @@ func (t *Tree) getDepth() int {
 			return 0
 		}
 
-		if n.left == nil && n.right == nil {
+		if n._left == nil && n._right == nil {
 			return 1
 		}
 
-		ld := depthCall(n.left)
-		rd := depthCall(n.right)
+		ld := depthCall(n._left)
+		rd := depthCall(n._right)
 
 		if ld > rd {
 			return ld + 1
@@ -205,67 +205,67 @@ func (t *Tree) getDepth() int {
 		return rd + 1
 	}
 
-	return depthCall(t.root)
+	return depthCall(t._root)
 }
 
 func (t *Tree) leftRotate(n *Node) {
-	if n.right == nil {
+	if n._right == nil {
 		return
 	}
 
-	r := n.right
-	n.right = r.left
-	if n.right != nil {
-		n.right.parent = n
+	r := n._right
+	n._right = r._left
+	if n._right != nil {
+		n._right._parent = n
 	}
 
-	r.parent = n.parent
-	if n.parent == nil {
-		t.root = r
+	r._parent = n._parent
+	if n._parent == nil {
+		t._root = r
 	} else {
-		if n.parent.left == n {
-			n.parent.left = r
+		if n._parent._left == n {
+			n._parent._left = r
 		} else {
-			n.parent.right = r
+			n._parent._right = r
 		}
 	}
-	r.left = n
-	n.parent = r
+	r._left = n
+	n._parent = r
 }
 
 func (t *Tree) rightRotate(n *Node) {
-	if n.left == nil {
+	if n._left == nil {
 		return
 	}
 
-	l := n.left
-	n.left = l.right
-	if n.left != nil {
-		n.left.parent = n
+	l := n._left
+	n._left = l._right
+	if n._left != nil {
+		n._left._parent = n
 	}
 
-	l.parent = n.parent
-	if n.parent == nil {
-		t.root = l
+	l._parent = n._parent
+	if n._parent == nil {
+		t._root = l
 	} else {
-		if n.parent.left == n {
-			n.parent.left = l
+		if n._parent._left == n {
+			n._parent._left = l
 		} else {
-			n.parent.right = l
+			n._parent._right = l
 		}
 	}
-	l.right = n
-	n.parent = l
+	l._right = n
+	n._parent = l
 }
 
 func (t *Tree) lookup(key interface{}) *Node {
-	n := t.root
+	n := t._root
 	for n != nil {
-		compare := t.compare(key, n.key)
+		compare := t._compare(key, n._key)
 		if compare > 0 {
-			n = n.right
+			n = n._right
 		} else if compare < 0 {
-			n = n.left
+			n = n._left
 		} else {
 			return n
 		}
@@ -276,10 +276,10 @@ func (t *Tree) lookup(key interface{}) *Node {
 // Left returns the left-most (min) node or nil if tree is empty
 func (t *Tree) left() *Node {
 	var parent *Node
-	cur := t.root
+	cur := t._root
 	for cur != nil {
 		parent = cur
-		cur = cur.left
+		cur = cur._left
 	}
 	return parent
 }
@@ -287,17 +287,17 @@ func (t *Tree) left() *Node {
 // Right returns the right-most (max) node or nil if tree is empty
 func (t *Tree) right() *Node {
 	var parent *Node
-	cur := t.root
+	cur := t._root
 	for cur != nil {
 		parent = cur
-		cur = cur.right
+		cur = cur._right
 	}
 	return parent
 }
 
 // Keys returns all keys
 func (t *Tree) Keys() []interface{} {
-	keys := make([]interface{}, t.size)
+	keys := make([]interface{}, t._size)
 	it := t.Iterator()
 	for i := 0; it.Next(); i++ {
 		keys[i] = it.Key()
@@ -307,7 +307,7 @@ func (t *Tree) Keys() []interface{} {
 
 // Values returns all values
 func (t *Tree) Values() []interface{} {
-	vals := make([]interface{}, t.size)
+	vals := make([]interface{}, t._size)
 	it := t.Iterator()
 	for i := 0; it.Next(); i++ {
 		vals[i] = it.Value()
@@ -319,7 +319,7 @@ func (t *Tree) Values() []interface{} {
 func (t *Tree) Get(k interface{}) (interface{}, bool) {
 	n := t.lookup(k)
 	if n != nil {
-		return n.val, true
+		return n._val, true
 	}
 	return nil, false
 }
@@ -328,40 +328,40 @@ func (t *Tree) Get(k interface{}) (interface{}, bool) {
 func (t *Tree) Insert(k, v interface{}) {
 	var n *Node
 	if t.Empty() {
-		t.root = t.newNode(k, v, colorRed)
+		t._root = t.newNode(k, v, colorRed)
 		return
 	}
 
-	cur := t.root
+	cur := t._root
 	for {
-		if t.compare(k, cur.key) > 0 {
-			if cur.right == nil {
-				cur.right = t.newNode(k, v, colorRed)
-				n = cur.right
+		if t._compare(k, cur._key) > 0 {
+			if cur._right == nil {
+				cur._right = t.newNode(k, v, colorRed)
+				n = cur._right
 				break
 			}
 
-			cur = cur.right
+			cur = cur._right
 			continue
-		} else if t.compare(k, cur.key) < 0 {
-			if cur.left == nil {
-				cur.left = t.newNode(k, v, colorRed)
-				n = cur.left
+		} else if t._compare(k, cur._key) < 0 {
+			if cur._left == nil {
+				cur._left = t.newNode(k, v, colorRed)
+				n = cur._left
 				break
 			}
 
-			cur = cur.left
+			cur = cur._left
 			continue
 		}
 
-		cur.key = k
-		cur.val = v
+		cur._key = k
+		cur._val = v
 		return
 	}
-	n.parent = cur
+	n._parent = cur
 
 	t.insertFixup1(n)
-	t.size++
+	t._size++
 }
 
 // Erase remove the node from the tree by key.
@@ -371,50 +371,50 @@ func (t *Tree) Erase(k interface{}) {
 	if n == nil {
 		return
 	}
-	if n.left != nil && n.right != nil {
-		pred := n.left.maximumNode()
-		n.key = pred.key
-		n.val = pred.val
+	if n._left != nil && n._right != nil {
+		pred := n._left.maximumNode()
+		n._key = pred._key
+		n._val = pred._val
 		n = pred
 	}
-	if n.left == nil || n.right == nil {
-		if n.right == nil {
-			c = n.left
+	if n._left == nil || n._right == nil {
+		if n._right == nil {
+			c = n._left
 		} else {
-			c = n.right
+			c = n._right
 		}
-		if n.color == colorBlock {
-			n.color = t.isRed(c)
+		if n._color == colorBlock {
+			n._color = t.isRed(c)
 			t.eraseFixup1(n)
 		}
-		if n.parent == nil {
-			t.root = c
+		if n._parent == nil {
+			t._root = c
 		} else {
-			if n == n.left.parent {
-				n.parent.left = c
+			if n == n._left._parent {
+				n._parent._left = c
 			} else {
-				n.parent.right = c
+				n._parent._right = c
 			}
 		}
 		if c != nil {
-			c.parent = n.parent
+			c._parent = n._parent
 		}
-		if n.parent == nil && c != nil {
-			c.color = colorBlock
+		if n._parent == nil && c != nil {
+			c._color = colorBlock
 		}
 	}
-	t.size--
-	if n.parent == nil &&
-		n.left == nil &&
-		n.right == nil {
+	t._size--
+	if n._parent == nil &&
+		n._left == nil &&
+		n._right == nil {
 		// ?  Logging and testing. Can it be performed here?
 		t.freeNode(n)
 	}
 }
 
 func (t *Tree) insertFixup1(n *Node) {
-	if n.parent == nil {
-		n.color = colorBlock
+	if n._parent == nil {
+		n._color = colorBlock
 	} else {
 		t.insertFixup2(n)
 	}
@@ -430,8 +430,8 @@ func (t *Tree) insertFixup2(n *Node) {
 func (t *Tree) insertFixup3(n *Node) {
 	uncle := n.uncle()
 	if t.isRed(uncle) {
-		n.parent.color, uncle.color = colorBlock, colorBlock
-		n.grandparent().color = colorRed
+		n._parent._color, uncle._color = colorBlock, colorBlock
+		n.grandparent()._color = colorRed
 		t.insertFixup1(n.grandparent())
 	} else {
 		t.insertFixup4(n)
@@ -440,29 +440,29 @@ func (t *Tree) insertFixup3(n *Node) {
 
 func (t *Tree) insertFixup4(n *Node) {
 	grandparent := n.grandparent()
-	if n == n.parent.right && n.parent == grandparent.left {
-		t.leftRotate(n.parent)
-		n = n.left
-	} else if n == n.parent.left && n.parent == grandparent.right {
-		t.rightRotate(n.parent)
-		n = n.right
+	if n == n._parent._right && n._parent == grandparent._left {
+		t.leftRotate(n._parent)
+		n = n._left
+	} else if n == n._parent._left && n._parent == grandparent._right {
+		t.rightRotate(n._parent)
+		n = n._right
 	}
 	t.insertFixup5(n)
 }
 
 func (t *Tree) insertFixup5(n *Node) {
-	n.parent.color = colorBlock
+	n._parent._color = colorBlock
 	grandparent := n.grandparent()
-	grandparent.color = colorRed
-	if n == n.parent.left && n.parent == grandparent.left {
+	grandparent._color = colorRed
+	if n == n._parent._left && n._parent == grandparent._left {
 		t.rightRotate(grandparent)
-	} else if n == n.parent.right && n.parent == grandparent.right {
+	} else if n == n._parent._right && n._parent == grandparent._right {
 		t.leftRotate(grandparent)
 	}
 }
 
 func (t *Tree) eraseFixup1(n *Node) {
-	if n.parent == nil {
+	if n._parent == nil {
 		return
 	}
 	t.eraseFixup2(n)
@@ -471,12 +471,12 @@ func (t *Tree) eraseFixup1(n *Node) {
 func (t *Tree) eraseFixup2(n *Node) {
 	sibling := n.sibling()
 	if t.isRed(sibling) {
-		n.parent.color = colorRed
-		sibling.color = colorBlock
-		if n == n.parent.left {
-			t.leftRotate(n.parent)
+		n._parent._color = colorRed
+		sibling._color = colorBlock
+		if n == n._parent._left {
+			t.leftRotate(n._parent)
 		} else {
-			t.rightRotate(n.parent)
+			t.rightRotate(n._parent)
 		}
 	}
 	t.eraseFixup3(n)
@@ -484,12 +484,12 @@ func (t *Tree) eraseFixup2(n *Node) {
 
 func (t *Tree) eraseFixup3(n *Node) {
 	sibling := n.sibling()
-	if !t.isRed(n.parent) &&
+	if !t.isRed(n._parent) &&
 		!t.isRed(sibling) &&
-		!t.isRed(sibling.left) &&
-		!t.isRed(sibling.right) {
-		sibling.color = colorRed
-		t.eraseFixup1(n.parent)
+		!t.isRed(sibling._left) &&
+		!t.isRed(sibling._right) {
+		sibling._color = colorRed
+		t.eraseFixup1(n._parent)
 	} else {
 		t.eraseFixup4(n)
 	}
@@ -497,12 +497,12 @@ func (t *Tree) eraseFixup3(n *Node) {
 
 func (t *Tree) eraseFixup4(n *Node) {
 	sibling := n.sibling()
-	if t.isRed(n.parent) &&
+	if t.isRed(n._parent) &&
 		!t.isRed(sibling) &&
-		!t.isRed(sibling.left) &&
-		!t.isRed(sibling.right) {
-		sibling.color = colorRed
-		n.parent.color = colorBlock
+		!t.isRed(sibling._left) &&
+		!t.isRed(sibling._right) {
+		sibling._color = colorRed
+		n._parent._color = colorBlock
 	} else {
 		t.eraseFixup5(n)
 	}
@@ -510,19 +510,19 @@ func (t *Tree) eraseFixup4(n *Node) {
 
 func (t *Tree) eraseFixup5(n *Node) {
 	sibling := n.sibling()
-	if n == n.parent.left &&
+	if n == n._parent._left &&
 		!t.isRed(sibling) &&
-		t.isRed(sibling.left) &&
-		!t.isRed(sibling.right) {
-		sibling.color = colorRed
-		sibling.left.color = colorBlock
+		t.isRed(sibling._left) &&
+		!t.isRed(sibling._right) {
+		sibling._color = colorRed
+		sibling._left._color = colorBlock
 		t.rightRotate(sibling)
-	} else if n == n.parent.right &&
+	} else if n == n._parent._right &&
 		!t.isRed(sibling) &&
-		t.isRed(sibling.right) &&
-		!t.isRed(sibling.left) {
-		sibling.color = colorRed
-		sibling.right.color = colorBlock
+		t.isRed(sibling._right) &&
+		!t.isRed(sibling._left) {
+		sibling._color = colorRed
+		sibling._right._color = colorBlock
 		t.leftRotate(sibling)
 	}
 	t.eraseFixup6(n)
@@ -530,13 +530,13 @@ func (t *Tree) eraseFixup5(n *Node) {
 
 func (t *Tree) eraseFixup6(n *Node) {
 	sibling := n.sibling()
-	sibling.color = t.isRed(n.parent)
-	n.parent.color = colorBlock
-	if n == n.parent.left && t.isRed(sibling.right) {
-		sibling.right.color = colorBlock
-		t.leftRotate(n.parent)
-	} else if t.isRed(sibling.left) {
-		sibling.left.color = colorBlock
-		t.rightRotate(n.parent)
+	sibling._color = t.isRed(n._parent)
+	n._parent._color = colorBlock
+	if n == n._parent._left && t.isRed(sibling._right) {
+		sibling._right._color = colorBlock
+		t.leftRotate(n._parent)
+	} else if t.isRed(sibling._left) {
+		sibling._left._color = colorBlock
+		t.rightRotate(n._parent)
 	}
 }

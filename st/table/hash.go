@@ -16,23 +16,23 @@ type HashTable struct {
 	Mask   uint32
 	Max    uint32
 	Comp   comparator.Comparator
-	seqID  uint32
-	sz     int
-	arrays []interface{}
+	_seqID  uint32
+	_sz     int
+	_arrays []interface{}
 }
 
 //Initial desc
 //@method Initial desc: Initialize the hashtable
 func (ht *HashTable) Initial() {
-	ht.arrays = make([]interface{}, ht.Max)
-	ht.seqID = 1
+	ht._arrays = make([]interface{}, ht.Max)
+	ht._seqID = 1
 }
 
 //Size desc
 //@method Size desc: Returns the hashtable is number
 //@return (int) size
 func (ht *HashTable) Size() int {
-	return ht.sz
+	return ht._sz
 }
 
 //Push desc
@@ -43,12 +43,12 @@ func (ht *HashTable) Size() int {
 func (ht *HashTable) Push(v interface{}) (uint32, error) {
 	var i uint32
 	for i = 0; i < ht.Max; i++ {
-		key := ((i + ht.seqID) & ht.Mask)
+		key := ((i + ht._seqID) & ht.Mask)
 		hash := key & (ht.Max - 1)
-		if ht.arrays[hash] == nil {
-			ht.seqID = key + 1
-			ht.arrays[hash] = v
-			ht.sz++
+		if ht._arrays[hash] == nil {
+			ht._seqID = key + 1
+			ht._arrays[hash] = v
+			ht._sz++
 			return uint32(key), nil
 		}
 	}
@@ -62,8 +62,8 @@ func (ht *HashTable) Push(v interface{}) (uint32, error) {
 //@return (interface{})
 func (ht *HashTable) Get(key uint32) interface{} {
 	hash := key & uint32(ht.Max-1)
-	if ht.arrays[hash] != nil && ht.Comp(ht.arrays[hash], key) == 0 {
-		return ht.arrays[hash]
+	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
+		return ht._arrays[hash]
 	}
 	return nil
 }
@@ -72,17 +72,17 @@ func (ht *HashTable) Get(key uint32) interface{} {
 //@method GetValues desc: Returns the elements of all from hashtable
 //@return ([]interface{}) Returns all value
 func (ht *HashTable) GetValues() []interface{} {
-	if ht.sz == 0 {
+	if ht._sz == 0 {
 		return nil
 	}
 
 	i := 0
-	result := make([]interface{}, ht.sz)
-	for _, v := range ht.arrays {
+	result := make([]interface{}, ht._sz)
+	for _, v := range ht._arrays {
 		if v == nil {
 			continue
 		}
-		result[i] = ht.arrays[i]
+		result[i] = ht._arrays[i]
 		i++
 	}
 
@@ -95,9 +95,9 @@ func (ht *HashTable) GetValues() []interface{} {
 //@return (bool)
 func (ht *HashTable) Remove(key uint32) bool {
 	hash := uint32(key) & uint32(ht.Max-1)
-	if ht.arrays[hash] != nil && ht.Comp(ht.arrays[hash], key) == 0 {
-		ht.arrays[hash] = nil
-		ht.sz--
+	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
+		ht._arrays[hash] = nil
+		ht._sz--
 		return true
 	}
 
