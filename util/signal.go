@@ -22,7 +22,6 @@ func (slf *SignalWatch) Initial(f func()) {
 	slf._f = f
 	slf._c = make(chan os.Signal)
 	slf._e = sync.WaitGroup{}
-
 	signal.Notify(slf._c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 }
 
