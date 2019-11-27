@@ -80,11 +80,11 @@ func IsPWDValidity(pwd string) bool {
 	return false
 }
 
-//IsACCValidity desc
+//IsAccountValidity desc
 //@method IsACCValidity desc: Verify account is valid
 //@param (string) account
 //@return (bool) is valid
-func IsACCValidity(account string) bool {
+func IsAccountValidity(account string) bool {
 	b, e := regexp.MatchString("^[a-zA-Z0-9_-]{8,16}$", account)
 	if e != nil {
 		panic(e)
