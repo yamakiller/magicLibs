@@ -120,10 +120,7 @@ func (slf *LogContext) write(msg *LogMessage) {
 }
 
 func (slf *LogContext) getPrefix(owner uint32) string {
-	if owner == 0 {
-		return "[&main]"
-	}
-	return fmt.Sprintf("[&%08x]", owner)
+	return fmt.Sprintf("[.%08x]", owner)
 }
 
 func (slf *LogContext) push(data LogMessage) {
