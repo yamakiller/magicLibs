@@ -91,3 +91,15 @@ func IsAccountValidity(account string) bool {
 	}
 	return b
 }
+
+//IsCaptchaValidity desc
+//@method IsCaptchaValidity desc: Verify captcha is valid
+//@param (string) captcha
+//@return (bool) is valid
+func IsCaptchaValidity(captcha string) bool {
+	b, e := regexp.MatchString("^[0-9]{6,6}", captcha)
+	if e != nil {
+		panic(e)
+	}
+	return b
+}
