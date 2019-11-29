@@ -69,8 +69,8 @@ func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 	return false, nil
 }
 
-//TryLock Try to acquire a lock
-//@method TryLock desc: Try to acquire a locking
+//TryRedisLock Try to acquire a lock
+//@method TryRedisLock desc: Try to acquire a locking
 //@param (RedisMethodDo) redis do function
 //@param (string) lock object(key/name)
 //@param (string) lock token
@@ -78,15 +78,15 @@ func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 //@return (*RedisMutex) redis mutex object
 //@return (bool) redis lock is success
 //@return (error) redis lock fail error informat
-func TryLock(doFun RedisMethodDo,
+func TryRedisLock(doFun RedisMethodDo,
 	resouse string,
 	token string,
 	timeout int) (m *RedisMutex, ok bool, err error) {
-	return TryLockWithTimeOut(doFun, resouse, token, timeout)
+	return TryRedisLockWithTimeOut(doFun, resouse, token, timeout)
 }
 
-//TryLockWithTimeOut desc
-//@method TryLockWithTimeOut desc: Try to acquire the lock and set the lock timeout
+//TryRedisLockWithTimeOut desc
+//@method TryRedisLockWithTimeOut desc: Try to acquire the lock and set the lock timeout
 //@param (RedisMethodDo) redis do function
 //@param (string) lock object(key/name)
 //@param (string) lock token
@@ -94,7 +94,7 @@ func TryLock(doFun RedisMethodDo,
 //@return (*RedisMutex) redis mutex object
 //@return (bool) redis lock is success
 //@return (error) redis lock fail error informat
-func TryLockWithTimeOut(doFun RedisMethodDo,
+func TryRedisLockWithTimeOut(doFun RedisMethodDo,
 	resouse string,
 	token string,
 	timeout int) (m *RedisMutex, ok bool, err error) {
