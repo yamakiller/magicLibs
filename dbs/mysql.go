@@ -175,7 +175,7 @@ func (slf *MySQLValue) ToByte() []byte {
 
 //ToTimeStamp desc
 //@method ToTimeStamp desc: Return  time int64 value
-//@return (int64) a value ss
+//@return (int64) a value
 func (slf *MySQLValue) ToTimeStamp() int64 {
 	v := slf.ToDateTime()
 	if v == nil {
