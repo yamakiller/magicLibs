@@ -1,8 +1,11 @@
 package util
 
 import (
+	"math/rand"
 	"regexp"
 )
+
+var _letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 //SubStr desc
 //@method SubStr desc:Cut string ends with length
@@ -58,6 +61,18 @@ func SubStr2(str string, start int, end int) string {
 		panic("end is wrong")
 	}
 	return string(rs[start:end])
+}
+
+//RandString desc
+//@method RandStr desc : Randomly generate a string of length n
+//@param (int) length
+//@return (string)
+func RandStr(length int) string {
+	b := make([]rune, length)
+	for i := range b {
+		b[i] = _letterRunes[rand.Intn(len(_letterRunes))]
+	}
+	return string(b)
 }
 
 //IsPWDValidity desc

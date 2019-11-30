@@ -277,6 +277,19 @@ func (slf *MySQLReader) GetValue(idx int) (*MySQLValue, error) {
 	return &slf._data[rpos], nil
 }
 
+//GetTryValue desc
+//@method GetTryValue desc: Return column index to value
+//@return (*MySQLValue) mysql value
+//@return (error) error informat
+func (slf *MySQLReader) GetTryValue(idx int) *MySQLValue {
+	r, e := slf.GetValue(idx)
+	if e != nil {
+		return nil
+	}
+
+	return r
+}
+
 //Next desc
 //@method Next desc: Return Next row is success
 //@return (bool) Next Success: true Next Fail:false
@@ -429,7 +442,7 @@ func (slf *MySQLDB) Update(strSQL string, args ...interface{}) (int64, error) {
 		return 0, perr
 	}
 
-	r, err := slf._db.Exec(strSQL, args)
+	r, err := slf._db.Exec(strSQL, args...)
 	if err != nil {
 		return 0, err
 	}
