@@ -7,8 +7,10 @@ import (
 	"log"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
+	//import mysql base library
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/yamakiller/magicLibs/util"
 )
@@ -411,6 +413,83 @@ func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, err
 	return record, nil
 }
 
+// QueryPage doc
+// @Summary Query page data
+// @method  Query
+// @Param   (string) table files (xxx,xxx)
+// @Param   (string) table names (xxx,xxx)
+// @Param   (string) query condition
+// @Param   (string) query order mode
+// @Param   (int) page
+// @Param   (int) pageSize
+// @Param   (...interface{}) where args
+// @Return  (int) pageCount
+// @Return  (*dbs.MySQLReader) reader
+// @Return  (error) ree
+func (slf *MySQLDB) QueryPage(fileds, tables, where, order string, page, pageSize int, args ...interface{}) (pageCount int, record *MySQLReader, err error) {
+	if perr := slf._db.Ping(); perr != nil {
+		return 0, nil, perr
+	}
+
+	idxFiled := strings.Split(fileds, ",")
+	sqlWhere := ""
+	sqlOrder := ""
+
+	if where != "" {
+		sqlWhere = fmt.Sprintf(" WHERE %s", where)
+	}
+
+	if order != "" {
+		sqlOrder = fmt.Sprintf(" Order By %s", order)
+	}
+
+	strSQL := fmt.Sprintf("SELECT count(%s) as totalNum FROM %s%s%s", strings.Trim(idxFiled[0], " "), tables, sqlWhere, sqlOrder)
+
+	var rows *sql.Rows
+	rows, err = slf._db.Query(strSQL, args...)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&pageCount)
+		if err != nil {
+			rows.Close()
+			return 0, nil, err
+		}
+	}
+	rows.Close()
+
+	strSQL = fmt.Sprintf("SELECT %s as totalNum FROM %s%s%s", strings.Trim(idxFiled[0], " "), tables, sqlWhere, sqlOrder)
+	rows, err = slf._db.Query(strSQL, args...)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	defer rows.Close()
+	columns, _ := rows.Columns()
+	scanArgs := make([]interface{}, len(columns))
+	values := make([]interface{}, len(columns))
+
+	for j := range values {
+		scanArgs[j] = &values[j]
+	}
+
+	record = &MySQLReader{_currentRow: -1}
+	record._columns = columns
+	for rows.Next() {
+		err = rows.Scan(scanArgs...)
+		d := make([]MySQLValue, len(columns))
+		for i, col := range values {
+			d[i]._v = col
+			d[i]._t = reflect.TypeOf(col)
+		}
+		record._data = append(record._data, d...)
+		record._rows++
+	}
+	return pageCount, record, nil
+}
+
 //Insert desc
 //@method Insert desc: execute sql Insert
 //@param (string) Insert sql
@@ -419,7 +498,6 @@ func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, err
 //@return (error) fail: return error, success: return nil
 func (slf *MySQLDB) Insert(strSQL string, args ...interface{}) (int64, error) {
 	if perr := slf._db.Ping(); perr != nil {
-		log.Println(perr)
 		return 0, perr
 	}
 
