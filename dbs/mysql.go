@@ -460,7 +460,8 @@ func (slf *MySQLDB) QueryPage(fileds, tables, where, order string, page, pageSiz
 	}
 	rows.Close()
 
-	strSQL = fmt.Sprintf("SELECT %s as totalNum FROM %s%s%s", strings.Trim(idxFiled[0], " "), tables, sqlWhere, sqlOrder)
+	strSQL = fmt.Sprintf("SELECT %s as totalNum FROM %s%s%s LIMIT %d,%d", strings.Trim(idxFiled[0], " "),
+		tables, sqlWhere, sqlOrder, page, pageSize)
 	rows, err = slf._db.Query(strSQL, args...)
 	if err != nil {
 		return 0, nil, err
