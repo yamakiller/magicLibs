@@ -7,7 +7,7 @@ import (
 	"github.com/yamakiller/magicLibs/dbs"
 )
 
-//TestMySQL desc
+//TestMySQL doc
 func TestMySQL(t *testing.T) {
 	dsn := "root:123456@tcp(127.0.0.1:3306)/test"
 	hsql := dbs.MySQLDB{}

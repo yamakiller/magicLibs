@@ -5,8 +5,8 @@ import (
 	"github.com/yamakiller/magicLibs/script/stack"
 )
 
-//NewJSStack desc
-//@Method NewJSStack desc: Create a js virtual machine
+//NewJSStack doc
+//@Method NewJSStack @Summary Create a js virtual machine
 //@Return (*stack.JSStack)
 func NewJSStack() *stack.JSStack {
 	stack := stack.MakeJSStack()

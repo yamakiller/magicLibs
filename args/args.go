@@ -11,8 +11,9 @@ var (
 	defaultArgs *Args
 )
 
-//Instance desc
-//@Method Instance desc: command line args instance
+//Instance doc
+//@Summary command line args instance
+//@Method Instance
 //@Return (*Args)
 func Instance() *Args {
 	oneArgs.Do(func() {
@@ -21,14 +22,16 @@ func Instance() *Args {
 	return defaultArgs
 }
 
-//Args desc
-//@Struct Args desc: command line args manager
+//Args doc
+//@Summary command line args manager
+//@Struct Args
 type Args struct {
 	m map[string]interface{}
 }
 
-//Parse desc
-//@Method Parse desc: parse command line args
+//Parse doc
+//@Summary parse command line args
+//@Method Parse
 func (slf *Args) Parse() {
 	var tmp []string
 	for _, args := range os.Args {
@@ -62,8 +65,8 @@ func (slf *Args) Parse() {
 	}
 }
 
-//GetString desc
-//@Method GetString desc: Return Args Command value
+//GetString doc
+//@Method GetString @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (string) default value
 //@Return (string) value
@@ -75,8 +78,8 @@ func (slf *Args) GetString(name string, def string) string {
 	return slf.m[name].(string)
 }
 
-//GetInt desc
-//@Method GetInt desc: Return Args Command value
+//GetInt doc
+//@Method GetInt @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (int) default value
 //@Return (int) value
@@ -93,8 +96,8 @@ func (slf *Args) GetInt(name string, def int) int {
 	return v.(int)
 }
 
-//GetInt64 desc
-//@Method GetInt64 desc: Return Args Command value
+//GetInt64 doc
+//@Method GetInt64 @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (int64) default value
 //@Return (int64) value
@@ -111,8 +114,8 @@ func (slf *Args) GetInt64(name string, def int64) int64 {
 	return v.(int64)
 }
 
-//GetBoolean desc
-//@Method GetBoolean desc: Return Args Command value
+//GetBoolean doc
+//@Method GetBoolean @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (bool) default value
 //@Return (bool) value
@@ -129,8 +132,8 @@ func (slf *Args) GetBoolean(name string, def bool) bool {
 	return v.(bool)
 }
 
-//GetFloat desc
-//@Method GetFloat desc: Return Args Command value
+//GetFloat doc
+//@Method GetFloat @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (float32) default value
 //@Return (float32) value
@@ -147,8 +150,8 @@ func (slf *Args) GetFloat(name string, def float32) float32 {
 	return v.(float32)
 }
 
-//GetDouble desc
-//@Method GetDouble desc: Return Args Command value
+//GetDouble doc
+//@Method GetDouble @Summary Return Args Command value
 //@Param  (string) Command
 //@Param  (float64) default value
 //@Return (float64) value

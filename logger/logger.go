@@ -12,8 +12,9 @@ const (
 	EnvKey = "log"
 )
 
-//Logger desc
-//@Interface Logger desc: Log module interface
+//Logger doc
+//@Summary Log module interface
+//@Interface Logger
 type Logger interface {
 	run() int
 	exit()
@@ -34,8 +35,9 @@ type Logger interface {
 	Trace(owner uint32, fmrt string, args ...interface{})
 }
 
-//Spawn desc
-//@type Spawn desc: Log object maker
+//Spawn doc
+//@Summary Log object maker
+//@type Spawn
 type Spawn func() Logger
 
 var (
@@ -66,8 +68,9 @@ var (
 	defaultHandle Logger
 )
 
-//New desc
-//@Method New desc: create an Logger object
+//New doc
+//@Summary create an Logger object
+//@Method New
 //@Param (Spawn) Logger make method
 //@Return (Logger) log object
 func New(spawn Spawn) Logger {
@@ -81,15 +84,17 @@ func New(spawn Spawn) Logger {
 	return r
 }
 
-//WithDefault desc
-//@Method WithDefault desc: Set the default log handle
+//WithDefault doc
+//@Summary Set the default log handle
+//@Method WithDefault
 //@Param (Logger) logger object
 func WithDefault(log Logger) {
 	defaultHandle = log
 }
 
-//Error desc
-//@Method Error desc: Output error log
+//Error doc
+//@Summary Output error log
+//@Method Error
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -100,8 +105,9 @@ func Error(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Error(owner, fmrt, args...)
 }
 
-//Info desc
-//@Method Info desc: Output information log
+//Info doc
+//@Summary Output information log
+//@Method Info
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -114,8 +120,9 @@ func Info(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Info(owner, fmrt, args...)
 }
 
-//Warning desc
-//@Method Warning desc: Output warning log
+//Warning doc
+//@Summary Output warning log
+//@Method Warning
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -126,8 +133,9 @@ func Warning(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Warning(owner, fmrt, args...)
 }
 
-//Panic desc
-//@Method Panic desc: Output program crash log
+//Panic doc
+//@Summary Output program crash log
+//@Method Panic
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -138,8 +146,9 @@ func Panic(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Panic(owner, fmrt, args...)
 }
 
-//Fatal desc
-//@Method Fatal desc: Output critical error log
+//Fatal doc
+//@Summary Output critical error log
+//@Method Fatal
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -150,8 +159,9 @@ func Fatal(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Fatal(owner, fmrt, args...)
 }
 
-//Debug desc
-//@Method Debug desc: Output Debug log
+//Debug doc
+//@Summary Output Debug log
+//@Method Debug
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -162,8 +172,9 @@ func Debug(owner uint32, fmrt string, args ...interface{}) {
 	defaultHandle.Debug(owner, fmrt, args...)
 }
 
-//Trace desc
-//@Method Trace desc: Output trace log
+//Trace doc
+//@Summary Output trace log
+//@Method Trace
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args

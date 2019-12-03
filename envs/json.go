@@ -13,7 +13,7 @@ type JSONEnv struct {
 }
 
 //Initial doc
-//@Method Initial desc: Initial json environment variable manager
+//@Method Initial @Summary Initial json environment variable manager
 func (slf *JSONEnv) Initial() {
 	slf.en = make(map[string]interface{})
 }

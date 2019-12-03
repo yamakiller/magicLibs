@@ -1,7 +1,8 @@
 package dbs
 
-//RedisDeploy desc
-//@Struct RedisDeploy desc: redis configureation json
+//RedisDeploy doc
+//@Summary redis configureation json
+//@Struct RedisDeploy
 //@Member (string) Redis Host from json "host"
 //@Member (int) Redis DB select from json "db"
 //@Member (int) Redis Connection max idle of number from json "max-idle"
@@ -15,15 +16,17 @@ type RedisDeploy struct {
 	IdleTime  int    `xml:"idle-time" yaml:"idle-time" json:"idle-time"`
 }
 
-//RedisDeployArray desc
-//@Struct RedisDeployArray desc: redis group configureation json
+//RedisDeployArray doc
+//@Summary redis group configureation json
+//@Struct RedisDeployArray
 //@Member ([]RedisDeploy) a redis configureation
 type RedisDeployArray struct {
 	Deploys []RedisDeploy `xml:"redis" yaml:"redis" json:"redis"`
 }
 
-//DoRedisDeploy desc
-//@Method DoRedisDeploy desc: deploy mysql db
+//DoRedisDeploy doc
+//@Summary deploy mysql db
+//@Method DoRedisDeploy
 //@Param  (*MySQLDB) mysql object
 //@Param  (*MySQLDeployArray) mysql config informat
 //@Return (error) register mysql success/fail

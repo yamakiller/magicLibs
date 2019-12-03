@@ -2,8 +2,8 @@ package util
 
 import "unsafe"
 
-//IsLittleEndian desc
-//@Method IsLittleEndian desc: Determine if the system is a small endian
+//IsLittleEndian doc
+//@Method IsLittleEndian @Summary Determine if the system is a small endian
 //@Return (bool)
 func IsLittleEndian() bool {
 	var i int32 = 0x01020304

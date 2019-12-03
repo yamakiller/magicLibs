@@ -1,7 +1,8 @@
 package logger
 
-//LogMessage desc
-//@Method LogMessage desc: log message
+//LogMessage doc
+//@Summary log message
+//@Method LogMessage
 //@Member (uint32) log level
 //@Member (string) log prefix informat
 //@Member (string) log message

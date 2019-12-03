@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-//GetCurrentGoroutineID desc
-//@Method GetCurrentGoroutineID desc: Return the ID of the current coroutine
+//GetCurrentGoroutineID doc
+//@Method GetCurrentGoroutineID @Summary Return the ID of the current coroutine
 //@Return  (int)
 func GetCurrentGoroutineID() int {
 	defer func() {

@@ -21,22 +21,22 @@ type HashTable struct {
 	_arrays []interface{}
 }
 
-//Initial desc
-//@Method Initial desc: Initialize the hashtable
+//Initial doc
+//@Method Initial @Summary Initialize the hashtable
 func (ht *HashTable) Initial() {
 	ht._arrays = make([]interface{}, ht.Max)
 	ht._seqID = 1
 }
 
-//Size desc
-//@Method Size desc: Returns the hashtable is number
+//Size doc
+//@Method Size @Summary Returns the hashtable is number
 //@Return (int) size
 func (ht *HashTable) Size() int {
 	return ht._sz
 }
 
-//Push desc
-//@Method Push desc: Insert an value
+//Push doc
+//@Method Push @Summary Insert an value
 //@Param (interface{}) value
 //@Return (int32) insert an value, hash value
 //@Return (error)
@@ -56,8 +56,8 @@ func (ht *HashTable) Push(v interface{}) (uint32, error) {
 	return 0, ErrHashTableFulled
 }
 
-//Get desc
-//@Method Get desc: Returns the one elements from the hashtable
+//Get doc
+//@Method Get @Summary Returns the one elements from the hashtable
 //@Param  (uint32) hash value
 //@Return (interface{})
 func (ht *HashTable) Get(key uint32) interface{} {
@@ -68,8 +68,8 @@ func (ht *HashTable) Get(key uint32) interface{} {
 	return nil
 }
 
-//GetValues desc
-//@Method GetValues desc: Returns the elements of all from hashtable
+//GetValues doc
+//@Method GetValues @Summary Returns the elements of all from hashtable
 //@Return ([]interface{}) Returns all value
 func (ht *HashTable) GetValues() []interface{} {
 	if ht._sz == 0 {
@@ -89,8 +89,8 @@ func (ht *HashTable) GetValues() []interface{} {
 	return result
 }
 
-//Remove desc
-//@Method Remove desc: removes one elements in the hashtable
+//Remove doc
+//@Method Remove @Summary removes one elements in the hashtable
 //@Param  (uint32) hash value
 //@Return (bool)
 func (ht *HashTable) Remove(key uint32) bool {

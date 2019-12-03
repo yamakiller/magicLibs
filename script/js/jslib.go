@@ -5,8 +5,8 @@ import (
 	"github.com/yamakiller/magicLibs/script/stack"
 )
 
-//Bundle desc
-//@Method Bundle desc: Basic binding js library, extended here
+//Bundle doc
+//@Method Bundle @Summary Basic binding js library, extended here
 //@Param (*stack.JSStack)
 func Bundle(stack *stack.JSStack) {
 	stack.SetFunc("Refer", refer)

@@ -5,14 +5,14 @@ import (
 	"strings"
 )
 
-//Set desc
-//@Struct Set desc: holds elements in go`s native map
+//Set doc
+//@Struct Set @Summary holds elements in go`s native map
 type Set struct {
 	items map[interface{}]struct{}
 }
 
-//Push desc
-//@Method Push desc: adds the es (one or more) to the set
+//Push doc
+//@Method Push @Summary adds the es (one or more) to the set
 //@Param  (...interface{}) insert elements
 func (s *Set) Push(es ...interface{}) {
 	for _, it := range es {
@@ -20,8 +20,8 @@ func (s *Set) Push(es ...interface{}) {
 	}
 }
 
-//PushAll desc
-//@Method PushAll desc: adds the st(set in element) to the set.
+//PushAll doc
+//@Method PushAll @Summary adds the st(set in element) to the set.
 //@Param (*Set) sets
 func (s *Set) PushAll(st *Set) {
 	for _, it := range st.items {
@@ -29,8 +29,8 @@ func (s *Set) PushAll(st *Set) {
 	}
 }
 
-//Retain desc
-//@Method Retain desc: retain the es (one or more) to the set.
+//Retain doc
+//@Method Retain @Summary retain the es (one or more) to the set.
 //@Param (...interface{}) elements
 func (s *Set) Retain(eds ...interface{}) {
 	vs := make(map[interface{}]struct{})
@@ -43,8 +43,8 @@ func (s *Set) Retain(eds ...interface{}) {
 	s.items = vs
 }
 
-//RetainAll desc
-//@Method RetainAll desc: retain the st(set in element) to the set.
+//RetainAll doc
+//@Method RetainAll @Summary retain the st(set in element) to the set.
 //@Param (*Set) sets
 func (s *Set) RetainAll(st *Set) {
 	vs := make(map[interface{}]struct{})
@@ -56,8 +56,8 @@ func (s *Set) RetainAll(st *Set) {
 	s.items = vs
 }
 
-//Erase desc
-//@Method Erase desc: removes the es (one or more) from the set
+//Erase doc
+//@Method Erase @Summary removes the es (one or more) from the set
 //@Param  (...interface{}) elements
 func (s *Set) Erase(es ...interface{}) {
 	for _, it := range es {
@@ -65,8 +65,8 @@ func (s *Set) Erase(es ...interface{}) {
 	}
 }
 
-//EraseAll desc
-//@Method EraseAll desc: removes this st(set in element) from the set
+//EraseAll doc
+//@Method EraseAll @Summary removes this st(set in element) from the set
 //@Param (*Set) sets
 func (s *Set) EraseAll(st *Set) {
 	for _, it := range st.items {
@@ -74,8 +74,8 @@ func (s *Set) EraseAll(st *Set) {
 	}
 }
 
-//Contains desc
-//@Method Contains desc: check if es (one or more) are present in the set.
+//Contains doc
+//@Method Contains @Summary check if es (one or more) are present in the set.
 //@Param  (...interface{}) elements
 //@Return (bool)
 func (s *Set) Contains(es ...interface{}) bool {
@@ -87,28 +87,28 @@ func (s *Set) Contains(es ...interface{}) bool {
 	return true
 }
 
-//Size desc
-//@Method Size desc: returns number of elements within the set.
+//Size doc
+//@Method Size @Summary returns number of elements within the set.
 //@Return (int) size
 func (s *Set) Size() int {
 	return len(s.items)
 }
 
-//IsEmpty desc
-//@Method IsEmpty desc: returns true if set does not contain any elements.
+//IsEmpty doc
+//@Method IsEmpty @Summary returns true if set does not contain any elements.
 //@Param (bool)
 func (s *Set) IsEmpty() bool {
 	return s.Size() == 0
 }
 
-//Clear desc
-//@Method Clear desc: clears all values in the set.
+//Clear doc
+//@Method Clear @Summary clears all values in the set.
 func (s *Set) Clear() {
 	s.items = make(map[interface{}]struct{})
 }
 
-//Values desc
-//@Method Values desc: returns all items in the set.
+//Values doc
+//@Method Values @Summary returns all items in the set.
 //@Return ([]interface{})
 func (s *Set) Values() []interface{} {
 	vs := make([]interface{}, s.Size())
@@ -120,8 +120,8 @@ func (s *Set) Values() []interface{} {
 	return vs
 }
 
-//String desc
-//@Method String desc: Returns a string
+//String doc
+//@Method String @Summary Returns a string
 //@Return (string)
 func (s *Set) String() string {
 	str := "HashSet\n"

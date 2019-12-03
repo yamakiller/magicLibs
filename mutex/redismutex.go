@@ -7,12 +7,12 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-//RedisMethodDo desc
+//RedisMethodDo doc
 //@type (func(commandName string, args ...interface{}) (interface{}, error))
 type RedisMethodDo func(commandName string, args ...interface{}) (interface{}, error)
 
-//RedisMutex desc
-//@Struct RedisMutex desc: redis mutex object
+//RedisMutex doc
+//@Struct RedisMutex @Summary redis mutex object
 //@Member (string) resource
 //@Member (string) token
 //@Member (int)    timeout
@@ -39,16 +39,16 @@ func (slf *RedisMutex) key() string {
 	return fmt.Sprintf("redislock:%s", slf._resource)
 }
 
-//Unlock desc
-//@Method Unlock desc: unlocking
+//Unlock doc
+//@Method Unlock @Summary unlocking
 //@Return (error) unlock fail returns error informat
 func (slf *RedisMutex) Unlock() (err error) {
 	_, err = slf._doFun("del", slf.key())
 	return
 }
 
-//AddTimeOut desc
-//@Method AddTimeOut desc: rest/append lock timeout time
+//AddTimeOut doc
+//@Method AddTimeOut @Summary rest/append lock timeout time
 //@Param (int64) setting/append time
 //@Return (bool)
 //@reutrn (error)
@@ -70,7 +70,7 @@ func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 }
 
 //TryRedisLock Try to acquire a lock
-//@Method TryRedisLock desc: Try to acquire a locking
+//@Method TryRedisLock @Summary Try to acquire a locking
 //@Param (RedisMethodDo) redis do function
 //@Param (string) lock object(key/name)
 //@Param (string) lock token
@@ -85,8 +85,8 @@ func TryRedisLock(doFun RedisMethodDo,
 	return TryRedisLockWithTimeOut(doFun, resouse, token, timeout)
 }
 
-//TryRedisLockWithTimeOut desc
-//@Method TryRedisLockWithTimeOut desc: Try to acquire the lock and set the lock timeout
+//TryRedisLockWithTimeOut doc
+//@Method TryRedisLockWithTimeOut @Summary Try to acquire the lock and set the lock timeout
 //@Param (RedisMethodDo) redis do function
 //@Param (string) lock object(key/name)
 //@Param (string) lock token

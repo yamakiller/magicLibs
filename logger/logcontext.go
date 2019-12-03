@@ -10,8 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//LogContext desc
-//@Struct LogContext desc: Log context
+//LogContext doc
+//@Summary Log context
+//@Struct LogContext
 //@Member (string) log file path
 //@Member (*os.File) log file handle
 //@Member (logrus.Levle) log level limit
@@ -33,50 +34,57 @@ type LogContext struct {
 	_logWait    sync.WaitGroup
 }
 
-//SetFilPath desc
-//@Method SetFilPath desc: Setting log file name
+//SetFilPath doc
+//@Summary Setting log file name
+//@Method SetFilPath
 //@Param (string) file name
 func (slf *LogContext) SetFilPath(v string) {
 	slf._filPath = v
 }
 
-//SetLevel desc
-//@Method SetLevel desc: Setting log level limit
+//SetLevel doc
+//@Summary Setting log level limit
+//@Method SetLevel
 //@Param (logrus.Level) log level
 func (slf *LogContext) SetLevel(v logrus.Level) {
 	slf._logLevel = v
 }
 
-//SetFilHandle desc
-//@Method SetFilHandle desc: Setting log file handle
+//SetFilHandle doc
+//@Summary Setting log file handle
+//@Method SetFilHandle
 //@Param (*os.File) log file
 func (slf *LogContext) SetFilHandle(v *os.File) {
 	slf._filHandle = v
 }
 
-//SetHandle desc
-//@Method SetHandle desc:Setting log object
+//SetHandle doc
+//@SummarySetting log object
+//@Method SetHandle
 //@Param (*logrus.Logger)
 func (slf *LogContext) SetHandle(v *logrus.Logger) {
 	slf._logHandle = v
 }
 
-//SetMailMax desc
-//@Method SetMailMax desc: Setting log mail max
+//SetMailMax doc
+//@Summary Setting log mail max
+//@Method SetMailMax
 //@Param (int)
 func (slf *LogContext) SetMailMax(v int) {
 	slf._logMailMax = int32(v)
 }
 
-//SetFormatter desc
-//@Method SetFormatter desc: Setting log format
+//SetFormatter doc
+//@Summary Setting log format
+//@Method SetFormatter
 //@Param (logrus.Formatter)
 func (slf *LogContext) SetFormatter(f logrus.Formatter) {
 	slf._logHandle.SetFormatter(f)
 }
 
-//Initial desc
-//@Method Initial desc: initail logger
+//Initial doc
+//@Summary initail logger
+//@Method Initial
 func (slf *LogContext) Initial() {
 	slf._logMailbox = make(chan LogMessage, slf._logMailMax)
 	slf._logStop = make(chan struct{})
@@ -131,8 +139,9 @@ func (slf *LogContext) push(data LogMessage) {
 	atomic.AddInt32(&slf._logMailNum, 1)
 }
 
-//Redirect desc
-//@Method Redirect desc: Redirect log file
+//Redirect doc
+//@Summary Redirect log file
+//@Method Redirect
 func (slf *LogContext) Redirect() {
 
 	if slf._filPath == "" {
@@ -149,8 +158,9 @@ func (slf *LogContext) Redirect() {
 	slf._logHandle.SetOutput(f)
 }
 
-//Mount desc
-//@Method Mount desc: Mount log module
+//Mount doc
+//@Summary Mount log module
+//@Method Mount
 func (slf *LogContext) Mount() {
 	slf._logWait.Add(1)
 	go func() {
@@ -163,8 +173,9 @@ func (slf *LogContext) Mount() {
 	}()
 }
 
-//Close desc
-//@Method Close desc: Turn off the logging system
+//Close doc
+//@Summary Turn off the logging system
+//@Method Close
 func (slf *LogContext) Close() {
 	for {
 		if atomic.LoadInt32(&slf._logMailNum) > 0 {
@@ -182,8 +193,9 @@ func (slf *LogContext) Close() {
 	}
 }
 
-//Error desc
-//@Method Error desc: Output error log
+//Error doc
+//@Summary Output error log
+//@Method Error
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -191,8 +203,9 @@ func (slf *LogContext) Error(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.ErrorLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Info desc
-//@Method Info desc: Output information log
+//Info doc
+//@Summary Output information log
+//@Method Info
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -200,8 +213,9 @@ func (slf *LogContext) Info(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.InfoLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Warning desc
-//@Method Warning desc: Output warning log
+//Warning doc
+//@Summary Output warning log
+//@Method Warning
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -209,8 +223,9 @@ func (slf *LogContext) Warning(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.WarnLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Panic desc
-//@Method Panic desc: Output program crash log
+//Panic doc
+//@Summary Output program crash log
+//@Method Panic
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -218,8 +233,9 @@ func (slf *LogContext) Panic(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.PanicLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Fatal desc
-//@Method Fatal desc: Output critical error log
+//Fatal doc
+//@Summary Output critical error log
+//@Method Fatal
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -227,8 +243,9 @@ func (slf *LogContext) Fatal(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.FatalLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Debug desc
-//@Method Debug desc: Output Debug log
+//Debug doc
+//@Summary Output Debug log
+//@Method Debug
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args
@@ -236,8 +253,9 @@ func (slf *LogContext) Debug(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.DebugLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
-//Trace desc
-//@Method Trace desc: Output trace log
+//Trace doc
+//@Summary Output trace log
+//@Method Trace
 //@Param (int32) owner
 //@Param (string) format
 //@Param (...interface{}) args

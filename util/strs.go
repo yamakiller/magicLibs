@@ -7,8 +7,8 @@ import (
 
 var _letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-//SubStr desc
-//@Method SubStr desc:Cut string ends with length
+//SubStr doc
+//@Method SubStr @SummaryCut string ends with length
 //@Param  (string) source string
 //@Param  (int)    start pos
 //@Param  (int)    sub length
@@ -43,8 +43,8 @@ func SubStr(str string, start int, length int) string {
 	return string(rs[start:end])
 }
 
-//SubStr2 desc
-//@Method SubStr2 desc : Cut string ends with index
+//SubStr2 doc
+//@Method SubStr2 doc : Cut string ends with index
 //@Param  (string) source string
 //@Param  (int)    start pos
 //@Param  (int)    end pos
@@ -63,8 +63,8 @@ func SubStr2(str string, start int, end int) string {
 	return string(rs[start:end])
 }
 
-//RandString desc
-//@Method RandStr desc : Randomly generate a string of length n
+//RandString doc
+//@Method RandStr doc : Randomly generate a string of length n
 //@Param (int) length
 //@Return (string)
 func RandStr(length int) string {
@@ -75,8 +75,8 @@ func RandStr(length int) string {
 	return string(b)
 }
 
-//IsPWDValidity desc
-//@Method IsPWDValidity desc: Verify password is valid
+//IsPWDValidity doc
+//@Method IsPWDValidity @Summary Verify password is valid
 //@Param (string) password
 //@Return (bool) is valid
 func IsPWDValidity(pwd string) bool {
@@ -95,8 +95,8 @@ func IsPWDValidity(pwd string) bool {
 	return false
 }
 
-//IsAccountValidity desc
-//@Method IsACCValidity desc: Verify account is valid
+//IsAccountValidity doc
+//@Method IsACCValidity @Summary Verify account is valid
 //@Param (string) account
 //@Return (bool) is valid
 func IsAccountValidity(account string) bool {
@@ -107,8 +107,8 @@ func IsAccountValidity(account string) bool {
 	return b
 }
 
-//IsCaptchaValidity desc
-//@Method IsCaptchaValidity desc: Verify captcha is valid
+//IsCaptchaValidity doc
+//@Method IsCaptchaValidity @Summary Verify captcha is valid
 //@Param (string) captcha
 //@Return (bool) is valid
 func IsCaptchaValidity(captcha string) bool {

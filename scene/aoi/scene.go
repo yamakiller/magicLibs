@@ -1,14 +1,14 @@
 package aoi
 
-//Scene desc
+//Scene doc
 type Scene struct {
 	_head  *DEntry
 	_tail  *DEntry
 	_count int
 }
 
-//Initial desc
-//@Method Initial desc:
+//Initial doc
+//@Method Initial @Summary
 func (slf *Scene) Initial() {
 	slf._head = &DEntry{}
 	slf._tail = &DEntry{}
@@ -18,8 +18,8 @@ func (slf *Scene) Initial() {
 	slf._tail._yPrev = slf._head
 }
 
-//Enter desc
-//@Method Enter desc: enter scene
+//Enter doc
+//@Method Enter @Summary enter scene
 //@Param (uint32) object id
 //@Param (float64) x
 //@Param (float64) y
@@ -34,8 +34,8 @@ func (slf *Scene) Enter(object uint32, x, y float64) *DEntry {
 	return n
 }
 
-//Leave desc
-//@Method Leave desc: leave object
+//Leave doc
+//@Method Leave @Summary leave object
 func (slf *Scene) Leave(entry *DEntry) {
 	if entry._xPrev == nil ||
 		entry._xNext == nil ||
@@ -57,7 +57,7 @@ func (slf *Scene) Leave(entry *DEntry) {
 	entry._yNext = nil
 }
 
-//Move desc
+//Move doc
 func (slf *Scene) Move(entry *DEntry, x, y float64) {
 
 }

@@ -71,8 +71,8 @@ func (slf *mongoClient) close() {
 	slf.db = nil
 }
 
-//MongoDB desc:
-//@Struct MongoDB desc: Mongo DB Object
+//MongoDB @Summary
+//@Struct MongoDB @Summary Mongo DB Object
 //@Member ([]*mongoClient) mongo client array
 type MongoDB struct {
 	cs   []*mongoClient
@@ -84,8 +84,8 @@ type MongoDB struct {
 	MaxClient int
 }
 
-//Init desc
-//@Method Init desc: initialization mongo db
+//Init doc
+//@Method Init @Summary initialization mongo db
 //@Return (error) initialization fail informat
 func (slf *MongoDB) Init() error {
 	slf.mx.Lock()
@@ -109,8 +109,8 @@ func (slf *MongoDB) Init() error {
 	return nil
 }
 
-//Close desc
-//@Method Close desc: close mongo db
+//Close doc
+//@Method Close @Summary close mongo db
 func (slf *MongoDB) Close() {
 	for {
 		slf.mx.Lock()
@@ -180,8 +180,8 @@ func (slf *MongoDB) getClient() (*mongoClient, error) {
 	return client, nil
 }
 
-//InsertOne desc
-//@Method InsertOne desc: Insert a piece of data
+//InsertOne doc
+//@Method InsertOne @Summary Insert a piece of data
 //@Param (string) set/table name
 //@Param (interface{}) data
 //@Return (interface{}) insert result
@@ -204,8 +204,8 @@ func (slf *MongoDB) InsertOne(name string, document interface{}) (interface{}, e
 	return r.InsertedID, nil
 }
 
-//InsertMany desc
-//@Method InsertMany desc: Insert multiple pieces of data
+//InsertMany doc
+//@Method InsertMany @Summary Insert multiple pieces of data
 //@Param (string) set/table name
 //@Param ([]interface{}) more data
 //@Return (interface{}) insert result
@@ -227,8 +227,8 @@ func (slf *MongoDB) InsertMany(name string, document []interface{}) ([]interface
 	return r.InsertedIDs, nil
 }
 
-//FindOne desc
-//@Method FindOne desc: Query a piece of data
+//FindOne doc
+//@Method FindOne @Summary Query a piece of data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) out result
@@ -251,8 +251,8 @@ func (slf *MongoDB) FindOne(name string, filter interface{}, out interface{}) er
 	return nil
 }
 
-//Find desc
-//@Method Find desc: Query multiple data
+//Find doc
+//@Method Find @Summary Query multiple data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{})
@@ -286,8 +286,8 @@ func (slf *MongoDB) Find(name string, filter interface{}, decode interface{}) ([
 	return ary, nil
 }
 
-//UpdateOne desc
-//@Method UpdateOne desc: update a piece of data
+//UpdateOne doc
+//@Method UpdateOne @Summary update a piece of data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) update informat
@@ -314,8 +314,8 @@ func (slf *MongoDB) UpdateOne(name string, filter interface{}, update interface{
 	return r.MatchedCount, r.ModifiedCount, r.UpsertedCount, r.UpsertedID, nil
 }
 
-//UpdateMany desc
-//@Method UpdateMany desc: update multiple data
+//UpdateMany doc
+//@Method UpdateMany @Summary update multiple data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) update informat
@@ -342,8 +342,8 @@ func (slf *MongoDB) UpdateMany(name string, filter interface{}, update interface
 	return r.MatchedCount, r.ModifiedCount, r.UpsertedCount, r.UpsertedID, nil
 }
 
-//ReplaceOne desc
-//@Method ReplaceOne desc: replace a piece of data
+//ReplaceOne doc
+//@Method ReplaceOne @Summary replace a piece of data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) update informat
@@ -371,8 +371,8 @@ func (slf *MongoDB) ReplaceOne(name string, filter interface{}, replacement inte
 	return r.MatchedCount, r.ModifiedCount, r.UpsertedCount, r.UpsertedID, nil
 }
 
-//DeleteOne desc
-//@Method DeleteOne desc: delete a piece of data
+//DeleteOne doc
+//@Method DeleteOne @Summary delete a piece of data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Return (int64) delete of number
@@ -395,8 +395,8 @@ func (slf *MongoDB) DeleteOne(name string, filter interface{}) (int64, error) {
 	return r.DeletedCount, nil
 }
 
-//DeleteMany desc
-//@Method DeleteMany desc: Delete multiple pieces of data
+//DeleteMany doc
+//@Method DeleteMany @Summary Delete multiple pieces of data
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Return (int64) delete of number
@@ -419,8 +419,8 @@ func (slf *MongoDB) DeleteMany(name string, filter interface{}) (int64, error) {
 	return r.DeletedCount, nil
 }
 
-//FindOneAndDelete desc
-//@Method FindOneAndDelete desc: find a piece of data and delete
+//FindOneAndDelete doc
+//@Method FindOneAndDelete @Summary find a piece of data and delete
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (out interface{}) One piece of data found
@@ -444,8 +444,8 @@ func (slf *MongoDB) FindOneAndDelete(name string, filter interface{}, out interf
 	return nil
 }
 
-//FindOneAndUpdate desc
-//@Method FindOneAndUpdate desc: find a piece of data and update
+//FindOneAndUpdate doc
+//@Method FindOneAndUpdate @Summary find a piece of data and update
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) data to be updated
@@ -469,8 +469,8 @@ func (slf *MongoDB) FindOneAndUpdate(name string, filter interface{}, update int
 	return nil
 }
 
-//FindOneAndReplace desc
-//@Method FindOneAndReplace desc: find a piece of data and replace
+//FindOneAndReplace doc
+//@Method FindOneAndReplace @Summary find a piece of data and replace
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Param (interface{}) data to be replace
@@ -494,8 +494,8 @@ func (slf *MongoDB) FindOneAndReplace(name string, filter interface{}, replaceme
 	return nil
 }
 
-//Distinct desc
-//@Method Distinct desc: Find in the specified field
+//Distinct doc
+//@Method Distinct @Summary Find in the specified field
 //@Param (string) set/table name
 //@Param (string) field name
 //@Param (interface{}) filter
@@ -519,8 +519,8 @@ func (slf *MongoDB) Distinct(name string, fieldName string, filter interface{}) 
 	return r, nil
 }
 
-//Drop desc:
-//@Method Drop desc: Delete set/table
+//Drop @Summary
+//@Method Drop @Summary Delete set/table
 //@Param  (string) set/table name
 //@Return (error)
 func (slf *MongoDB) Drop(name string) error {
@@ -536,8 +536,8 @@ func (slf *MongoDB) Drop(name string) error {
 	return client.db.Collection(name).Drop(ctx)
 }
 
-//CountDocuments desc:
-//@Method CountDocuments desc: Return the total number of documents
+//CountDocuments @Summary
+//@Method CountDocuments @Summary Return the total number of documents
 //@Param (string) set/table name
 //@Param (interface{}) filter
 //@Return (int64) a number

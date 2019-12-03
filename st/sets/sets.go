@@ -2,8 +2,8 @@ package sets
 
 import "github.com/yamakiller/magicLibs/st/containers"
 
-//Set desc
-//@Interface Set desc: that all sets
+//Set doc
+//@Interface Set @Summary that all sets
 type Set interface {
 	Push(es ...interface{})
 	PushAll(st *Set)

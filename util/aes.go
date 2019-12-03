@@ -10,8 +10,8 @@ import (
 	"io"
 )
 
-//AesEncrypt desc
-//@Method AesEncrypt desc: aes encrypt
+//AesEncrypt doc
+//@Method AesEncrypt @Summary aes encrypt
 //@Param (string) key
 //@Param (string) plaintext
 //@Return (string)  ciphertext
@@ -32,8 +32,8 @@ func AesEncrypt(key string, plaintext string) (string, error) {
 	return hex.EncodeToString(ciphertext), nil
 }
 
-//AesDecrypt desc
-//@Method AesDecrypt desc: aes decrypt
+//AesDecrypt doc
+//@Method AesDecrypt @Summary aes decrypt
 //@Param (string) key
 //@Param (string) ciphertext
 //@Return (string) plaintext

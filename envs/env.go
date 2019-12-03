@@ -33,7 +33,7 @@ func Instance() IEnv {
 //IEnv doc
 //@Summary Environment variable loading interface
 //@Interface IEnv
-//@Method Load desc: file load to environment variable
+//@Method Load @Summary file load to environment variable
 type IEnv interface {
 	Initial()
 	Load(key string, fileName string, out interface{}) error

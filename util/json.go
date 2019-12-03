@@ -6,8 +6,8 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-//JSONSerialize desc
-//@Method JSONSerialize desc: golang object Serialized to json string
+//JSONSerialize doc
+//@Method JSONSerialize @Summary golang object Serialized to json string
 //@Param  (interface{}) json object
 //@Return (string) json string
 func JSONSerialize(obj interface{}) string {
@@ -21,8 +21,8 @@ func JSONSerialize(obj interface{}) string {
 	return string(data)
 }
 
-//JSONUnSerialize desc
-//@Method JSONUnSerialize desc: Reverse the json string [byte] into a golang object
+//JSONUnSerialize doc
+//@Method JSONUnSerialize @Summary Reverse the json string [byte] into a golang object
 //@Param  ([]byte) json []byte
 //@Param  (interface{}) out json object
 //@Return (error)
@@ -32,8 +32,8 @@ func JSONUnSerialize(data []byte, v interface{}) error {
 	return err
 }
 
-//JSONUnFormSerialize desc
-//@Method JSONUnFormSerialize desc: Reverse the json string into a golang object
+//JSONUnFormSerialize doc
+//@Method JSONUnFormSerialize @Summary Reverse the json string into a golang object
 //@Param  (string) json string
 //@Param  (interface{}) out json object
 func JSONUnFormSerialize(data string, v interface{}) error {

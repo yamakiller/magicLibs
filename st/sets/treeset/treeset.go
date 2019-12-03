@@ -7,14 +7,14 @@ import (
 	rbt "github.com/yamakiller/magicLibs/st/trees/redblacktree"
 )
 
-//Set desc
-//@Struct Set desc: holds elements in a red-black tree
+//Set doc
+//@Struct Set @Summary holds elements in a red-black tree
 type Set struct {
 	_tree *rbt.Tree
 }
 
-//Push desc
-//@Method Push desc: adds the es (one or more) to the set
+//Push doc
+//@Method Push @Summary adds the es (one or more) to the set
 //@Param (...interface{}) elements
 func (s *Set) Push(es ...interface{}) {
 	for _, it := range es {
@@ -22,8 +22,8 @@ func (s *Set) Push(es ...interface{}) {
 	}
 }
 
-//PushAll desc
-//@Method PushAll desc: adds the st(set in element) to the set.
+//PushAll doc
+//@Method PushAll @Summary adds the st(set in element) to the set.
 //@Param (*Set) sets
 func (s *Set) PushAll(st *Set) {
 	it := st._tree.Iterator()
@@ -34,8 +34,8 @@ func (s *Set) PushAll(st *Set) {
 	}
 }
 
-//Retain desc
-//@Method Retain desc: retain the es (one or more) to the set.
+//Retain doc
+//@Method Retain @Summary retain the es (one or more) to the set.
 //@Param (...interface{}) elements
 func (s *Set) Retain(eds ...interface{}) {
 	var vs []interface{}
@@ -54,8 +54,8 @@ func (s *Set) Retain(eds ...interface{}) {
 	vs = nil
 }
 
-//RetainAll desc
-//@Method RetainAll desc: retain the st(set in element) to the set.
+//RetainAll doc
+//@Method RetainAll @Summary retain the st(set in element) to the set.
 //@Param (*Set) sets
 func (s *Set) RetainAll(st *Set) {
 	var vs []interface{}
@@ -78,8 +78,8 @@ func (s *Set) RetainAll(st *Set) {
 	vs = nil
 }
 
-//Erase desc
-//@Method Erase desc: removes the es (one or more) from the set
+//Erase doc
+//@Method Erase @Summary removes the es (one or more) from the set
 //@Param (...interface{}) elements
 func (s *Set) Erase(es ...interface{}) {
 	for _, it := range es {
@@ -87,8 +87,8 @@ func (s *Set) Erase(es ...interface{}) {
 	}
 }
 
-//EraseAll desc
-//@Method EraseAll desc: removes this st(set in element) from the set
+//EraseAll doc
+//@Method EraseAll @Summary removes this st(set in element) from the set
 //@Param (*Set) sets
 func (s *Set) EraseAll(st *Set) {
 	it := st._tree.Iterator()
@@ -99,8 +99,8 @@ func (s *Set) EraseAll(st *Set) {
 	}
 }
 
-//Contains desc
-//@Method Contains desc: check if es (one or more) are present in the set.
+//Contains doc
+//@Method Contains @Summary check if es (one or more) are present in the set.
 //@Param  (...interface{}) elements
 //@Return (bool)
 func (s *Set) Contains(es ...interface{}) bool {
@@ -112,35 +112,35 @@ func (s *Set) Contains(es ...interface{}) bool {
 	return true
 }
 
-//Size desc
-//@Method Size desc: Returns number of elements within the set.
+//Size doc
+//@Method Size @Summary Returns number of elements within the set.
 //@Return (int) size
 func (s *Set) Size() int {
 	return s._tree.Size()
 }
 
-//IsEmpty desc
-//@Method IsEmpty desc: Returns true if set does not contain any elements.
+//IsEmpty doc
+//@Method IsEmpty @Summary Returns true if set does not contain any elements.
 //@Return (bool)
 func (s *Set) IsEmpty() bool {
 	return s.Size() == 0
 }
 
-//Clear desc
-//@Method Clear desc: clears all values in the set.
+//Clear doc
+//@Method Clear @Summary clears all values in the set.
 func (s *Set) Clear() {
 	s._tree.Clear()
 }
 
-//Values desc
-//@Method Values desc: Returns all items in the set.
+//Values doc
+//@Method Values @Summary Returns all items in the set.
 //@Return ([]interface{})
 func (s *Set) Values() []interface{} {
 	return s._tree.Keys()
 }
 
-//String desc
-//@Method String desc: Returns a string
+//String doc
+//@Method String @Summary Returns a string
 func (s *Set) String() string {
 	str := "TreeSet\n"
 	items := []string{}

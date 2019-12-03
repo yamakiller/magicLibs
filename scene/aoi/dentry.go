@@ -2,7 +2,7 @@ package aoi
 
 import "github.com/yamakiller/magicLibs/math"
 
-//DEntry desc
+//DEntry doc
 type DEntry struct {
 	_xPrev *DEntry
 	_xNext *DEntry

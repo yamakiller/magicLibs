@@ -21,8 +21,8 @@ func getHash(str []byte) uint32 {
 	return hash
 }
 
-//NewConsistentHash desc
-//@Method NewConsistentHash desc: Create a hash consistent loader
+//NewConsistentHash doc
+//@Method NewConsistentHash @Summary Create a hash consistent loader
 //@Param  (int) replicas of number
 //@Return (*Map)
 func NewConsistentHash(replicas int) *Map {
@@ -38,15 +38,15 @@ var ErrEmptyCircle = errors.New("empty circle")
 
 type uInt32Slice []uint32
 
-//Len desc
-//@Method Len desc: array lenght
+//Len doc
+//@Method Len @Summary array lenght
 //@Return (int)
 func (s uInt32Slice) Len() int {
 	return len(s)
 }
 
-//Less desc
-//@Method Less desc: Compare the size of the array i, j position
+//Less doc
+//@Method Less @Summary Compare the size of the array i, j position
 //@Param  (int) array index
 //@Param  (int) array index
 //@Return If the data in the position of the array i is smaller than the data in the j position, it returns True, otherwise it returns False.
@@ -54,16 +54,16 @@ func (s uInt32Slice) Less(i, j int) bool {
 	return s[i] < s[j]
 }
 
-//Swap desc
-//@Method Swap desc: Data exchange between the position of the array i and the data of the j position
+//Swap doc
+//@Method Swap @Summary Data exchange between the position of the array i and the data of the j position
 //@Param  (int) array index
 //@Param  (int) array index
 func (s uInt32Slice) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
-//Map desc
-//@Struct Map desc: Hash consistency load balancing
+//Map doc
+//@Struct Map @Summary Hash consistency load balancing
 type Map struct {
 	_replicas     int
 	_sortedHashes uInt32Slice
@@ -71,8 +71,8 @@ type Map struct {
 	sync.RWMutex
 }
 
-//UnAdd desc
-//@Method UnAdd desc: Join an object, not locked
+//UnAdd doc
+//@Method UnAdd @Summary Join an object, not locked
 //@Param (string) key
 //@Param (interface{}) element value
 func (m *Map) UnAdd(key string, v interface{}) {
@@ -82,8 +82,8 @@ func (m *Map) UnAdd(key string, v interface{}) {
 	m.updateSortedHashes()
 }
 
-//UnRemove desc
-//@Method UnRemove desc: Delete an object, not locked
+//UnRemove doc
+//@Method UnRemove @Summary Delete an object, not locked
 //@Param (string) key
 func (m *Map) UnRemove(key string) {
 	for i := 0; i < m._replicas; i++ {
@@ -92,8 +92,8 @@ func (m *Map) UnRemove(key string) {
 	m.updateSortedHashes()
 }
 
-//UnGet desc
-//@Method UnGet desc: Return an object, not locked
+//UnGet doc
+//@Method UnGet @Summary Return an object, not locked
 //@Param  (string) name
 //@Return (interface{}) element value
 //@Return (error)

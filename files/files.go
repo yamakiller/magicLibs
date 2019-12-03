@@ -7,8 +7,9 @@ import (
 	"sync/atomic"
 )
 
-//Files desc
-//@Struct Files desc: files system
+//Files doc
+//@Summary files system
+//@Struct Files
 type Files struct {
 	_dir        Directory
 	_cached     sync.Map
@@ -16,14 +17,16 @@ type Files struct {
 	_cacheMem   int64
 }
 
-//Initial desc
-//@Method Initial desc: Initial files system
+//Initial doc
+//@Summary Initial files system
+//@Method Initial
 func (slf *Files) Initial() {
 	slf._dir.Initial()
 }
 
-//Close desc
-//@Method Close desc: Close System and clear data
+//Close doc
+//@Summary Close System and clear data
+//@Method Close
 func (slf *Files) Close() {
 
 	var key []string
@@ -40,8 +43,9 @@ func (slf *Files) Close() {
 	key = nil
 }
 
-//IsFileExist desc
-//@Method IsFileExist desc: files is exist
+//IsFileExist doc
+//@Summary files is exist
+//@Method IsFileExist
 //@Param (string) file path and name
 //@Return (bool) exist:true not exits: false
 func (slf *Files) IsFileExist(fullPath string) bool {
@@ -57,8 +61,9 @@ func (slf *Files) IsFileExist(fullPath string) bool {
 	return true
 }
 
-//DeleteFile desc
-//@Method DeleteFile desc: delete file and remove cache
+//DeleteFile doc
+//@Summary delete file and remove cache
+//@Method DeleteFile
 //@Param  (string) full path and file name
 //@retur  (error) delete fail error
 func (slf *Files) DeleteFile(fullPath string) error {
@@ -75,29 +80,33 @@ func (slf *Files) DeleteFile(fullPath string) error {
 	return nil
 }
 
-//GetRoot desc
-//@Method GetRoot desc: Return root dir
+//GetRoot doc
+//@Summary Return root dir
+//@Method GetRoot
 //@Return (string) dir
 func (slf *Files) GetRoot() string {
 	return slf._dir.rootPath
 }
 
-//GetCacheFiles desc
-//@Method GetCacheFiles desc: Return Cache file of number
+//GetCacheFiles doc
+//@Summary Return Cache file of number
+//@Method GetCacheFiles
 //@Return (int) file of number
 func (slf *Files) GetCacheFiles() int {
 	return int(atomic.LoadInt64(&slf._cachedFils))
 }
 
-//GetCacheMem desc
-//@Method GetCacheMem desc: Return Cache memory
+//GetCacheMem doc
+//@Summary Return Cache memory
+//@Method GetCacheMem
 //@Return (int64) Cache size
 func (slf *Files) GetCacheMem() int64 {
 	return atomic.LoadInt64(&slf._cacheMem)
 }
 
-//GetDataFromFile desc
-//@Method GetDataFromFile desc: Retrun File data
+//GetDataFromFile doc
+//@Summary Retrun File data
+//@Method GetDataFromFile
 //@Param  (string) full path and file name
 //@Return ([]byte) file data
 //@Return (error)
@@ -111,8 +120,9 @@ func (slf *Files) GetDataFromFile(fullPath string) ([]byte, error) {
 	return d, nil
 }
 
-//GetDataFromCacheFile desc
-//@Method GetDataFromCacheFile desc: Use Cache or Read File Return data
+//GetDataFromCacheFile doc
+//@Summary Use Cache or Read File Return data
+//@Method GetDataFromCacheFile
 //@Param  (string) full path and file name
 //@Return (*FileHandle) file handle
 //@Return (error)
@@ -137,23 +147,26 @@ func (slf *Files) GetDataFromCacheFile(fullPath string) (*FileHandle, error) {
 	return h, nil
 }
 
-//WithRoot desc
-//@Method WithRoot desc:setting system root dir
+//WithRoot doc
+//@Summarysetting system root dir
+//@Method WithRoot
 //@Param (string) path
 func (slf *Files) WithRoot(path string) {
 	slf._dir.WithRoot(path)
 }
 
-//GetFullPathForFilename desc
-//@Method GetFullPathForFilename desc: Returns file full path and file name
+//GetFullPathForFilename doc
+//@Summary Returns file full path and file name
+//@Method GetFullPathForFilename
 //@Param  (string) file path
 //@Return (string) full path and file name
 func (slf *Files) GetFullPathForFilename(filePath string) string {
 	return slf._dir.GetFullPathName(filePath)
 }
 
-//getCache desc
-//@Method getCache desc: Return file cache
+//getCache doc
+//@Summary Return file cache
+//@Method getCache
 //@Return (*FileHandle) file cache handle
 func (slf *Files) getCache(fullPath string) *FileHandle {
 	r, ok := slf._cached.Load(fullPath)
@@ -173,8 +186,9 @@ var (
 	defaultFile *Files
 )
 
-//Instance desc
-//@Method Instance desc: Files System instance
+//Instance doc
+//@Summary Files System instance
+//@Method Instance
 //@Return (*Files) Files System object
 func Instance() *Files {
 	oneFiles.Do(func() {

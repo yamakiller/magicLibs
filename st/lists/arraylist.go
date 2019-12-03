@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-//List desc
-//@Struct List desc: holds the elements in a slice
+//List doc
+//@Struct List @Summary holds the elements in a slice
 type List struct {
 	_es   []interface{}
 	_size int
@@ -17,8 +17,8 @@ const (
 	shrinkFactor = float32(0.25)
 )
 
-//NewList desc
-//@Method NewList desc: instantiates a new list and adds the passed values, if any, to the list
+//NewList doc
+//@Method NewList @Summary instantiates a new list and adds the passed values, if any, to the list
 //@Param (...interface{}) elements
 //@Return (*List)
 func NewList(values ...interface{}) *List {
@@ -29,8 +29,8 @@ func NewList(values ...interface{}) *List {
 	return list
 }
 
-//Add desc
-//@Method Add desc: appends a value at the end of the list
+//Add doc
+//@Method Add @Summary appends a value at the end of the list
 //@Param (...interface{}) elements
 func (list *List) Add(values ...interface{}) {
 	list.growBy(len(values))
@@ -40,8 +40,8 @@ func (list *List) Add(values ...interface{}) {
 	}
 }
 
-//Get desc
-//@Method Get desc: returns the element at index.
+//Get doc
+//@Method Get @Summary returns the element at index.
 //@Param  (int) index
 //@Return (interface{}) Returns value
 //@Return (bool)  Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
@@ -54,8 +54,8 @@ func (list *List) Get(index int) (interface{}, bool) {
 	return list._es[index], true
 }
 
-//Remove desc
-//@Method Remove desc: removes the element at the given index from the list.
+//Remove doc
+//@Method Remove @Summary removes the element at the given index from the list.
 //@Param (int) index
 func (list *List) Remove(index int) {
 
@@ -70,8 +70,8 @@ func (list *List) Remove(index int) {
 	list.shrink()
 }
 
-//Contains desc
-//@Method Contains desc: checks if elements (one or more) are present in the set.
+//Contains doc
+//@Method Contains @Summary checks if elements (one or more) are present in the set.
 // All elements have to be present in the set for the method to return true.
 // Performance time complexity of n^2.
 // Returns true if no arguments are passed at all, i.e. set is always super-set of empty set.
@@ -94,8 +94,8 @@ func (list *List) Contains(values ...interface{}) bool {
 	return true
 }
 
-//Values desc
-//@Method Values desc: returns all elements in the list.
+//Values doc
+//@Method Values @Summary returns all elements in the list.
 //@Return ([]interface{})
 func (list *List) Values() []interface{} {
 	newElements := make([]interface{}, list._size, list._size)
@@ -103,8 +103,8 @@ func (list *List) Values() []interface{} {
 	return newElements
 }
 
-//IndexOf desc
-//@Method IndexOf desc: returns index of provided element
+//IndexOf doc
+//@Method IndexOf @Summary returns index of provided element
 //@Param  (interface{}) element
 //@Return (int) index
 func (list *List) IndexOf(value interface{}) int {
@@ -119,29 +119,29 @@ func (list *List) IndexOf(value interface{}) int {
 	return -1
 }
 
-//IsEmpty desc
-//@Method IsEmpty desc: returns true if list does not contain any elements.
+//IsEmpty doc
+//@Method IsEmpty @Summary returns true if list does not contain any elements.
 //@Return (bool)
 func (list *List) IsEmpty() bool {
 	return list._size == 0
 }
 
-//Size desc
-//@Method Size desc: returns number of elements within the list.
+//Size doc
+//@Method Size @Summary returns number of elements within the list.
 //@Return (int) size
 func (list *List) Size() int {
 	return list._size
 }
 
-//Clear desc
-//@Method Clear desc: removes all elements from the list.
+//Clear doc
+//@Method Clear @Summary removes all elements from the list.
 func (list *List) Clear() {
 	list._size = 0
 	list._es = []interface{}{}
 }
 
-//Swap desc
-//@Method Swap desc: swaps the two values at the specified positions.
+//Swap doc
+//@Method Swap @Summary swaps the two values at the specified positions.
 //@Param (int)
 //@Param (int)
 func (list *List) Swap(i, j int) {
@@ -150,8 +150,8 @@ func (list *List) Swap(i, j int) {
 	}
 }
 
-//Insert desc
-//@Method Insert desc: inserts values at specified index position shifting the value at that position (if any) and any subsequent elements to the right.
+//Insert doc
+//@Method Insert @Summary inserts values at specified index position shifting the value at that position (if any) and any subsequent elements to the right.
 //@Param (int) index
 //@Param (...interface{}) values
 // Does not do anything if position is negative or bigger than list's size
@@ -173,8 +173,8 @@ func (list *List) Insert(index int, values ...interface{}) {
 	copy(list._es[index:], values)
 }
 
-//Set desc
-//@Method Set desc:the value at specified index
+//Set doc
+//@Method Set @Summarythe value at specified index
 //@Param (int) index
 //@Param (interface{}) value
 // Does not do anything if position is negative or bigger than list's size
@@ -192,8 +192,8 @@ func (list *List) Set(index int, value interface{}) {
 	list._es[index] = value
 }
 
-//String desc
-//@Method String desc: returns a string representation of container
+//String doc
+//@Method String @Summary returns a string representation of container
 //@Return (string)
 func (list *List) String() string {
 	str := "ArrayList\n"

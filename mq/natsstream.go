@@ -6,28 +6,28 @@ import (
 	stan "github.com/nats-io/go-nats-streaming"
 )
 
-//INatPubAck desc
-//@Interface INatPubAck desc: nats stream Publish ack function
+//INatPubAck doc
+//@Interface INatPubAck @Summary nats stream Publish ack function
 //@function onAck(string, error)
 type INatPubAck interface {
 	onAck(string, error)
 }
 
-//INatSubCall desc
-//@Interface INatSubCall desc: nats stream Subscribe Call function
+//INatSubCall doc
+//@Interface INatSubCall @Summary nats stream Subscribe Call function
 //@function   onRecive*(*stan.Msg)
 type INatSubCall interface {
 	onRecive(msg *stan.Msg)
 }
 
-//INatLostCall desc
-//@Interface INatLostCall desc: nats stream connection lost Call function
+//INatLostCall doc
+//@Interface INatLostCall @Summary nats stream connection lost Call function
 //@function onLost(stan.Conn, error)
 type INatLostCall interface {
 	onLost(stan.Conn, error)
 }
 
-//NatsStreamClient desc
+//NatsStreamClient doc
 //@Struct NatsStreamClient
 type NatsStreamClient struct {
 	_c          stan.Conn
@@ -43,8 +43,8 @@ type NatsStreamClient struct {
 	ConnectTimeout int
 }
 
-//Connect desc
-//@Method Connect desc: Connect to the NatsSteam server
+//Connect doc
+//@Method Connect @Summary Connect to the NatsSteam server
 //@Param (string) nats server cluster ID
 //@Param (string) nats client ID
 //@Return (error) nats connect fail error
@@ -78,8 +78,8 @@ func (slf *NatsStreamClient) Connect(clusterID string, clientID string) error {
 	return nil
 }
 
-//Publish desc
-//@Method Publish desc: Post message
+//Publish doc
+//@Method Publish @Summary Post message
 //@Param  (string) Subscription name
 //@Param  ([]byte) Post data
 //@Return (error)
@@ -87,8 +87,8 @@ func (slf *NatsStreamClient) Publish(name string, data []byte) error {
 	return slf._c.Publish(name, data)
 }
 
-//PublishAsync desc
-//@Method PublishAsync desc: Async Post message
+//PublishAsync doc
+//@Method PublishAsync @Summary Async Post message
 //@Param  (string) Subscription name
 //@Param  ([]byte) Post data
 //@Return (string)
@@ -97,16 +97,16 @@ func (slf *NatsStreamClient) PublishAsync(name string, data []byte) (string, err
 	return slf._c.PublishAsync(name, data, slf._ack.onAck)
 }
 
-//Subscribe desc
-//@Method Subscribe desc: Recvie message
+//Subscribe doc
+//@Method Subscribe @Summary Recvie message
 //@Param (string) Subscription name
 //@Param (...stan.SubscriptionOption) sub option
 func (slf *NatsStreamClient) Subscribe(name string, opts ...stan.SubscriptionOption) (stan.Subscription, error) {
 	return slf._c.Subscribe(name, slf._sub.onRecive, opts...)
 }
 
-//QueueSubscribe desc
-//@Method QueueSubscribe desc: Recvie Queue message
+//QueueSubscribe doc
+//@Method QueueSubscribe @Summary Recvie Queue message
 //@Param (string) Subscription name
 //@Param (string) Subscription group name
 //@Param (...stan.SubscriptionOption) sub option
@@ -114,8 +114,8 @@ func (slf *NatsStreamClient) QueueSubscribe(name, qgroup string, opts ...stan.Su
 	return slf._c.QueueSubscribe(name, qgroup, slf._sub.onRecive, opts...)
 }
 
-//Close desc
-//@Method Close desc: Close connection
+//Close doc
+//@Method Close @Summary Close connection
 //@Return (error) close error returns
 func (slf *NatsStreamClient) Close() error {
 	return slf._c.Close()

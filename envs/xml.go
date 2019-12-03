@@ -14,7 +14,7 @@ type XMLEnv struct {
 }
 
 //Initial doc
-//@Method Initial desc: Initial xml environment variable manager
+//@Method Initial @Summary Initial xml environment variable manager
 func (slf *XMLEnv) Initial() {
 	slf.en = make(map[string]interface{})
 }

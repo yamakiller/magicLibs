@@ -13,8 +13,9 @@ import (
 	"gopkg.in/oauth2.v3/store"
 )
 
-//OAuth2 desc
-//@Struct OAuth2 desc:
+//OAuth2 doc
+//@Summary
+//@Struct OAuth2
 type OAuth2 struct {
 	_m *manage.Manager
 	_c *store.ClientStore
@@ -27,43 +28,49 @@ type OAuth2 struct {
 	_accessURI         string
 }
 
-//SetTokenExp desc
-//@Method SetTokenExp desc: Setting oauth2 token exp time
+//SetTokenExp doc
+//@Summary Setting oauth2 token exp time
+//@Method SetTokenExp
 //@Param (int) token exp time sec
 func (slf *OAuth2) SetTokenExp(v int) {
 	slf._tokenExp = v
 }
 
-//SetRefreshTokenExp desc
-//@Method SetRefreshTokenExp desc: Setting oauth2 refresh token exp time
+//SetRefreshTokenExp doc
+//@Summary Setting oauth2 refresh token exp time
+//@Method SetRefreshTokenExp
 //@Param (int) refresh token exp time sec
 func (slf *OAuth2) SetRefreshTokenExp(v int) {
 	slf._refreshTokenExp = v
 }
 
-//SetRefresh desc
-//@Method SetRefresh desc: Setting oauth2 token reset refresh
+//SetRefresh doc
+//@Summary Setting oauth2 token reset refresh
+//@Method SetRefresh
 //@Param (bool) is refresh
 func (slf *OAuth2) SetRefresh(v bool) {
 	slf._isGenerateRefresh = v
 }
 
-//SetKey desc
-//@Method SetKey desc: Setting oauth2 token s256 key
+//SetKey doc
+//@Summary Setting oauth2 token s256 key
+//@Method SetKey
 //@Param (string) key
 func (slf *OAuth2) SetKey(v string) {
 	slf._s256KeyValue = v
 }
 
-//SetURI desc
-//@Method SetURI desc: Setting oauth2 access address
+//SetURI doc
+//@Summary Setting oauth2 access address
+//@Method SetURI
 //@Param (string) oauth2 access address
 func (slf *OAuth2) SetURI(v string) {
 	slf._accessURI = v
 }
 
-//Initial desc
-//@Method Initial desc:
+//Initial doc
+//@Summary
+//@Method Initial
 func (slf *OAuth2) Initial() {
 	codeTokenCfg := &manage.Config{
 		AccessTokenExp:    time.Second * time.Duration(slf._tokenExp),
@@ -92,8 +99,9 @@ func (slf *OAuth2) Initial() {
 	slf._m.SetRefreshTokenCfg(manage.DefaultRefreshTokenCfg)
 }
 
-//onRequestAuth desc
-//@Method onRequestAuth desc: http request method
+//onRequestAuth doc
+//@Summary http request method
+//@Method onRequestAuth
 //@Param (http.ResponseWriter)
 //@Param (http.Request)
 func (slf *OAuth2) onRequestAuth(w http.ResponseWriter, r *http.Request) {
@@ -103,8 +111,9 @@ func (slf *OAuth2) onRequestAuth(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//AddAuthClient desc
-//@Method AddAuthClient desc: append authorization client
+//AddAuthClient doc
+//@Summary append authorization client
+//@Method AddAuthClient
 //@Param (string) client id
 //@Param (string) secret
 //@Param (string) domain
@@ -113,7 +122,7 @@ func (slf *OAuth2) AddAuthClient(id string, secret string, domain string, userid
 	slf._c.Set(id, &models.Client{ID: id, Secret: secret, Domain: domain, UserID: userid})
 }
 
-//ValidateToken desc
+//ValidateToken doc
 func ValidateToken(fun func(w http.ResponseWriter, r *http.Request),
 	f interface{},
 	srv *server.Server) func(w http.ResponseWriter, r *http.Request) {

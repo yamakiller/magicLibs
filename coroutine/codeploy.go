@@ -3,20 +3,22 @@ package coroutine
 import "math"
 
 const (
-	//EnvKey desc: coroutine pool env name
+	//EnvKey @Summary coroutine pool env name
 	EnvKey = "coroutine pool"
 )
 
-//Deploy desc
-//@Struct Deploy desc coroutine pool deploy informat (json)
+//Deploy doc
+//@Summary coroutine pool deploy informat (json)
+//@Struct Deploy
 type Deploy struct {
-	Max  int `json:"max"`
-	Min  int `json:"min"`
-	Task int `json:"task-limit"`
+	Max  int `xml:"max" yaml:"max" json:"max"`
+	Min  int `xml:"min" yaml:"min" json:"min"`
+	Task int `xml:"task-limit" yaml:"task-limit" json:"task-limit"`
 }
 
-//NewDefault desc
-//@Method NewDefault desc: create default coroutine pool deploy informat
+//NewDefault doc
+//@Summary create default coroutine pool deploy informat
+//@Method NewDefault
 func NewDefault() *Deploy {
 	return &Deploy{math.MaxInt16, 32, 64}
 }
