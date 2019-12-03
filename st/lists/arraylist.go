@@ -6,7 +6,7 @@ import (
 )
 
 //List desc
-//@struct List desc: holds the elements in a slice
+//@Struct List desc: holds the elements in a slice
 type List struct {
 	_es   []interface{}
 	_size int
@@ -18,9 +18,9 @@ const (
 )
 
 //NewList desc
-//@method NewList desc: instantiates a new list and adds the passed values, if any, to the list
-//@param (...interface{}) elements
-//@return (*List)
+//@Method NewList desc: instantiates a new list and adds the passed values, if any, to the list
+//@Param (...interface{}) elements
+//@Return (*List)
 func NewList(values ...interface{}) *List {
 	list := &List{}
 	if len(values) > 0 {
@@ -30,8 +30,8 @@ func NewList(values ...interface{}) *List {
 }
 
 //Add desc
-//@method Add desc: appends a value at the end of the list
-//@param (...interface{}) elements
+//@Method Add desc: appends a value at the end of the list
+//@Param (...interface{}) elements
 func (list *List) Add(values ...interface{}) {
 	list.growBy(len(values))
 	for _, value := range values {
@@ -41,10 +41,10 @@ func (list *List) Add(values ...interface{}) {
 }
 
 //Get desc
-//@method Get desc: returns the element at index.
-//@param  (int) index
-//@return (interface{}) Returns value
-//@return (bool)  Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
+//@Method Get desc: returns the element at index.
+//@Param  (int) index
+//@Return (interface{}) Returns value
+//@Return (bool)  Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
 func (list *List) Get(index int) (interface{}, bool) {
 
 	if !list.withinRange(index) {
@@ -55,8 +55,8 @@ func (list *List) Get(index int) (interface{}, bool) {
 }
 
 //Remove desc
-//@method Remove desc: removes the element at the given index from the list.
-//@param (int) index
+//@Method Remove desc: removes the element at the given index from the list.
+//@Param (int) index
 func (list *List) Remove(index int) {
 
 	if !list.withinRange(index) {
@@ -71,12 +71,12 @@ func (list *List) Remove(index int) {
 }
 
 //Contains desc
-//@method Contains desc: checks if elements (one or more) are present in the set.
+//@Method Contains desc: checks if elements (one or more) are present in the set.
 // All elements have to be present in the set for the method to return true.
 // Performance time complexity of n^2.
 // Returns true if no arguments are passed at all, i.e. set is always super-set of empty set.
-//@param  (...interface{}) elements
-//@return (bool)
+//@Param  (...interface{}) elements
+//@Return (bool)
 func (list *List) Contains(values ...interface{}) bool {
 
 	for _, searchValue := range values {
@@ -95,8 +95,8 @@ func (list *List) Contains(values ...interface{}) bool {
 }
 
 //Values desc
-//@method Values desc: returns all elements in the list.
-//@return ([]interface{})
+//@Method Values desc: returns all elements in the list.
+//@Return ([]interface{})
 func (list *List) Values() []interface{} {
 	newElements := make([]interface{}, list._size, list._size)
 	copy(newElements, list._es[:list._size])
@@ -104,9 +104,9 @@ func (list *List) Values() []interface{} {
 }
 
 //IndexOf desc
-//@method IndexOf desc: returns index of provided element
-//@param  (interface{}) element
-//@return (int) index
+//@Method IndexOf desc: returns index of provided element
+//@Param  (interface{}) element
+//@Return (int) index
 func (list *List) IndexOf(value interface{}) int {
 	if list._size == 0 {
 		return -1
@@ -120,30 +120,30 @@ func (list *List) IndexOf(value interface{}) int {
 }
 
 //IsEmpty desc
-//@method IsEmpty desc: returns true if list does not contain any elements.
-//@return (bool)
+//@Method IsEmpty desc: returns true if list does not contain any elements.
+//@Return (bool)
 func (list *List) IsEmpty() bool {
 	return list._size == 0
 }
 
 //Size desc
-//@method Size desc: returns number of elements within the list.
-//@return (int) size
+//@Method Size desc: returns number of elements within the list.
+//@Return (int) size
 func (list *List) Size() int {
 	return list._size
 }
 
 //Clear desc
-//@method Clear desc: removes all elements from the list.
+//@Method Clear desc: removes all elements from the list.
 func (list *List) Clear() {
 	list._size = 0
 	list._es = []interface{}{}
 }
 
 //Swap desc
-//@method Swap desc: swaps the two values at the specified positions.
-//@param (int)
-//@param (int)
+//@Method Swap desc: swaps the two values at the specified positions.
+//@Param (int)
+//@Param (int)
 func (list *List) Swap(i, j int) {
 	if list.withinRange(i) && list.withinRange(j) {
 		list._es[i], list._es[j] = list._es[j], list._es[i]
@@ -151,9 +151,9 @@ func (list *List) Swap(i, j int) {
 }
 
 //Insert desc
-//@method Insert desc: inserts values at specified index position shifting the value at that position (if any) and any subsequent elements to the right.
-//@param (int) index
-//@param (...interface{}) values
+//@Method Insert desc: inserts values at specified index position shifting the value at that position (if any) and any subsequent elements to the right.
+//@Param (int) index
+//@Param (...interface{}) values
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
 func (list *List) Insert(index int, values ...interface{}) {
@@ -174,9 +174,9 @@ func (list *List) Insert(index int, values ...interface{}) {
 }
 
 //Set desc
-//@method Set desc:the value at specified index
-//@param (int) index
-//@param (interface{}) value
+//@Method Set desc:the value at specified index
+//@Param (int) index
+//@Param (interface{}) value
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
 func (list *List) Set(index int, value interface{}) {
@@ -193,8 +193,8 @@ func (list *List) Set(index int, value interface{}) {
 }
 
 //String desc
-//@method String desc: returns a string representation of container
-//@return (string)
+//@Method String desc: returns a string representation of container
+//@Return (string)
 func (list *List) String() string {
 	str := "ArrayList\n"
 	values := []string{}

@@ -3,7 +3,7 @@ package sets
 import "github.com/yamakiller/magicLibs/st/containers"
 
 //Set desc
-//@interface Set desc: that all sets
+//@Interface Set desc: that all sets
 type Set interface {
 	Push(es ...interface{})
 	PushAll(st *Set)

@@ -11,16 +11,16 @@ import (
 )
 
 //LogContext desc
-//@struct LogContext desc: Log context
-//@member (string) log file path
-//@member (*os.File) log file handle
-//@member (logrus.Levle) log level limit
-//@member (*logrus.Logger) log object
-//@member (int32) log mail queue number
-//@member (int32) log mail queue max
-//@member (chan LogMessage) log mail queue chan
-//@member (chan struct{}) log system shutdown chan
-//@member (sync.WaitGroup) log system is shutdown success
+//@Struct LogContext desc: Log context
+//@Member (string) log file path
+//@Member (*os.File) log file handle
+//@Member (logrus.Levle) log level limit
+//@Member (*logrus.Logger) log object
+//@Member (int32) log mail queue number
+//@Member (int32) log mail queue max
+//@Member (chan LogMessage) log mail queue chan
+//@Member (chan struct{}) log system shutdown chan
+//@Member (sync.WaitGroup) log system is shutdown success
 type LogContext struct {
 	_filPath    string
 	_filHandle  *os.File
@@ -34,49 +34,49 @@ type LogContext struct {
 }
 
 //SetFilPath desc
-//@method SetFilPath desc: Setting log file name
-//@param (string) file name
+//@Method SetFilPath desc: Setting log file name
+//@Param (string) file name
 func (slf *LogContext) SetFilPath(v string) {
 	slf._filPath = v
 }
 
 //SetLevel desc
-//@method SetLevel desc: Setting log level limit
-//@param (logrus.Level) log level
+//@Method SetLevel desc: Setting log level limit
+//@Param (logrus.Level) log level
 func (slf *LogContext) SetLevel(v logrus.Level) {
 	slf._logLevel = v
 }
 
 //SetFilHandle desc
-//@method SetFilHandle desc: Setting log file handle
-//@param (*os.File) log file
+//@Method SetFilHandle desc: Setting log file handle
+//@Param (*os.File) log file
 func (slf *LogContext) SetFilHandle(v *os.File) {
 	slf._filHandle = v
 }
 
 //SetHandle desc
-//@method SetHandle desc:Setting log object
-//@param (*logrus.Logger)
+//@Method SetHandle desc:Setting log object
+//@Param (*logrus.Logger)
 func (slf *LogContext) SetHandle(v *logrus.Logger) {
 	slf._logHandle = v
 }
 
 //SetMailMax desc
-//@method SetMailMax desc: Setting log mail max
-//@param (int)
+//@Method SetMailMax desc: Setting log mail max
+//@Param (int)
 func (slf *LogContext) SetMailMax(v int) {
 	slf._logMailMax = int32(v)
 }
 
 //SetFormatter desc
-//@method SetFormatter desc: Setting log format
-//@param (logrus.Formatter)
+//@Method SetFormatter desc: Setting log format
+//@Param (logrus.Formatter)
 func (slf *LogContext) SetFormatter(f logrus.Formatter) {
 	slf._logHandle.SetFormatter(f)
 }
 
 //Initial desc
-//@method Initial desc: initail logger
+//@Method Initial desc: initail logger
 func (slf *LogContext) Initial() {
 	slf._logMailbox = make(chan LogMessage, slf._logMailMax)
 	slf._logStop = make(chan struct{})
@@ -132,7 +132,7 @@ func (slf *LogContext) push(data LogMessage) {
 }
 
 //Redirect desc
-//@method Redirect desc: Redirect log file
+//@Method Redirect desc: Redirect log file
 func (slf *LogContext) Redirect() {
 
 	if slf._filPath == "" {
@@ -150,7 +150,7 @@ func (slf *LogContext) Redirect() {
 }
 
 //Mount desc
-//@method Mount desc: Mount log module
+//@Method Mount desc: Mount log module
 func (slf *LogContext) Mount() {
 	slf._logWait.Add(1)
 	go func() {
@@ -164,7 +164,7 @@ func (slf *LogContext) Mount() {
 }
 
 //Close desc
-//@method Close desc: Turn off the logging system
+//@Method Close desc: Turn off the logging system
 func (slf *LogContext) Close() {
 	for {
 		if atomic.LoadInt32(&slf._logMailNum) > 0 {
@@ -183,64 +183,64 @@ func (slf *LogContext) Close() {
 }
 
 //Error desc
-//@method Error desc: Output error log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Error desc: Output error log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Error(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.ErrorLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Info desc
-//@method Info desc: Output information log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Info desc: Output information log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Info(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.InfoLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Warning desc
-//@method Warning desc: Output warning log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Warning desc: Output warning log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Warning(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.WarnLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Panic desc
-//@method Panic desc: Output program crash log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Panic desc: Output program crash log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Panic(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.PanicLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Fatal desc
-//@method Fatal desc: Output critical error log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Fatal desc: Output critical error log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Fatal(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.FatalLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Debug desc
-//@method Debug desc: Output Debug log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Debug desc: Output Debug log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Debug(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.DebugLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }
 
 //Trace desc
-//@method Trace desc: Output trace log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Trace desc: Output trace log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func (slf *LogContext) Trace(owner uint32, fmrt string, args ...interface{}) {
 	slf.push(spawnMessage(uint32(logrus.TraceLevel), slf.getPrefix(owner), fmt.Sprintf(fmrt, args...)))
 }

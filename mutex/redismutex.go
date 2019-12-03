@@ -12,10 +12,10 @@ import (
 type RedisMethodDo func(commandName string, args ...interface{}) (interface{}, error)
 
 //RedisMutex desc
-//@struct RedisMutex desc: redis mutex object
-//@member (string) resource
-//@member (string) token
-//@member (int)    timeout
+//@Struct RedisMutex desc: redis mutex object
+//@Member (string) resource
+//@Member (string) token
+//@Member (int)    timeout
 type RedisMutex struct {
 	_doFun    RedisMethodDo
 	_resource string
@@ -40,17 +40,17 @@ func (slf *RedisMutex) key() string {
 }
 
 //Unlock desc
-//@method Unlock desc: unlocking
-//@return (error) unlock fail returns error informat
+//@Method Unlock desc: unlocking
+//@Return (error) unlock fail returns error informat
 func (slf *RedisMutex) Unlock() (err error) {
 	_, err = slf._doFun("del", slf.key())
 	return
 }
 
 //AddTimeOut desc
-//@method AddTimeOut desc: rest/append lock timeout time
-//@param (int64) setting/append time
-//@return (bool)
+//@Method AddTimeOut desc: rest/append lock timeout time
+//@Param (int64) setting/append time
+//@Return (bool)
 //@reutrn (error)
 func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 	ttl, err := redis.Int64(slf._doFun("TTL", slf.key()))
@@ -70,14 +70,14 @@ func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 }
 
 //TryRedisLock Try to acquire a lock
-//@method TryRedisLock desc: Try to acquire a locking
-//@param (RedisMethodDo) redis do function
-//@param (string) lock object(key/name)
-//@param (string) lock token
-//@param (int)    lock timeout millsec
-//@return (*RedisMutex) redis mutex object
-//@return (bool) redis lock is success
-//@return (error) redis lock fail error informat
+//@Method TryRedisLock desc: Try to acquire a locking
+//@Param (RedisMethodDo) redis do function
+//@Param (string) lock object(key/name)
+//@Param (string) lock token
+//@Param (int)    lock timeout millsec
+//@Return (*RedisMutex) redis mutex object
+//@Return (bool) redis lock is success
+//@Return (error) redis lock fail error informat
 func TryRedisLock(doFun RedisMethodDo,
 	resouse string,
 	token string,
@@ -86,14 +86,14 @@ func TryRedisLock(doFun RedisMethodDo,
 }
 
 //TryRedisLockWithTimeOut desc
-//@method TryRedisLockWithTimeOut desc: Try to acquire the lock and set the lock timeout
-//@param (RedisMethodDo) redis do function
-//@param (string) lock object(key/name)
-//@param (string) lock token
-//@param (int)    lock timeout millsec
-//@return (*RedisMutex) redis mutex object
-//@return (bool) redis lock is success
-//@return (error) redis lock fail error informat
+//@Method TryRedisLockWithTimeOut desc: Try to acquire the lock and set the lock timeout
+//@Param (RedisMethodDo) redis do function
+//@Param (string) lock object(key/name)
+//@Param (string) lock token
+//@Param (int)    lock timeout millsec
+//@Return (*RedisMutex) redis mutex object
+//@Return (bool) redis lock is success
+//@Return (error) redis lock fail error informat
 func TryRedisLockWithTimeOut(doFun RedisMethodDo,
 	resouse string,
 	token string,

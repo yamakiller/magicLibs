@@ -15,22 +15,27 @@ import (
 	"github.com/yamakiller/magicLibs/util"
 )
 
-//MySQLValue desc
-//@struct MySQLValue desc mysql result value
+//MySQLValue doc
+//@Summary mysql result value
+//@Struct MySQLValue
+//@Member interface{} value
+//@Member reflect.Type value type
 type MySQLValue struct {
 	_v interface{}
 	_t reflect.Type
 }
 
-//Print desc
-//@method Print desc:
+//Print doc
+//@Summary Print value informat
+//@Method Print
 func (slf *MySQLValue) Print() {
 	fmt.Printf("%+v, %+v\n", slf._v, slf._t)
 }
 
-//IsEmpty desc
-//@method IsEmpty desc: Return Is Empty
-//@return (bool) emtpy: true  no empty:false
+//IsEmpty doc
+//@Summary Return Is Empty
+//@Method IsEmpty
+//@Return (bool) emtpy: true  no empty:false
 func (slf *MySQLValue) IsEmpty() bool {
 	if slf._v == nil {
 		return true
@@ -38,16 +43,18 @@ func (slf *MySQLValue) IsEmpty() bool {
 	return false
 }
 
-//ToString desc
-//@method ToString desc: Return string value
-//@return (string) a string
+//ToString doc
+//@Summary Return string value
+//@Method ToString
+//@Return (string) a string
 func (slf *MySQLValue) ToString() string {
 	return slf.getString()
 }
 
-//ToUint desc
-//@method ToUint desc: Return uint value
-//@return (uint) a value
+//ToUint doc
+//@Summary Return uint value
+//@Method ToUint
+//@Return (uint) a value
 func (slf *MySQLValue) ToUint() uint {
 	if v, e := slf.getNumber(); e == nil {
 		return uint(v)
@@ -61,9 +68,10 @@ func (slf *MySQLValue) ToUint() uint {
 	return uint(v)
 }
 
-//ToInt desc
-//@method ToInt desc: Return int value
-//@return (int) a value
+//ToInt doc
+//@Summary Return int value
+//@Method ToInt
+//@Return (int) a value
 func (slf *MySQLValue) ToInt() int {
 	if v, e := slf.getNumber(); e == nil {
 		return int(v)
@@ -77,9 +85,10 @@ func (slf *MySQLValue) ToInt() int {
 	return v
 }
 
-//ToUint32 desc
-//@method ToUint32 desc: Return uint32 value
-//@return (uint32) a value
+//ToUint32 doc
+//@Summary Return uint32 value
+//@Method ToUint32
+//@Return (uint32) a value
 func (slf *MySQLValue) ToUint32() uint32 {
 	if v, e := slf.getNumber(); e == nil {
 		return uint32(v)
@@ -93,9 +102,10 @@ func (slf *MySQLValue) ToUint32() uint32 {
 	return uint32(v)
 }
 
-//ToInt32 desc
-//@method ToInt32 desc: Return int32 value
-//@return (int32) a value
+//ToInt32 doc
+//@Summary Return int32 value
+//@Method ToInt32
+//@Return (int32) a value
 func (slf *MySQLValue) ToInt32() int32 {
 	if v, e := slf.getNumber(); e == nil {
 		return int32(v)
@@ -108,9 +118,10 @@ func (slf *MySQLValue) ToInt32() int32 {
 	return int32(v)
 }
 
-//ToUint64 desc
-//@method ToUint64 desc: Return uint64 value
-//@return (uint64) a value
+//ToUint64 doc
+//@Summary Return uint64 value
+//@Method ToUint64
+//@Return (uint64) a value
 func (slf *MySQLValue) ToUint64() uint64 {
 	if v, e := slf.getNumber(); e == nil {
 		return uint64(v)
@@ -123,9 +134,10 @@ func (slf *MySQLValue) ToUint64() uint64 {
 	return uint64(v)
 }
 
-//ToInt64 desc
-//@method ToInt64 desc: Return int64 value
-//@return (int64) a value
+//ToInt64 doc
+//@Summary Return int64 value
+//@Method ToInt64
+//@Return (int64) a value
 func (slf *MySQLValue) ToInt64() int64 {
 	if v, e := slf.getNumber(); e == nil {
 		return int64(v)
@@ -138,9 +150,10 @@ func (slf *MySQLValue) ToInt64() int64 {
 	return v
 }
 
-//ToFloat desc
-//@method ToFloat desc: Return float32 value
-//@return (float32) a value
+//ToFloat doc
+//@Summary Return float32 value
+//@Method ToFloat
+//@Return (float32) a value
 func (slf *MySQLValue) ToFloat() float32 {
 	if v, e := slf.getFloat(); e == nil {
 		return float32(v)
@@ -153,9 +166,10 @@ func (slf *MySQLValue) ToFloat() float32 {
 	return float32(v)
 }
 
-//ToDouble desc
-//@method ToDouble desc: Return float64 value
-//@return (float64) a value
+//ToDouble doc
+//@Summary Return float64 value
+//@Method ToDouble
+//@Return (float64) a value
 func (slf *MySQLValue) ToDouble() float64 {
 	if v, e := slf.getFloat(); e == nil {
 		return v
@@ -168,16 +182,18 @@ func (slf *MySQLValue) ToDouble() float64 {
 	return v
 }
 
-//ToByte desc
-//@method ToByte desc: Return []byte value
-//@return ([]byte) a value
+//ToByte doc
+//@Summary Return []byte value
+//@Method ToByte
+//@Return ([]byte) a value
 func (slf *MySQLValue) ToByte() []byte {
 	return ([]byte)(slf._v.([]uint8))
 }
 
-//ToTimeStamp desc
-//@method ToTimeStamp desc: Return  time int64 value
-//@return (int64) a value
+//ToTimeStamp doc
+//@Summary  Return  time int64 value
+//@Method ToTimeStamp
+//@Return (int64) a value
 func (slf *MySQLValue) ToTimeStamp() int64 {
 	v := slf.ToDateTime()
 	if v == nil {
@@ -187,9 +203,10 @@ func (slf *MySQLValue) ToTimeStamp() int64 {
 	return v.Unix()
 }
 
-//ToDate desc
-//@method ToDate desc: Return  time date value
-//@return (*time.Time) a value
+//ToDate doc
+//@Summary  Return  time date value
+//@Method ToDate
+//@Return (*time.Time) a value
 func (slf *MySQLValue) ToDate() *time.Time {
 	v, e := time.Parse("2006-01-02", slf.getString())
 	if e != nil {
@@ -199,9 +216,10 @@ func (slf *MySQLValue) ToDate() *time.Time {
 	return &v
 }
 
-//ToDateTime desc
-//@method ToDateTime desc: Return  time date time value
-//@return (*time.Time) a value
+//ToDateTime doc
+//@Summary  Return  time date value
+//@Method ToDateTime
+//@Return (*time.Time) a value
 func (slf *MySQLValue) ToDateTime() *time.Time {
 	v, e := time.Parse("2006-01-02 15:04:05", slf.getString())
 	if e != nil {
@@ -240,12 +258,13 @@ func (slf *MySQLValue) getFloat() (float64, error) {
 	}
 }
 
-//MySQLReader desc
-//@struct MySQLReader desc: mysql reader
-//@member (int) count row of number
-//@member (int) read current row in index
-//@member ([]string) columns name
-//@member ([]MySQLValue) a mysql value
+//MySQLReader doc
+//@Summary mysql reader
+//@Struct MySQLReader
+//@Member (int) count row of number
+//@Member (int) read current row in index
+//@Member ([]string) columns name
+//@Member ([]MySQLValue) a mysql value
 type MySQLReader struct {
 	_rows       int
 	_currentRow int
@@ -253,10 +272,11 @@ type MySQLReader struct {
 	_data       []MySQLValue
 }
 
-//GetAsNameValue desc
-//@method GetAsNameValue desc: Return column name to value
-//@return (*MySQLValue) mysql value
-//@return (error) error informat
+//GetAsNameValue doc
+//@Summary Return column name to value
+//@Method GetAsNameValue
+//@Return (*MySQLValue) mysql value
+//@Return (error) error informat
 func (slf *MySQLReader) GetAsNameValue(name string) (*MySQLValue, error) {
 	idx := slf.getNamePos(name)
 	if idx == -1 {
@@ -266,10 +286,11 @@ func (slf *MySQLReader) GetAsNameValue(name string) (*MySQLValue, error) {
 	return slf.GetValue(idx)
 }
 
-//GetValue desc
-//@method GetValue desc: Return column index to value
-//@return (*MySQLValue) mysql value
-//@return (error) error informat
+//GetValue doc
+//@Summary Return column index to value
+//@Method GetValue
+//@Return (*MySQLValue) mysql value
+//@Return (error) error informat
 func (slf *MySQLReader) GetValue(idx int) (*MySQLValue, error) {
 	rpos := (slf._currentRow * len(slf._columns)) + idx
 	if rpos >= len(slf._data) {
@@ -279,10 +300,11 @@ func (slf *MySQLReader) GetValue(idx int) (*MySQLValue, error) {
 	return &slf._data[rpos], nil
 }
 
-//GetTryValue desc
-//@method GetTryValue desc: Return column index to value
-//@return (*MySQLValue) mysql value
-//@return (error) error informat
+//GetTryValue doc
+//@Summary Return column index to value
+//@Method GetTryValue
+//@Return (*MySQLValue) mysql value
+//@Return (error) error informat
 func (slf *MySQLReader) GetTryValue(idx int) *MySQLValue {
 	r, e := slf.GetValue(idx)
 	if e != nil {
@@ -292,9 +314,10 @@ func (slf *MySQLReader) GetTryValue(idx int) *MySQLValue {
 	return r
 }
 
-//Next desc
-//@method Next desc: Return Next row is success
-//@return (bool) Next Success: true Next Fail:false
+//Next doc
+//@Summary Return Next row is success
+//@Method Next
+//@Return (bool) Next Success: true Next Fail:false
 func (slf *MySQLReader) Next() bool {
 	if (slf._currentRow + 1) >= slf._rows {
 		return false
@@ -303,28 +326,32 @@ func (slf *MySQLReader) Next() bool {
 	return true
 }
 
-//GetColumn desc
-//@method GetColumn desc: Return Column of number
-//@return (int) a number
+//GetColumn doc
+//@Summary Return Column of number
+//@Method GetColumn
+//@Return (int) a number
 func (slf *MySQLReader) GetColumn() int {
 	return len(slf._columns)
 }
 
-//GetRow desc
-//@method GetRow desc: Return row of number
-//@return (int) a number
+//GetRow doc
+//@Summary Return row of number
+//@Method GetRow
+//@Return (int) a number
 func (slf *MySQLReader) GetRow() int {
 	return int(slf._rows)
 }
 
-//Rest desc
-//@method Rest desc: go to first row
+//Rest doc
+//@Summary go to first row
+//@Method Rest
 func (slf *MySQLReader) Rest() {
 	slf._currentRow = -1
 }
 
-//Close desc
-//@method Close desc: clear data
+//Close doc
+//@Summary clear data
+//@Method Close
 func (slf *MySQLReader) Close() {
 	slf._columns = nil
 	slf._data = nil
@@ -339,22 +366,24 @@ func (slf *MySQLReader) getNamePos(name string) int {
 	return -1
 }
 
-//MySQLDB desc
-//@struct MySQLDB desc: mysql operation object
-//@member (string) mysql connection dsn
-//@member (*sql.DB) mysql connection object
+//MySQLDB doc
+//@Summary mysql operation object
+//@Struct MySQLDB
+//@Member (string) mysql connection dsn
+//@Member (*sql.DB) mysql connection object
 type MySQLDB struct {
 	_dsn string
 	_db  *sql.DB
 }
 
-//Initial desc
-//@method Initial desc: initialization mysql DB
-//@param (string) mysql connection dsn
-//@param (int) mysql connection max of number
-//@param (int) mysql connection idle of number
-//@param (int) mysql connection life time[util/sec]
-//@return (error) fail:return error, success: return nil
+//Initial doc
+//@Summary initialization mysql DB
+//@Method Initial
+//@Param (string) mysql connection dsn
+//@Param (int) mysql connection max of number
+//@Param (int) mysql connection idle of number
+//@Param (int) mysql connection life time[util/sec]
+//@Return (error) fail:return error, success: return nil
 func (slf *MySQLDB) Initial(dsn string, maxConn int, maxIdleConn, lifeSec int) error {
 	var err error
 	slf._db, err = sql.Open("mysql", dsn)
@@ -372,12 +401,13 @@ func (slf *MySQLDB) Initial(dsn string, maxConn int, maxIdleConn, lifeSec int) e
 	return nil
 }
 
-//Query desc
-//@method Query desc: execute sql query
-//@param (string) query sql
-//@param (...interface{}) sql params
-//@return (map[string]interface{}) query result
-//@return (error) fail: return error, success: return nil
+//Query doc
+//@Summary execute sql query
+//@Method Query
+//@Param (string) query sql
+//@Param (...interface{}) sql params
+//@Return (map[string]interface{}) query result
+//@Return (error) fail: return error, success: return nil
 func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, error) {
 	if perr := slf._db.Ping(); perr != nil {
 		return nil, perr
@@ -415,7 +445,7 @@ func (slf *MySQLDB) Query(strSQL string, args ...interface{}) (*MySQLReader, err
 
 // QueryPage doc
 // @Summary Query page data
-// @method  Query
+// @Method  Query
 // @Param   (string) table files (xxx,xxx)
 // @Param   (string) table names (xxx,xxx)
 // @Param   (string) query condition
@@ -491,12 +521,13 @@ func (slf *MySQLDB) QueryPage(fileds, tables, where, order string, page, pageSiz
 	return pageCount, record, nil
 }
 
-//Insert desc
-//@method Insert desc: execute sql Insert
-//@param (string) Insert sql
-//@param (...interface{}) sql params
-//@return (int54) insert of number
-//@return (error) fail: return error, success: return nil
+//Insert doc
+//@Summary execute sql Insert
+//@Method Insert
+//@Param (string) Insert sql
+//@Param (...interface{}) sql params
+//@Return (int54) insert of number
+//@Return (error) fail: return error, success: return nil
 func (slf *MySQLDB) Insert(strSQL string, args ...interface{}) (int64, error) {
 	if perr := slf._db.Ping(); perr != nil {
 		return 0, perr
@@ -511,11 +542,12 @@ func (slf *MySQLDB) Insert(strSQL string, args ...interface{}) (int64, error) {
 	return r.LastInsertId()
 }
 
-//Update desc
-//@method Update desc: execute sql Update
-//@param (string) Update sql
-//@param (...interface{}) sql params
-//@return (int54) Update of number
+//Update doc
+//@Summary execute sql Update
+//@Method Update
+//@Param (string) Update sql
+//@Param (...interface{}) sql params
+//@Return (int54) Update of number
 func (slf *MySQLDB) Update(strSQL string, args ...interface{}) (int64, error) {
 	if perr := slf._db.Ping(); perr != nil {
 		return 0, perr
@@ -529,8 +561,9 @@ func (slf *MySQLDB) Update(strSQL string, args ...interface{}) (int64, error) {
 	return r.RowsAffected()
 }
 
-//Close desc
-//@method CLose desc: close mysql connection
+//Close doc
+//@Summary close mysql connection
+//@Method CLose
 func (slf *MySQLDB) Close() {
 	slf._db.Close()
 }

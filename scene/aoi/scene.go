@@ -8,7 +8,7 @@ type Scene struct {
 }
 
 //Initial desc
-//@method Initial desc:
+//@Method Initial desc:
 func (slf *Scene) Initial() {
 	slf._head = &DEntry{}
 	slf._tail = &DEntry{}
@@ -19,11 +19,11 @@ func (slf *Scene) Initial() {
 }
 
 //Enter desc
-//@method Enter desc: enter scene
-//@param (uint32) object id
-//@param (float64) x
-//@param (float64) y
-//@return (*DEntry) return node
+//@Method Enter desc: enter scene
+//@Param (uint32) object id
+//@Param (float64) x
+//@Param (float64) y
+//@Return (*DEntry) return node
 func (slf *Scene) Enter(object uint32, x, y float64) *DEntry {
 	n := &DEntry{_vKey: object}
 	n._vPos.SetX(x)
@@ -35,7 +35,7 @@ func (slf *Scene) Enter(object uint32, x, y float64) *DEntry {
 }
 
 //Leave desc
-//@method Leave desc: leave object
+//@Method Leave desc: leave object
 func (slf *Scene) Leave(entry *DEntry) {
 	if entry._xPrev == nil ||
 		entry._xNext == nil ||

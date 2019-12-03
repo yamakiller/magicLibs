@@ -7,15 +7,15 @@ import (
 )
 
 //Directory desc
-//@struct Directory desc: Virtual Directory
-//@member (string) Base Directory
+//@Struct Directory desc: Virtual Directory
+//@Member (string) Base Directory
 type Directory struct {
 	rootPath string
 	wildCard string
 }
 
 //Initial desc
-//@method Initial desc: initialization Directory
+//@Method Initial desc: initialization Directory
 func (slf *Directory) Initial() {
 
 	if runtime.GOOS == "windows" {
@@ -29,8 +29,8 @@ func (slf *Directory) Initial() {
 }
 
 //WithRoot desc
-//@method WithRoot desc: Setting Root path
-//@param  (string) path
+//@Method WithRoot desc: Setting Root path
+//@Param  (string) path
 func (slf *Directory) WithRoot(path string) {
 	slf.rootPath = path
 	if strings.HasSuffix(slf.rootPath, slf.wildCard) {
@@ -39,8 +39,8 @@ func (slf *Directory) WithRoot(path string) {
 }
 
 //GetFullPathName desc
-//@method GetFullPathName desc: Return Full path and file name
-//@return (string) Full path and file name
+//@Method GetFullPathName desc: Return Full path and file name
+//@Return (string) Full path and file name
 func (slf *Directory) GetFullPathName(filePath string) string {
 	if strings.HasPrefix(filePath, slf.rootPath) {
 		return filePath

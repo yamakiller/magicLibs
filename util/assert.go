@@ -7,9 +7,9 @@ import (
 )
 
 //Assert desc
-//@method Assert desc: Assert boolean and output error message
-//@param (bool) false assert
-//@param (string) error message
+//@Method Assert desc: Assert boolean and output error message
+//@Param (bool) false assert
+//@Param (string) error message
 func Assert(isAs bool, errMsg string) {
 	if !isAs {
 		panic(errMsg)
@@ -17,9 +17,9 @@ func Assert(isAs bool, errMsg string) {
 }
 
 //AssertEmpty desc
-//@method AssertEmtpy desc: Assert Nil and output an error message
-//@param (interface{}) is null assert
-//@param (string) error message
+//@Method AssertEmtpy desc: Assert Nil and output an error message
+//@Param (interface{}) is null assert
+//@Param (string) error message
 func AssertEmpty(isNull interface{}, errMsg string) {
 	if isNull == nil {
 		panic(errMsg)
@@ -27,8 +27,8 @@ func AssertEmpty(isNull interface{}, errMsg string) {
 }
 
 //GetStack desc
-//@method GetStack desc: Return current stack information
-//@return (string)
+//@Method GetStack desc: Return current stack information
+//@Return (string)
 func GetStack() string {
 	var name, file string
 	var line int

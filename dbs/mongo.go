@@ -72,8 +72,8 @@ func (slf *mongoClient) close() {
 }
 
 //MongoDB desc:
-//@struct MongoDB desc: Mongo DB Object
-//@member ([]*mongoClient) mongo client array
+//@Struct MongoDB desc: Mongo DB Object
+//@Member ([]*mongoClient) mongo client array
 type MongoDB struct {
 	cs   []*mongoClient
 	size int
@@ -85,8 +85,8 @@ type MongoDB struct {
 }
 
 //Init desc
-//@method Init desc: initialization mongo db
-//@return (error) initialization fail informat
+//@Method Init desc: initialization mongo db
+//@Return (error) initialization fail informat
 func (slf *MongoDB) Init() error {
 	slf.mx.Lock()
 	defer slf.mx.Unlock()
@@ -110,7 +110,7 @@ func (slf *MongoDB) Init() error {
 }
 
 //Close desc
-//@method Close desc: close mongo db
+//@Method Close desc: close mongo db
 func (slf *MongoDB) Close() {
 	for {
 		slf.mx.Lock()
@@ -181,11 +181,11 @@ func (slf *MongoDB) getClient() (*mongoClient, error) {
 }
 
 //InsertOne desc
-//@method InsertOne desc: Insert a piece of data
-//@param (string) set/table name
-//@param (interface{}) data
-//@return (interface{}) insert result
-//@return (error) insert fail
+//@Method InsertOne desc: Insert a piece of data
+//@Param (string) set/table name
+//@Param (interface{}) data
+//@Return (interface{}) insert result
+//@Return (error) insert fail
 func (slf *MongoDB) InsertOne(name string, document interface{}) (interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -205,11 +205,11 @@ func (slf *MongoDB) InsertOne(name string, document interface{}) (interface{}, e
 }
 
 //InsertMany desc
-//@method InsertMany desc: Insert multiple pieces of data
-//@param (string) set/table name
-//@param ([]interface{}) more data
-//@return (interface{}) insert result
-//@return (error) insert fail
+//@Method InsertMany desc: Insert multiple pieces of data
+//@Param (string) set/table name
+//@Param ([]interface{}) more data
+//@Return (interface{}) insert result
+//@Return (error) insert fail
 func (slf *MongoDB) InsertMany(name string, document []interface{}) ([]interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -228,11 +228,11 @@ func (slf *MongoDB) InsertMany(name string, document []interface{}) ([]interface
 }
 
 //FindOne desc
-//@method FindOne desc: Query a piece of data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) out result
-//@return (error) Return error
+//@Method FindOne desc: Query a piece of data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) out result
+//@Return (error) Return error
 func (slf *MongoDB) FindOne(name string, filter interface{}, out interface{}) error {
 	client, err := slf.getClient()
 	if err != nil {
@@ -252,12 +252,12 @@ func (slf *MongoDB) FindOne(name string, filter interface{}, out interface{}) er
 }
 
 //Find desc
-//@method Find desc: Query multiple data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{})
-//@return ([]interface{}) Return result
-//@return (error) Return error
+//@Method Find desc: Query multiple data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{})
+//@Return ([]interface{}) Return result
+//@Return (error) Return error
 func (slf *MongoDB) Find(name string, filter interface{}, decode interface{}) ([]interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -287,15 +287,15 @@ func (slf *MongoDB) Find(name string, filter interface{}, decode interface{}) ([
 }
 
 //UpdateOne desc
-//@method UpdateOne desc: update a piece of data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) update informat
-//@return (int64) match of number
-//@return (int64) modify of number
-//@return (int64) update of number
-//@return (interface{}) update id
-//@return (error)
+//@Method UpdateOne desc: update a piece of data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) update informat
+//@Return (int64) match of number
+//@Return (int64) modify of number
+//@Return (int64) update of number
+//@Return (interface{}) update id
+//@Return (error)
 func (slf *MongoDB) UpdateOne(name string, filter interface{}, update interface{}) (int64, int64, int64, interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -315,15 +315,15 @@ func (slf *MongoDB) UpdateOne(name string, filter interface{}, update interface{
 }
 
 //UpdateMany desc
-//@method UpdateMany desc: update multiple data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) update informat
-//@return (int64) match of number
-//@return (int64) modify of number
-//@return (int64) update of number
-//@return (interface{}) update id
-//@return (error)
+//@Method UpdateMany desc: update multiple data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) update informat
+//@Return (int64) match of number
+//@Return (int64) modify of number
+//@Return (int64) update of number
+//@Return (interface{}) update id
+//@Return (error)
 func (slf *MongoDB) UpdateMany(name string, filter interface{}, update interface{}) (int64, int64, int64, interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -343,15 +343,15 @@ func (slf *MongoDB) UpdateMany(name string, filter interface{}, update interface
 }
 
 //ReplaceOne desc
-//@method ReplaceOne desc: replace a piece of data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) update informat
-//@return (int64) match of number
-//@return (int64) modify of number
-//@return (int64) update of number
-//@return (interface{}) update id
-//@return (error)
+//@Method ReplaceOne desc: replace a piece of data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) update informat
+//@Return (int64) match of number
+//@Return (int64) modify of number
+//@Return (int64) update of number
+//@Return (interface{}) update id
+//@Return (error)
 func (slf *MongoDB) ReplaceOne(name string, filter interface{}, replacement interface{}) (int64, int64, int64, interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -372,11 +372,11 @@ func (slf *MongoDB) ReplaceOne(name string, filter interface{}, replacement inte
 }
 
 //DeleteOne desc
-//@method DeleteOne desc: delete a piece of data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@return (int64) delete of number
-//@return (error)
+//@Method DeleteOne desc: delete a piece of data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Return (int64) delete of number
+//@Return (error)
 func (slf *MongoDB) DeleteOne(name string, filter interface{}) (int64, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -396,11 +396,11 @@ func (slf *MongoDB) DeleteOne(name string, filter interface{}) (int64, error) {
 }
 
 //DeleteMany desc
-//@method DeleteMany desc: Delete multiple pieces of data
-//@param (string) set/table name
-//@param (interface{}) filter
-//@return (int64) delete of number
-//@return (error)
+//@Method DeleteMany desc: Delete multiple pieces of data
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Return (int64) delete of number
+//@Return (error)
 func (slf *MongoDB) DeleteMany(name string, filter interface{}) (int64, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -420,11 +420,11 @@ func (slf *MongoDB) DeleteMany(name string, filter interface{}) (int64, error) {
 }
 
 //FindOneAndDelete desc
-//@method FindOneAndDelete desc: find a piece of data and delete
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (out interface{}) One piece of data found
-//@return (error)
+//@Method FindOneAndDelete desc: find a piece of data and delete
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (out interface{}) One piece of data found
+//@Return (error)
 func (slf *MongoDB) FindOneAndDelete(name string, filter interface{}, out interface{}) error {
 	client, err := slf.getClient()
 	if err != nil {
@@ -445,12 +445,12 @@ func (slf *MongoDB) FindOneAndDelete(name string, filter interface{}, out interf
 }
 
 //FindOneAndUpdate desc
-//@method FindOneAndUpdate desc: find a piece of data and update
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) data to be updated
-//@param (out interface{}) One piece of data found
-//@return (error)
+//@Method FindOneAndUpdate desc: find a piece of data and update
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) data to be updated
+//@Param (out interface{}) One piece of data found
+//@Return (error)
 func (slf *MongoDB) FindOneAndUpdate(name string, filter interface{}, update interface{}, out interface{}) error {
 	client, err := slf.getClient()
 	if err != nil {
@@ -470,12 +470,12 @@ func (slf *MongoDB) FindOneAndUpdate(name string, filter interface{}, update int
 }
 
 //FindOneAndReplace desc
-//@method FindOneAndReplace desc: find a piece of data and replace
-//@param (string) set/table name
-//@param (interface{}) filter
-//@param (interface{}) data to be replace
-//@param (out interface{}) One piece of data found
-//@return (error)
+//@Method FindOneAndReplace desc: find a piece of data and replace
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Param (interface{}) data to be replace
+//@Param (out interface{}) One piece of data found
+//@Return (error)
 func (slf *MongoDB) FindOneAndReplace(name string, filter interface{}, replacement interface{}, out interface{}) error {
 	client, err := slf.getClient()
 	if err != nil {
@@ -495,12 +495,12 @@ func (slf *MongoDB) FindOneAndReplace(name string, filter interface{}, replaceme
 }
 
 //Distinct desc
-//@method Distinct desc: Find in the specified field
-//@param (string) set/table name
-//@param (string) field name
-//@param (interface{}) filter
-//@return ([]interface{}) Return result
-//@return (error)
+//@Method Distinct desc: Find in the specified field
+//@Param (string) set/table name
+//@Param (string) field name
+//@Param (interface{}) filter
+//@Return ([]interface{}) Return result
+//@Return (error)
 func (slf *MongoDB) Distinct(name string, fieldName string, filter interface{}) ([]interface{}, error) {
 	client, err := slf.getClient()
 	if err != nil {
@@ -520,9 +520,9 @@ func (slf *MongoDB) Distinct(name string, fieldName string, filter interface{}) 
 }
 
 //Drop desc:
-//@method Drop desc: Delete set/table
-//@param  (string) set/table name
-//@return (error)
+//@Method Drop desc: Delete set/table
+//@Param  (string) set/table name
+//@Return (error)
 func (slf *MongoDB) Drop(name string) error {
 	client, err := slf.getClient()
 	if err != nil {
@@ -537,11 +537,11 @@ func (slf *MongoDB) Drop(name string) error {
 }
 
 //CountDocuments desc:
-//@method CountDocuments desc: Return the total number of documents
-//@param (string) set/table name
-//@param (interface{}) filter
-//@return (int64) a number
-//@return (error)
+//@Method CountDocuments desc: Return the total number of documents
+//@Param (string) set/table name
+//@Param (interface{}) filter
+//@Return (int64) a number
+//@Return (error)
 func (slf *MongoDB) CountDocuments(name string, filter interface{}) (int64, error) {
 	client, err := slf.getClient()
 	if err != nil {

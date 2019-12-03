@@ -34,9 +34,9 @@ type GRPCClientSet struct {
 }
 
 //Initial desc
-//@method Initial desc:Initialization grpc client sets
-//@param (string) target address
-//@param (...grpc.DialOption) grpc client options
+//@Method Initial desc:Initialization grpc client sets
+//@Param (string) target address
+//@Param (...grpc.DialOption) grpc client options
 func (slf *GRPCClientSet) Initial(target string, opts ...grpc.DialOption) error {
 	slf._cs = make(chan *grpcIdleConn, slf.MaxConn)
 	slf._factory = func() (*grpc.ClientConn, error) {
@@ -61,7 +61,7 @@ func (slf *GRPCClientSet) Initial(target string, opts ...grpc.DialOption) error 
 }
 
 //Close desc
-//@method Close desc: Closing grpc client set
+//@Method Close desc: Closing grpc client set
 func (slf *GRPCClientSet) Close() {
 	slf._mx.Lock()
 	conns := slf._cs
@@ -82,7 +82,7 @@ func (slf *GRPCClientSet) Close() {
 }
 
 //Invoke desc
-//@method Invoke desc: Invoke grpc method
+//@Method Invoke desc: Invoke grpc method
 func (slf *GRPCClientSet) Invoke(method string, args, reply interface{}) error { //优化参数设置
 	conn, err := slf.getConn()
 	if err != nil {
@@ -152,8 +152,8 @@ func (slf *GRPCClientSet) putConn(conn *grpc.ClientConn) error {
 }
 
 //GetIdleCount desc
-//@method GetIdleCount desc: Number of idle connections
-//@return (int)
+//@Method GetIdleCount desc: Number of idle connections
+//@Return (int)
 func (slf *GRPCClientSet) GetIdleCount() int {
 	slf._mx.Lock()
 	conns := slf._cs

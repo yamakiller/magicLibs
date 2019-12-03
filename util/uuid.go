@@ -3,8 +3,8 @@ package util
 import "github.com/google/uuid"
 
 //SpawnUUID desc
-//@method SpawnUUID desc: spawn uuid
-//@return (string) uuid
+//@Method SpawnUUID desc: spawn uuid
+//@Return (string) uuid
 func SpawnUUID() string {
 	guid := uuid.New()
 	return guid.String()

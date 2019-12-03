@@ -6,8 +6,8 @@ import (
 )
 
 //Bundle desc
-//@method Bundle desc: Basic binding js library, extended here
-//@param (*stack.JSStack)
+//@Method Bundle desc: Basic binding js library, extended here
+//@Param (*stack.JSStack)
 func Bundle(stack *stack.JSStack) {
 	stack.SetFunc("Refer", refer)
 }

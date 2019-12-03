@@ -1,7 +1,7 @@
 package containers
 
 //Container desc
-//@struct Container desc: is base interface that all data structures
+//@Struct Container desc: is base interface that all data structures
 type Container interface {
 	IsEmpty() bool
 	Size() int

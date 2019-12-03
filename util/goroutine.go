@@ -8,8 +8,8 @@ import (
 )
 
 //GetCurrentGoroutineID desc
-//@method GetCurrentGoroutineID desc: Return the ID of the current coroutine
-//@return  (int)
+//@Method GetCurrentGoroutineID desc: Return the ID of the current coroutine
+//@Return  (int)
 func GetCurrentGoroutineID() int {
 	defer func() {
 		if err := recover(); err != nil {

@@ -1,9 +1,9 @@
 package util
 
 //IsPower desc
-//@method IsPower desc: Determine if the value is a power of 2
-//@param  (int)  check value
-//@return (bool) yes:true no:false
+//@Method IsPower desc: Determine if the value is a power of 2
+//@Param  (int)  check value
+//@Return (bool) yes:true no:false
 func IsPower(n int) bool {
 	if n < 2 {
 		return false

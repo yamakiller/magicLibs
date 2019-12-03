@@ -8,7 +8,7 @@ const (
 )
 
 //Deploy desc
-//@struct Deploy desc coroutine pool deploy informat (json)
+//@Struct Deploy desc coroutine pool deploy informat (json)
 type Deploy struct {
 	Max  int `json:"max"`
 	Min  int `json:"min"`
@@ -16,7 +16,7 @@ type Deploy struct {
 }
 
 //NewDefault desc
-//@method NewDefault desc: create default coroutine pool deploy informat
+//@Method NewDefault desc: create default coroutine pool deploy informat
 func NewDefault() *Deploy {
 	return &Deploy{math.MaxInt16, 32, 64}
 }

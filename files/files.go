@@ -8,7 +8,7 @@ import (
 )
 
 //Files desc
-//@struct Files desc: files system
+//@Struct Files desc: files system
 type Files struct {
 	_dir        Directory
 	_cached     sync.Map
@@ -17,13 +17,13 @@ type Files struct {
 }
 
 //Initial desc
-//@method Initial desc: Initial files system
+//@Method Initial desc: Initial files system
 func (slf *Files) Initial() {
 	slf._dir.Initial()
 }
 
 //Close desc
-//@method Close desc: Close System and clear data
+//@Method Close desc: Close System and clear data
 func (slf *Files) Close() {
 
 	var key []string
@@ -41,9 +41,9 @@ func (slf *Files) Close() {
 }
 
 //IsFileExist desc
-//@method IsFileExist desc: files is exist
-//@param (string) file path and name
-//@return (bool) exist:true not exits: false
+//@Method IsFileExist desc: files is exist
+//@Param (string) file path and name
+//@Return (bool) exist:true not exits: false
 func (slf *Files) IsFileExist(fullPath string) bool {
 	h := slf.getCache(fullPath)
 	if h != nil {
@@ -58,8 +58,8 @@ func (slf *Files) IsFileExist(fullPath string) bool {
 }
 
 //DeleteFile desc
-//@method DeleteFile desc: delete file and remove cache
-//@param  (string) full path and file name
+//@Method DeleteFile desc: delete file and remove cache
+//@Param  (string) full path and file name
 //@retur  (error) delete fail error
 func (slf *Files) DeleteFile(fullPath string) error {
 	h := slf.getCache(fullPath)
@@ -76,31 +76,31 @@ func (slf *Files) DeleteFile(fullPath string) error {
 }
 
 //GetRoot desc
-//@method GetRoot desc: Return root dir
-//@return (string) dir
+//@Method GetRoot desc: Return root dir
+//@Return (string) dir
 func (slf *Files) GetRoot() string {
 	return slf._dir.rootPath
 }
 
 //GetCacheFiles desc
-//@method GetCacheFiles desc: Return Cache file of number
-//@return (int) file of number
+//@Method GetCacheFiles desc: Return Cache file of number
+//@Return (int) file of number
 func (slf *Files) GetCacheFiles() int {
 	return int(atomic.LoadInt64(&slf._cachedFils))
 }
 
 //GetCacheMem desc
-//@method GetCacheMem desc: Return Cache memory
-//@return (int64) Cache size
+//@Method GetCacheMem desc: Return Cache memory
+//@Return (int64) Cache size
 func (slf *Files) GetCacheMem() int64 {
 	return atomic.LoadInt64(&slf._cacheMem)
 }
 
 //GetDataFromFile desc
-//@method GetDataFromFile desc: Retrun File data
-//@param  (string) full path and file name
-//@return ([]byte) file data
-//@return (error)
+//@Method GetDataFromFile desc: Retrun File data
+//@Param  (string) full path and file name
+//@Return ([]byte) file data
+//@Return (error)
 func (slf *Files) GetDataFromFile(fullPath string) ([]byte, error) {
 
 	d, e := ioutil.ReadFile(fullPath)
@@ -112,10 +112,10 @@ func (slf *Files) GetDataFromFile(fullPath string) ([]byte, error) {
 }
 
 //GetDataFromCacheFile desc
-//@method GetDataFromCacheFile desc: Use Cache or Read File Return data
-//@param  (string) full path and file name
-//@return (*FileHandle) file handle
-//@return (error)
+//@Method GetDataFromCacheFile desc: Use Cache or Read File Return data
+//@Param  (string) full path and file name
+//@Return (*FileHandle) file handle
+//@Return (error)
 func (slf *Files) GetDataFromCacheFile(fullPath string) (*FileHandle, error) {
 	h := slf.getCache(fullPath)
 	if h != nil {
@@ -138,23 +138,23 @@ func (slf *Files) GetDataFromCacheFile(fullPath string) (*FileHandle, error) {
 }
 
 //WithRoot desc
-//@method WithRoot desc:setting system root dir
-//@param (string) path
+//@Method WithRoot desc:setting system root dir
+//@Param (string) path
 func (slf *Files) WithRoot(path string) {
 	slf._dir.WithRoot(path)
 }
 
 //GetFullPathForFilename desc
-//@method GetFullPathForFilename desc: Returns file full path and file name
-//@param  (string) file path
-//@return (string) full path and file name
+//@Method GetFullPathForFilename desc: Returns file full path and file name
+//@Param  (string) file path
+//@Return (string) full path and file name
 func (slf *Files) GetFullPathForFilename(filePath string) string {
 	return slf._dir.GetFullPathName(filePath)
 }
 
 //getCache desc
-//@method getCache desc: Return file cache
-//@return (*FileHandle) file cache handle
+//@Method getCache desc: Return file cache
+//@Return (*FileHandle) file cache handle
 func (slf *Files) getCache(fullPath string) *FileHandle {
 	r, ok := slf._cached.Load(fullPath)
 	if !ok {
@@ -174,8 +174,8 @@ var (
 )
 
 //Instance desc
-//@method Instance desc: Files System instance
-//@return (*Files) Files System object
+//@Method Instance desc: Files System instance
+//@Return (*Files) Files System object
 func Instance() *Files {
 	oneFiles.Do(func() {
 		defaultFile = &Files{}

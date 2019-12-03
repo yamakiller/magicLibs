@@ -22,9 +22,9 @@ func getHash(str []byte) uint32 {
 }
 
 //NewConsistentHash desc
-//@method NewConsistentHash desc: Create a hash consistent loader
-//@param  (int) replicas of number
-//@return (*Map)
+//@Method NewConsistentHash desc: Create a hash consistent loader
+//@Param  (int) replicas of number
+//@Return (*Map)
 func NewConsistentHash(replicas int) *Map {
 	if replicas <= 0 {
 		replicas = 20
@@ -39,31 +39,31 @@ var ErrEmptyCircle = errors.New("empty circle")
 type uInt32Slice []uint32
 
 //Len desc
-//@method Len desc: array lenght
-//@return (int)
+//@Method Len desc: array lenght
+//@Return (int)
 func (s uInt32Slice) Len() int {
 	return len(s)
 }
 
 //Less desc
-//@method Less desc: Compare the size of the array i, j position
-//@param  (int) array index
-//@param  (int) array index
-//@return If the data in the position of the array i is smaller than the data in the j position, it returns True, otherwise it returns False.
+//@Method Less desc: Compare the size of the array i, j position
+//@Param  (int) array index
+//@Param  (int) array index
+//@Return If the data in the position of the array i is smaller than the data in the j position, it returns True, otherwise it returns False.
 func (s uInt32Slice) Less(i, j int) bool {
 	return s[i] < s[j]
 }
 
 //Swap desc
-//@method Swap desc: Data exchange between the position of the array i and the data of the j position
-//@param  (int) array index
-//@param  (int) array index
+//@Method Swap desc: Data exchange between the position of the array i and the data of the j position
+//@Param  (int) array index
+//@Param  (int) array index
 func (s uInt32Slice) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
 //Map desc
-//@struct Map desc: Hash consistency load balancing
+//@Struct Map desc: Hash consistency load balancing
 type Map struct {
 	_replicas     int
 	_sortedHashes uInt32Slice
@@ -72,9 +72,9 @@ type Map struct {
 }
 
 //UnAdd desc
-//@method UnAdd desc: Join an object, not locked
-//@param (string) key
-//@param (interface{}) element value
+//@Method UnAdd desc: Join an object, not locked
+//@Param (string) key
+//@Param (interface{}) element value
 func (m *Map) UnAdd(key string, v interface{}) {
 	for i := 0; i < m._replicas; i++ {
 		m._circle[getHash([]byte(strconv.Itoa(i)+key))] = v
@@ -83,8 +83,8 @@ func (m *Map) UnAdd(key string, v interface{}) {
 }
 
 //UnRemove desc
-//@method UnRemove desc: Delete an object, not locked
-//@param (string) key
+//@Method UnRemove desc: Delete an object, not locked
+//@Param (string) key
 func (m *Map) UnRemove(key string) {
 	for i := 0; i < m._replicas; i++ {
 		delete(m._circle, getHash([]byte(strconv.Itoa(i)+key)))
@@ -93,10 +93,10 @@ func (m *Map) UnRemove(key string) {
 }
 
 //UnGet desc
-//@method UnGet desc: Return an object, not locked
-//@param  (string) name
-//@return (interface{}) element value
-//@return (error)
+//@Method UnGet desc: Return an object, not locked
+//@Param  (string) name
+//@Return (interface{}) element value
+//@Return (error)
 func (m *Map) UnGet(name string) (interface{}, error) {
 	if len(m._circle) == 0 {
 		return "", ErrEmptyCircle

@@ -1,24 +1,24 @@
 package files
 
 //FileHandle desc
-//@struct FileHandle desc: file handle
-//@member ([]byte) file data
-//@member (int) file size
+//@Struct FileHandle desc: file handle
+//@Member ([]byte) file data
+//@Member (int) file size
 type FileHandle struct {
 	_data []byte
 	_size int
 }
 
 //GetBytes desc
-//@method GetBytes desc: Returns data
-//@return ([]byte)
+//@Method GetBytes desc: Returns data
+//@Return ([]byte)
 func (slf *FileHandle) GetBytes() []byte {
 	return slf._data
 }
 
 //GetSize desc
-//@method GetSize desc: Returns data size
-//@return (int) size
+//@Method GetSize desc: Returns data size
+//@Return (int) size
 func (slf *FileHandle) GetSize() int {
 	return slf._size
 }

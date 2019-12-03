@@ -6,8 +6,8 @@ import (
 )
 
 //NewJSStack desc
-//@method NewJSStack desc: Create a js virtual machine
-//@return (*stack.JSStack)
+//@Method NewJSStack desc: Create a js virtual machine
+//@Return (*stack.JSStack)
 func NewJSStack() *stack.JSStack {
 	stack := stack.MakeJSStack()
 	js.Bundle(stack)

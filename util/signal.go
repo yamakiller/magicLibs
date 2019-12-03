@@ -8,7 +8,7 @@ import (
 )
 
 //SignalWatch desc
-//@struct SignalWatch desc: signal watch proccesser
+//@Struct SignalWatch desc: signal watch proccesser
 type SignalWatch struct {
 	_c chan os.Signal
 	_e sync.WaitGroup
@@ -16,8 +16,8 @@ type SignalWatch struct {
 }
 
 //Initial desc
-//@method Initial desc: Initialization signal watcher
-//@param (func()) Signal response back call function
+//@Method Initial desc: Initialization signal watcher
+//@Param (func()) Signal response back call function
 func (slf *SignalWatch) Initial(f func()) {
 	slf._f = f
 	slf._c = make(chan os.Signal)
@@ -26,7 +26,7 @@ func (slf *SignalWatch) Initial(f func()) {
 }
 
 //Watch desc
-//@method Watch desc: start watch signal
+//@Method Watch desc: start watch signal
 func (slf *SignalWatch) Watch() {
 	slf._e.Add(1)
 	go func() {
@@ -44,7 +44,7 @@ func (slf *SignalWatch) Watch() {
 }
 
 //Wait desc
-//@method Wait desc: wait signal watcher exit
+//@Method Wait desc: wait signal watcher exit
 func (slf *SignalWatch) Wait() {
 	slf._e.Wait()
 }

@@ -6,14 +6,14 @@ import (
 )
 
 //Set desc
-//@struct Set desc: holds elements in go`s native map
+//@Struct Set desc: holds elements in go`s native map
 type Set struct {
 	items map[interface{}]struct{}
 }
 
 //Push desc
-//@method Push desc: adds the es (one or more) to the set
-//@param  (...interface{}) insert elements
+//@Method Push desc: adds the es (one or more) to the set
+//@Param  (...interface{}) insert elements
 func (s *Set) Push(es ...interface{}) {
 	for _, it := range es {
 		s.items[it] = struct{}{}
@@ -21,8 +21,8 @@ func (s *Set) Push(es ...interface{}) {
 }
 
 //PushAll desc
-//@method PushAll desc: adds the st(set in element) to the set.
-//@param (*Set) sets
+//@Method PushAll desc: adds the st(set in element) to the set.
+//@Param (*Set) sets
 func (s *Set) PushAll(st *Set) {
 	for _, it := range st.items {
 		s.items[it] = struct{}{}
@@ -30,8 +30,8 @@ func (s *Set) PushAll(st *Set) {
 }
 
 //Retain desc
-//@method Retain desc: retain the es (one or more) to the set.
-//@param (...interface{}) elements
+//@Method Retain desc: retain the es (one or more) to the set.
+//@Param (...interface{}) elements
 func (s *Set) Retain(eds ...interface{}) {
 	vs := make(map[interface{}]struct{})
 	for _, it := range eds {
@@ -44,8 +44,8 @@ func (s *Set) Retain(eds ...interface{}) {
 }
 
 //RetainAll desc
-//@method RetainAll desc: retain the st(set in element) to the set.
-//@param (*Set) sets
+//@Method RetainAll desc: retain the st(set in element) to the set.
+//@Param (*Set) sets
 func (s *Set) RetainAll(st *Set) {
 	vs := make(map[interface{}]struct{})
 	for _, it := range st.items {
@@ -57,8 +57,8 @@ func (s *Set) RetainAll(st *Set) {
 }
 
 //Erase desc
-//@method Erase desc: removes the es (one or more) from the set
-//@param  (...interface{}) elements
+//@Method Erase desc: removes the es (one or more) from the set
+//@Param  (...interface{}) elements
 func (s *Set) Erase(es ...interface{}) {
 	for _, it := range es {
 		delete(s.items, it)
@@ -66,8 +66,8 @@ func (s *Set) Erase(es ...interface{}) {
 }
 
 //EraseAll desc
-//@method EraseAll desc: removes this st(set in element) from the set
-//@param (*Set) sets
+//@Method EraseAll desc: removes this st(set in element) from the set
+//@Param (*Set) sets
 func (s *Set) EraseAll(st *Set) {
 	for _, it := range st.items {
 		delete(s.items, it)
@@ -75,9 +75,9 @@ func (s *Set) EraseAll(st *Set) {
 }
 
 //Contains desc
-//@method Contains desc: check if es (one or more) are present in the set.
-//@param  (...interface{}) elements
-//@return (bool)
+//@Method Contains desc: check if es (one or more) are present in the set.
+//@Param  (...interface{}) elements
+//@Return (bool)
 func (s *Set) Contains(es ...interface{}) bool {
 	for _, it := range es {
 		if _, cs := s.items[it]; !cs {
@@ -88,28 +88,28 @@ func (s *Set) Contains(es ...interface{}) bool {
 }
 
 //Size desc
-//@method Size desc: returns number of elements within the set.
-//@return (int) size
+//@Method Size desc: returns number of elements within the set.
+//@Return (int) size
 func (s *Set) Size() int {
 	return len(s.items)
 }
 
 //IsEmpty desc
-//@method IsEmpty desc: returns true if set does not contain any elements.
-//@param (bool)
+//@Method IsEmpty desc: returns true if set does not contain any elements.
+//@Param (bool)
 func (s *Set) IsEmpty() bool {
 	return s.Size() == 0
 }
 
 //Clear desc
-//@method Clear desc: clears all values in the set.
+//@Method Clear desc: clears all values in the set.
 func (s *Set) Clear() {
 	s.items = make(map[interface{}]struct{})
 }
 
 //Values desc
-//@method Values desc: returns all items in the set.
-//@return ([]interface{})
+//@Method Values desc: returns all items in the set.
+//@Return ([]interface{})
 func (s *Set) Values() []interface{} {
 	vs := make([]interface{}, s.Size())
 	icnt := 0
@@ -121,8 +121,8 @@ func (s *Set) Values() []interface{} {
 }
 
 //String desc
-//@method String desc: Returns a string
-//@return (string)
+//@Method String desc: Returns a string
+//@Return (string)
 func (s *Set) String() string {
 	str := "HashSet\n"
 	items := []string{}

@@ -8,25 +8,27 @@ import (
 )
 
 //RedisDB desc
-//@struct RedisDB desc: redis db opertioner
-//@member (*redis.Pool) a redis connection pool
-//@member (string) redis address
-//@member (int)  redis db code
+//@Summary redis db opertioner
+//@Struct RedisDB
+//@Member (*redis.Pool) a redis connection pool
+//@Member (string) redis address
+//@Member (int)  redis db code
 type RedisDB struct {
 	_c    *redis.Pool
 	_host string
 	_db   int
 }
 
-//Init desc
-//@method Init desc: initialization Redis DB
-//@param (string) redis host address
-//@param (int) redis db code
-//@param (int) redis connection max idle of number
-//@param (int) redis connection max active of number
-//@param (int) redis connection idle time (unit/sec)
-//@return (error) if connecting fail return error ,success return nil
-func (slf *RedisDB) Init(host string, db int, maxIdle int, maxActive int, idleSec int) error {
+//Initial desc
+//@Summary initialization Redis DB
+//@Method Initial
+//@Param (string) redis host address
+//@Param (int) redis db code
+//@Param (int) redis connection max idle of number
+//@Param (int) redis connection max active of number
+//@Param (int) redis connection idle time (unit/sec)
+//@Return (error) if connecting fail return error ,success return nil
+func (slf *RedisDB) Initial(host string, db int, maxIdle int, maxActive int, idleSec int) error {
 	slf._host = host
 	slf._db = db
 
@@ -51,11 +53,12 @@ func (slf *RedisDB) Init(host string, db int, maxIdle int, maxActive int, idleSe
 }
 
 //Do desc
-//@method Do desc: execute redis command
-//@param (string) command name
-//@param (...interface{}) command params
-//@return (interface{}) execute result
-//@return (error) if execute fail return error, execute success return nil
+//@Summary execute redis command
+//@Method Do
+//@Param (string) command name
+//@Param (...interface{}) command params
+//@Return (interface{}) execute result
+//@Return (error) if execute fail return error, execute success return nil
 func (slf *RedisDB) Do(commandName string, args ...interface{}) (interface{}, error) {
 	c := slf._c.Get()
 	defer c.Close()
@@ -63,7 +66,8 @@ func (slf *RedisDB) Do(commandName string, args ...interface{}) (interface{}, er
 }
 
 //Close desc
-//@method Close desc: close redis db operation
+//@Summary close redis db operation
+//@Method Close
 func (slf *RedisDB) Close() {
 	slf._c.Close()
 }

@@ -7,9 +7,9 @@ import (
 )
 
 //JSONSerialize desc
-//@method JSONSerialize desc: golang object Serialized to json string
-//@param  (interface{}) json object
-//@return (string) json string
+//@Method JSONSerialize desc: golang object Serialized to json string
+//@Param  (interface{}) json object
+//@Return (string) json string
 func JSONSerialize(obj interface{}) string {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	data, err := json.Marshal(&obj)
@@ -22,10 +22,10 @@ func JSONSerialize(obj interface{}) string {
 }
 
 //JSONUnSerialize desc
-//@method JSONUnSerialize desc: Reverse the json string [byte] into a golang object
-//@param  ([]byte) json []byte
-//@param  (interface{}) out json object
-//@return (error)
+//@Method JSONUnSerialize desc: Reverse the json string [byte] into a golang object
+//@Param  ([]byte) json []byte
+//@Param  (interface{}) out json object
+//@Return (error)
 func JSONUnSerialize(data []byte, v interface{}) error {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	err := json.Unmarshal(data, v)
@@ -33,9 +33,9 @@ func JSONUnSerialize(data []byte, v interface{}) error {
 }
 
 //JSONUnFormSerialize desc
-//@method JSONUnFormSerialize desc: Reverse the json string into a golang object
-//@param  (string) json string
-//@param  (interface{}) out json object
+//@Method JSONUnFormSerialize desc: Reverse the json string into a golang object
+//@Param  (string) json string
+//@Param  (interface{}) out json object
 func JSONUnFormSerialize(data string, v interface{}) error {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	err := json.UnmarshalFromString(data, v)

@@ -11,11 +11,11 @@ import (
 )
 
 //AesEncrypt desc
-//@method AesEncrypt desc: aes encrypt
-//@param (string) key
-//@param (string) plaintext
-//@return (string)  ciphertext
-//@return (error)
+//@Method AesEncrypt desc: aes encrypt
+//@Param (string) key
+//@Param (string) plaintext
+//@Return (string)  ciphertext
+//@Return (error)
 func AesEncrypt(key string, plaintext string) (string, error) {
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
@@ -33,11 +33,11 @@ func AesEncrypt(key string, plaintext string) (string, error) {
 }
 
 //AesDecrypt desc
-//@method AesDecrypt desc: aes decrypt
-//@param (string) key
-//@param (string) ciphertext
-//@return (string) plaintext
-//@return (error)
+//@Method AesDecrypt desc: aes decrypt
+//@Param (string) key
+//@Param (string) ciphertext
+//@Return (string) plaintext
+//@Return (error)
 func AesDecrypt(key string, d string) (string, error) {
 	ciphertext, err := hex.DecodeString(d)
 	if err != nil {

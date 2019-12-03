@@ -22,24 +22,24 @@ type HashTable struct {
 }
 
 //Initial desc
-//@method Initial desc: Initialize the hashtable
+//@Method Initial desc: Initialize the hashtable
 func (ht *HashTable) Initial() {
 	ht._arrays = make([]interface{}, ht.Max)
 	ht._seqID = 1
 }
 
 //Size desc
-//@method Size desc: Returns the hashtable is number
-//@return (int) size
+//@Method Size desc: Returns the hashtable is number
+//@Return (int) size
 func (ht *HashTable) Size() int {
 	return ht._sz
 }
 
 //Push desc
-//@method Push desc: Insert an value
-//@param (interface{}) value
-//@return (int32) insert an value, hash value
-//@return (error)
+//@Method Push desc: Insert an value
+//@Param (interface{}) value
+//@Return (int32) insert an value, hash value
+//@Return (error)
 func (ht *HashTable) Push(v interface{}) (uint32, error) {
 	var i uint32
 	for i = 0; i < ht.Max; i++ {
@@ -57,9 +57,9 @@ func (ht *HashTable) Push(v interface{}) (uint32, error) {
 }
 
 //Get desc
-//@method Get desc: Returns the one elements from the hashtable
-//@param  (uint32) hash value
-//@return (interface{})
+//@Method Get desc: Returns the one elements from the hashtable
+//@Param  (uint32) hash value
+//@Return (interface{})
 func (ht *HashTable) Get(key uint32) interface{} {
 	hash := key & uint32(ht.Max-1)
 	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
@@ -69,8 +69,8 @@ func (ht *HashTable) Get(key uint32) interface{} {
 }
 
 //GetValues desc
-//@method GetValues desc: Returns the elements of all from hashtable
-//@return ([]interface{}) Returns all value
+//@Method GetValues desc: Returns the elements of all from hashtable
+//@Return ([]interface{}) Returns all value
 func (ht *HashTable) GetValues() []interface{} {
 	if ht._sz == 0 {
 		return nil
@@ -90,9 +90,9 @@ func (ht *HashTable) GetValues() []interface{} {
 }
 
 //Remove desc
-//@method Remove desc: removes one elements in the hashtable
-//@param  (uint32) hash value
-//@return (bool)
+//@Method Remove desc: removes one elements in the hashtable
+//@Param  (uint32) hash value
+//@Return (bool)
 func (ht *HashTable) Remove(key uint32) bool {
 	hash := uint32(key) & uint32(ht.Max-1)
 	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {

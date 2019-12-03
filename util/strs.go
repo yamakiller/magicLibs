@@ -8,11 +8,11 @@ import (
 var _letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 //SubStr desc
-//@method SubStr desc:Cut string ends with length
-//@param  (string) source string
-//@param  (int)    start pos
-//@param  (int)    sub length
-//@return (string) sub string
+//@Method SubStr desc:Cut string ends with length
+//@Param  (string) source string
+//@Param  (int)    start pos
+//@Param  (int)    sub length
+//@Return (string) sub string
 func SubStr(str string, start int, length int) string {
 	rs := []rune(str)
 	rl := len(rs)
@@ -44,11 +44,11 @@ func SubStr(str string, start int, length int) string {
 }
 
 //SubStr2 desc
-//@method SubStr2 desc : Cut string ends with index
-//@param  (string) source string
-//@param  (int)    start pos
-//@param  (int)    end pos
-//@return (string) sub string
+//@Method SubStr2 desc : Cut string ends with index
+//@Param  (string) source string
+//@Param  (int)    start pos
+//@Param  (int)    end pos
+//@Return (string) sub string
 func SubStr2(str string, start int, end int) string {
 	rs := []rune(str)
 	length := len(rs)
@@ -64,9 +64,9 @@ func SubStr2(str string, start int, end int) string {
 }
 
 //RandString desc
-//@method RandStr desc : Randomly generate a string of length n
-//@param (int) length
-//@return (string)
+//@Method RandStr desc : Randomly generate a string of length n
+//@Param (int) length
+//@Return (string)
 func RandStr(length int) string {
 	b := make([]rune, length)
 	for i := range b {
@@ -76,9 +76,9 @@ func RandStr(length int) string {
 }
 
 //IsPWDValidity desc
-//@method IsPWDValidity desc: Verify password is valid
-//@param (string) password
-//@return (bool) is valid
+//@Method IsPWDValidity desc: Verify password is valid
+//@Param (string) password
+//@Return (bool) is valid
 func IsPWDValidity(pwd string) bool {
 	b, e := regexp.MatchString("^([a-zA-Z_-].*)([0-9].*)$", pwd)
 	if e != nil {
@@ -96,9 +96,9 @@ func IsPWDValidity(pwd string) bool {
 }
 
 //IsAccountValidity desc
-//@method IsACCValidity desc: Verify account is valid
-//@param (string) account
-//@return (bool) is valid
+//@Method IsACCValidity desc: Verify account is valid
+//@Param (string) account
+//@Return (bool) is valid
 func IsAccountValidity(account string) bool {
 	b, e := regexp.MatchString("^[a-zA-Z0-9_-]{8,16}$", account)
 	if e != nil {
@@ -108,9 +108,9 @@ func IsAccountValidity(account string) bool {
 }
 
 //IsCaptchaValidity desc
-//@method IsCaptchaValidity desc: Verify captcha is valid
-//@param (string) captcha
-//@return (bool) is valid
+//@Method IsCaptchaValidity desc: Verify captcha is valid
+//@Param (string) captcha
+//@Return (bool) is valid
 func IsCaptchaValidity(captcha string) bool {
 	b, e := regexp.MatchString("^[0-9]{6,6}", captcha)
 	if e != nil {

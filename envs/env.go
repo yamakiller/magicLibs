@@ -7,16 +7,18 @@ var (
 	defaultEnv IEnv
 )
 
-//With desc
-//@method With desc: Setting Environment variable object
-//@param (IEnv) new Environment variable object
+//With doc
+//@Summary Setting Environment variable object
+//@Method With
+//@Param (IEnv) new Environment variable object
 func With(h IEnv) {
 	defaultEnv = h
 }
 
-//Instance desc
-//@method Instance desc: Environment variable object instance
-//@return (IEnv) an Environment variable object
+//Instance doc
+//@Summary Environment variable object instance
+//@Method Instance
+//@Return (IEnv) an Environment variable object
 func Instance() IEnv {
 	oneEnv.Do(func() {
 		if defaultEnv == nil {
@@ -28,9 +30,10 @@ func Instance() IEnv {
 	return defaultEnv
 }
 
-//IEnv desc
-//@interface IEnv desc: Environment variable loading interface
-//@method Load desc: file load to environment variable
+//IEnv doc
+//@Summary Environment variable loading interface
+//@Interface IEnv
+//@Method Load desc: file load to environment variable
 type IEnv interface {
 	Initial()
 	Load(key string, fileName string, out interface{}) error

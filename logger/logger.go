@@ -13,7 +13,7 @@ const (
 )
 
 //Logger desc
-//@interface Logger desc: Log module interface
+//@Interface Logger desc: Log module interface
 type Logger interface {
 	run() int
 	exit()
@@ -67,9 +67,9 @@ var (
 )
 
 //New desc
-//@method New desc: create an Logger object
-//@param (Spawn) Logger make method
-//@return (Logger) log object
+//@Method New desc: create an Logger object
+//@Param (Spawn) Logger make method
+//@Return (Logger) log object
 func New(spawn Spawn) Logger {
 
 	if spawn == nil {
@@ -82,17 +82,17 @@ func New(spawn Spawn) Logger {
 }
 
 //WithDefault desc
-//@method WithDefault desc: Set the default log handle
-//@param (Logger) logger object
+//@Method WithDefault desc: Set the default log handle
+//@Param (Logger) logger object
 func WithDefault(log Logger) {
 	defaultHandle = log
 }
 
 //Error desc
-//@method Error desc: Output error log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Error desc: Output error log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Error(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return
@@ -101,10 +101,10 @@ func Error(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Info desc
-//@method Info desc: Output information log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Info desc: Output information log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Info(owner uint32, fmrt string, args ...interface{}) {
 
 	if defaultHandle == nil {
@@ -115,10 +115,10 @@ func Info(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Warning desc
-//@method Warning desc: Output warning log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Warning desc: Output warning log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Warning(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return
@@ -127,10 +127,10 @@ func Warning(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Panic desc
-//@method Panic desc: Output program crash log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Panic desc: Output program crash log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Panic(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return
@@ -139,10 +139,10 @@ func Panic(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Fatal desc
-//@method Fatal desc: Output critical error log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Fatal desc: Output critical error log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Fatal(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return
@@ -151,10 +151,10 @@ func Fatal(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Debug desc
-//@method Debug desc: Output Debug log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Debug desc: Output Debug log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Debug(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return
@@ -163,10 +163,10 @@ func Debug(owner uint32, fmrt string, args ...interface{}) {
 }
 
 //Trace desc
-//@method Trace desc: Output trace log
-//@param (int32) owner
-//@param (string) format
-//@param (...interface{}) args
+//@Method Trace desc: Output trace log
+//@Param (int32) owner
+//@Param (string) format
+//@Param (...interface{}) args
 func Trace(owner uint32, fmrt string, args ...interface{}) {
 	if defaultHandle == nil {
 		return

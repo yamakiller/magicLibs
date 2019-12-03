@@ -14,7 +14,7 @@ import (
 )
 
 //OAuth2 desc
-//@struct OAuth2 desc:
+//@Struct OAuth2 desc:
 type OAuth2 struct {
 	_m *manage.Manager
 	_c *store.ClientStore
@@ -28,42 +28,42 @@ type OAuth2 struct {
 }
 
 //SetTokenExp desc
-//@method SetTokenExp desc: Setting oauth2 token exp time
-//@param (int) token exp time sec
+//@Method SetTokenExp desc: Setting oauth2 token exp time
+//@Param (int) token exp time sec
 func (slf *OAuth2) SetTokenExp(v int) {
 	slf._tokenExp = v
 }
 
 //SetRefreshTokenExp desc
-//@method SetRefreshTokenExp desc: Setting oauth2 refresh token exp time
-//@param (int) refresh token exp time sec
+//@Method SetRefreshTokenExp desc: Setting oauth2 refresh token exp time
+//@Param (int) refresh token exp time sec
 func (slf *OAuth2) SetRefreshTokenExp(v int) {
 	slf._refreshTokenExp = v
 }
 
 //SetRefresh desc
-//@method SetRefresh desc: Setting oauth2 token reset refresh
-//@param (bool) is refresh
+//@Method SetRefresh desc: Setting oauth2 token reset refresh
+//@Param (bool) is refresh
 func (slf *OAuth2) SetRefresh(v bool) {
 	slf._isGenerateRefresh = v
 }
 
 //SetKey desc
-//@method SetKey desc: Setting oauth2 token s256 key
-//@param (string) key
+//@Method SetKey desc: Setting oauth2 token s256 key
+//@Param (string) key
 func (slf *OAuth2) SetKey(v string) {
 	slf._s256KeyValue = v
 }
 
 //SetURI desc
-//@method SetURI desc: Setting oauth2 access address
-//@param (string) oauth2 access address
+//@Method SetURI desc: Setting oauth2 access address
+//@Param (string) oauth2 access address
 func (slf *OAuth2) SetURI(v string) {
 	slf._accessURI = v
 }
 
 //Initial desc
-//@method Initial desc:
+//@Method Initial desc:
 func (slf *OAuth2) Initial() {
 	codeTokenCfg := &manage.Config{
 		AccessTokenExp:    time.Second * time.Duration(slf._tokenExp),
@@ -93,9 +93,9 @@ func (slf *OAuth2) Initial() {
 }
 
 //onRequestAuth desc
-//@method onRequestAuth desc: http request method
-//@param (http.ResponseWriter)
-//@param (http.Request)
+//@Method onRequestAuth desc: http request method
+//@Param (http.ResponseWriter)
+//@Param (http.Request)
 func (slf *OAuth2) onRequestAuth(w http.ResponseWriter, r *http.Request) {
 	err := slf._s.HandleTokenRequest(w, r)
 	if err != nil {
@@ -104,11 +104,11 @@ func (slf *OAuth2) onRequestAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 //AddAuthClient desc
-//@method AddAuthClient desc: append authorization client
-//@param (string) client id
-//@param (string) secret
-//@param (string) domain
-//@param (string) user id
+//@Method AddAuthClient desc: append authorization client
+//@Param (string) client id
+//@Param (string) secret
+//@Param (string) domain
+//@Param (string) user id
 func (slf *OAuth2) AddAuthClient(id string, secret string, domain string, userid string) {
 	slf._c.Set(id, &models.Client{ID: id, Secret: secret, Domain: domain, UserID: userid})
 }

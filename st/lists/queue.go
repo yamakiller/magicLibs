@@ -11,16 +11,16 @@ type node struct {
 }
 
 //Queue desc
-//@struct Queue desc: Simple queue
-//@member (*node) header
-//@member (*node) tail
+//@Struct Queue desc: Simple queue
+//@Member (*node) header
+//@Member (*node) tail
 type Queue struct {
 	_head, _tail *node
 }
 
 //NewQueue desc
-//@method NewQueue desc: Create a queue object
-//@return (*Queue) Queue object
+//@Method NewQueue desc: Create a queue object
+//@Return (*Queue) Queue object
 func NewQueue() *Queue {
 	q := &Queue{}
 	stub := &node{}
@@ -30,8 +30,8 @@ func NewQueue() *Queue {
 }
 
 //Push desc
-//@method Push desc: Insert an Object into the queue
-//@param  (interface{}) insert value
+//@Method Push desc: Insert an Object into the queue
+//@Param  (interface{}) insert value
 func (slf *Queue) Push(t interface{}) {
 	n := new(node)
 	n._val = t
@@ -40,8 +40,8 @@ func (slf *Queue) Push(t interface{}) {
 }
 
 //Pop desc
-//@method Pop desc: An object pops up in the re-queue
-//@return (interface{}) pop header elements
+//@Method Pop desc: An object pops up in the re-queue
+//@Return (interface{}) pop header elements
 func (slf *Queue) Pop() interface{} {
 	tail := slf._tail
 	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail._next))))
@@ -55,8 +55,8 @@ func (slf *Queue) Pop() interface{} {
 }
 
 //IsEmpty desc
-//@method IsEmpty desc: Whether the queue is empty
-//@return (bool) null:true, not null:false
+//@Method IsEmpty desc: Whether the queue is empty
+//@Return (bool) null:true, not null:false
 func (slf *Queue) IsEmpty() bool {
 	tail := slf._tail
 	next := (*node)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&tail._next))))

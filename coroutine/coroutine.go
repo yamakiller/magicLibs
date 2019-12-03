@@ -60,8 +60,8 @@ var (
 )
 
 //Instance desc
-//@method Instance desc: coroutine pool instance
-//@return (*CoroutinePool)
+//@Method Instance desc: coroutine pool instance
+//@Return (*CoroutinePool)
 func Instance() *CoPools {
 	oneCoroutinePool.Do(func() {
 		defaultCoroutinePool = &CoPools{}
@@ -70,8 +70,8 @@ func Instance() *CoPools {
 }
 
 //CoPools desc
-//@struct CoPools desc: Coroutine pool
-//@member (int) number of task limit
+//@Struct CoPools desc: Coroutine pool
+//@Member (int) number of task limit
 type CoPools struct {
 	_taskLimit int
 	_maxNum    int
@@ -122,10 +122,10 @@ scheduer_end:
 }
 
 //Start desc
-//@method Start desc: Start the coroutine pool
-//@param (int) coroutine max of number
-//@param (int) coroutine min of number
-//@param (int) coroutine task max limit
+//@Method Start desc: Start the coroutine pool
+//@Param (int) coroutine max of number
+//@Param (int) coroutine min of number
+//@Param (int) coroutine task max limit
 func (slf *CoPools) Start(max int, min int, taskmax int) {
 	slf._maxNum = max
 	slf._minNum = min
@@ -165,17 +165,17 @@ func (slf *CoPools) startOne(idx int) {
 }
 
 //Stop desc
-//@method Stop desc: Stop the coroutine pool
+//@Method Stop desc: Stop the coroutine pool
 func (slf *CoPools) Stop() {
 	close(slf._quit)
 	slf._wait.Wait()
 }
 
 //Go desc
-//@method Go desc: Running coroutine
-//@param  (func(params []interface{})) call function
-//@param  (...interface{}) call args
-//@return (error)
+//@Method Go desc: Running coroutine
+//@Param  (func(params []interface{})) call function
+//@Param  (...interface{}) call args
+//@Return (error)
 func (slf *CoPools) Go(f func(params []interface{}), params ...interface{}) error {
 
 	select {
