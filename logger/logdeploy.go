@@ -3,9 +3,9 @@ package logger
 //LogDeploy doc
 //@Struct LogDeploy @Summary logger config informat
 type LogDeploy struct {
-	LogPath  string `json:"log-path"`
-	LogSize  int    `json:"log-size"`
-	LogLevel uint32 `json:"log-level"`
+	LogPath  string `xml:"log-path" yaml:"log-path" json:"log-path"`
+	LogSize  int    `xml:"log-size" yaml:"log-size" json:"log-size"`
+	LogLevel uint32 `xml:"log-level" yaml:"log-level" json:"log-level"`
 }
 
 //NewDefault doc
