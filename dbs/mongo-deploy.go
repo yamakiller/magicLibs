@@ -10,15 +10,15 @@ package dbs
 //@Member (int) Mongo DB connection heart beat interval [Unit second]
 //@Member (int) Mongo DB connection idle time [Unit second]
 //@Member (int) Mongo DB Background time out  [Unit second]
-//@Member (int) Mongo DB connection socket time out [Unit second]
+//@Member (int) Mongo DB connectiosn socket time out [Unit second]
 type MongoDeplay struct {
-	Host              []string `xml:"host" yaml:"host" json:"host"`
+	Hosts             []string `xml:"hosts" yaml:"hosts" json:"hosts"`
 	URI               string   `xml:"uri" yaml:"uri" json:"uri"`
-	DBName            string   `xml:"db-name" yaml:"db-name" json:"db-name"`
-	MaxPoolSize       int      `xml:"max-pool-size" yaml:"max-pool-size" json:"max-pool-size"`
-	MinPoolSize       int      `xml:"min-pool-size" yaml:"min-pool-size" json:"min-pool-size"`
-	HeartbeatInterval int      `xml:"heart-beat-interval" yaml:"heart-beat-interval" json:"heart-beat-interval"`
-	IdleTime          int      `xml:"idle-time" yaml:"idle-time" json:"idle-time"`
-	TimeOut           int      `xml:"time-out" yaml:"time-out" json:"time-out"`
-	SocketTimeout     int      `xml:"socket-timeout" yaml:"socket-timeout" json:"socket-timeout"`
+	DBName            string   `xml:"db-name" yaml:"db name" json:"db-name"`
+	MaxPoolSize       int      `xml:"max-pool" yaml:"max pool" json:"max-pool"`
+	MinPoolSize       int      `xml:"min-pool" yaml:"min pool" json:"min-pool"`
+	HeartRate 		  int      `xml:"heart-rate" yaml:"heart rate" json:"heart-beat-interval"`
+	IdleTime          int      `xml:"idle-time" yaml:"idle time" json:"idle-time"`
+	TimeOut           int      `xml:"time-out" yaml:"time out" json:"time-out"`
+	ConnectTimeout    int      `xml:"connection-timeout" yaml:"connection timeout" json:"connection-timeout"`
 }
