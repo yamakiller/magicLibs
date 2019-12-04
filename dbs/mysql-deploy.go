@@ -9,9 +9,9 @@ package dbs
 //@Member (int) mysql connection life time (sec)
 type MySQLDeploy struct {
 	DSN  string `xml:"dsn" yaml:"dsn" json:"dsn"`
-	Max  int    `xml:"max-conn" yaml:"max-conn" json:"max-conn"`
-	Idle int    `xml:"idle-conn" yaml:"idle-conn" json:"idle-conn"`
-	Life int    `xml:"life-time" yaml:"life-time" json:"life-time"`
+	Max  int    `xml:"max" yaml:"max conn" json:"max"`
+	Idle int    `xml:"idle" yaml:"idle" json:"idle"`
+	Life int    `xml:"life" yaml:"life" json:"life"`
 }
 
 //DoMySQLDeploy doc

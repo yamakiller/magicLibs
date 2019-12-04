@@ -5,15 +5,15 @@ package dbs
 //@Struct RedisDeploy
 //@Member (string) Redis Host from json "host"
 //@Member (int) Redis DB select from json "db"
-//@Member (int) Redis Connection max idle of number from json "max-idle"
-//@Member (int) Redis Connection max active of number from json "max-active"
+//@Member (int) Redis Connection max idle of number from json "idle"
+//@Member (int) Redis Connection max active of number from json "active"
 //@Member (int) Redis Connection idle time from json "idle-time" util/sec
 type RedisDeploy struct {
 	Host      string `xml:"host" yaml:"host" json:"host"`
 	DB        int    `xml:"db" yaml:"db" json:"db"`
-	MaxIdle   int    `xml:"max-idle" yaml:"max-idle" json:"max-idle"`
-	MaxActive int    `xml:"max-active" yaml:"max-active" json:"max-active"`
-	IdleTime  int    `xml:"idle-time" yaml:"idle-time" json:"idle-time"`
+	MaxIdle   int    `xml:"idle" yaml:"idle" json:"idle"`
+	MaxActive int    `xml:"active" yaml:"active" json:"active"`
+	IdleTime  int    `xml:"idletime" yaml:"idletime" json:"idletime"`
 }
 
 //RedisDeployArray doc
