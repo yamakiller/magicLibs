@@ -2,7 +2,6 @@ package table
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/yamakiller/magicLibs/st/comparator"
 )
@@ -97,12 +96,10 @@ func (ht *HashTable) GetValues() []interface{} {
 //@Param  (uint32) hash value
 //@Return (bool)
 func (ht *HashTable) Remove(key uint32) bool {
-	fmt.Println("remove")
 	hash := uint32(key) & uint32(ht.Max-1)
 	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
 		ht._arrays[hash] = nil
 		ht._sz--
-		fmt.Println("removed")
 		return true
 	}
 
