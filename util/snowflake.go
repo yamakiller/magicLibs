@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	constWorkerIdBits     int64 = 5
-	constDatacenterIdBits int64 = 5
+	constWorkerIDBits     int64 = 5
+	constDatacenterIDBits int64 = 5
 	constSequenceBits     int64 = 12
 
-	constMaxWorkerId     int64 = -1 ^ (-1 << uint64(constWorkerIdBits))
-	constMaxDatacenterId int64 = -1 ^ (-1 << uint64(constDatacenterIdBits))
+	constMaxWorkerID     int64 = -1 ^ (-1 << uint64(constWorkerIDBits))
+	constMaxDatacenterID int64 = -1 ^ (-1 << uint64(constDatacenterIDBits))
 	constMaxSequence     int64 = -1 ^ (-1 << uint64(constSequenceBits))
 
 	timeLeft uint8 = 22

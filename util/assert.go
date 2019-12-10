@@ -12,7 +12,8 @@ import (
 //@Param (string) error message
 func Assert(isAs bool, errMsg string) {
 	if !isAs {
-		panic(errMsg)
+		_, file, inline, ok := runtime.Caller(2)
+		panic(fmt.Sprintf("%s %d %v\n%s", file, inline, ok, errMsg))
 	}
 }
 
@@ -22,7 +23,8 @@ func Assert(isAs bool, errMsg string) {
 //@Param (string) error message
 func AssertEmpty(isNull interface{}, errMsg string) {
 	if isNull == nil {
-		panic(errMsg)
+		_, file, inline, ok := runtime.Caller(2)
+		panic(fmt.Sprintf("%s %d %v\n%s", file, inline, ok, errMsg))
 	}
 }
 

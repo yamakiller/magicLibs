@@ -63,7 +63,7 @@ func SubStr2(str string, start int, end int) string {
 	return string(rs[start:end])
 }
 
-//RandString doc
+//RandStr doc
 //@Method RandStr doc : Randomly generate a string of length n
 //@Param (int) length
 //@Return (string)
