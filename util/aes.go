@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
 )
 
@@ -52,7 +51,6 @@ func AesDecrypt(key string, d string) (string, error) {
 	}
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
-	fmt.Println(len(ciphertext), len(iv))
 	cipher.NewCFBDecrypter(block, iv).XORKeyStream(ciphertext, ciphertext)
 	return string(ciphertext), nil
 }
