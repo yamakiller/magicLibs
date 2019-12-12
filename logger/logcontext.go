@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 //LogContext doc
@@ -162,6 +163,11 @@ func (slf *LogContext) Redirect() {
 		slf.Error(0, "config local file system logger error. %+v", errors.WithStack(err))
 	}
 
+	formatter := new(prefixed.TextFormatter)
+	formatter.FullTimestamp = true
+	formatter.TimestampFormat = "2006-01-02 15:04:05"
+	formatter.DisableColors = true
+
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
 		logrus.DebugLevel: writer,
 		logrus.InfoLevel:  writer,
@@ -169,7 +175,7 @@ func (slf *LogContext) Redirect() {
 		logrus.ErrorLevel: writer,
 		logrus.FatalLevel: writer,
 		logrus.PanicLevel: writer,
-	}, &logrus.TextFormatter{DisableColors: true, TimestampFormat: "2006-01-02 15:04:05.000"})
+	}, formatter)
 
 	slf._logHandle.AddHook(lfHook)
 }
