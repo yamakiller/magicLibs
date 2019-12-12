@@ -1,8 +1,6 @@
 package logger
 
 import (
-	"runtime"
-
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
@@ -53,12 +51,10 @@ var (
 
 		formatter := new(prefixed.TextFormatter)
 		formatter.FullTimestamp = true
-		if runtime.GOOS == "windows" {
-			formatter.DisableColors = true
-		} else {
-			formatter.SetColorScheme(&prefixed.ColorScheme{
-				PrefixStyle: "blue+b"})
-		}
+		formatter.TimestampFormat = "2006-01-02 15:04:05"
+		formatter.SetColorScheme(&prefixed.ColorScheme{
+			PrefixStyle:    "white+h",
+			TimestampStyle: "black+h"})
 		l.SetFormatter(formatter)
 		l.Initial()
 		l.Redirect()
