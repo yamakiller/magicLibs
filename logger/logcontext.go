@@ -3,10 +3,14 @@ package logger
 import (
 	"fmt"
 	"os"
+	"path"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
+	"github.com/pkg/errors"
+	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,7 +28,6 @@ import (
 //@Member (sync.WaitGroup) log system is shutdown success
 type LogContext struct {
 	_filPath    string
-	_filHandle  *os.File
 	_logLevel   logrus.Level
 	_logHandle  *logrus.Logger
 	_logMailNum int32
@@ -50,13 +53,13 @@ func (slf *LogContext) SetLevel(v logrus.Level) {
 	slf._logLevel = v
 }
 
-//SetFilHandle doc
+/*//SetFilHandle doc
 //@Summary Setting log file handle
 //@Method SetFilHandle
 //@Param (*os.File) log file
 func (slf *LogContext) SetFilHandle(v *os.File) {
 	slf._filHandle = v
-}
+}*/
 
 //SetHandle doc
 //@SummarySetting log object
@@ -143,19 +146,32 @@ func (slf *LogContext) push(data LogMessage) {
 //@Summary Redirect log file
 //@Method Redirect
 func (slf *LogContext) Redirect() {
-
+	slf._logHandle.SetOutput(os.Stdout)
 	if slf._filPath == "" {
-		slf._logHandle.SetOutput(os.Stdout)
 		return
 	}
+	baseLogPath := path.Join(slf._filPath, "log")
+	writer, err := rotatelogs.New(
+		baseLogPath+".%Y-%m-%d",
+		rotatelogs.WithLinkName(baseLogPath),
+		rotatelogs.WithMaxAge(7*24*time.Hour),
+		rotatelogs.WithRotationTime(24*time.Hour),
+	)
 
-	f, err := os.OpenFile(slf._filPath, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		return
+		slf.Error(0, "config local file system logger error. %+v", errors.WithStack(err))
 	}
 
-	slf._filHandle = f
-	slf._logHandle.SetOutput(f)
+	lfHook := lfshook.NewHook(lfshook.WriterMap{
+		logrus.DebugLevel: writer,
+		logrus.InfoLevel:  writer,
+		logrus.WarnLevel:  writer,
+		logrus.ErrorLevel: writer,
+		logrus.FatalLevel: writer,
+		logrus.PanicLevel: writer,
+	}, &logrus.TextFormatter{DisableColors: true, TimestampFormat: "2006-01-02 15:04:05.000"})
+
+	slf._logHandle.AddHook(lfHook)
 }
 
 //Mount doc
@@ -188,9 +204,9 @@ func (slf *LogContext) Close() {
 	close(slf._logStop)
 	slf._logWait.Wait()
 	close(slf._logMailbox)
-	if slf._filHandle != nil {
+	/*if slf._filHandle != nil {
 		slf._filHandle.Close()
-	}
+	}*/
 }
 
 //Error doc
