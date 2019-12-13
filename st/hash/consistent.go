@@ -21,16 +21,16 @@ func getHash(str []byte) uint32 {
 	return hash
 }
 
-//NewConsistentHash doc
-//@Method NewConsistentHash @Summary Create a hash consistent loader
+//New doc
+//@Summary Create a hash consistent loader
+//@Method New
 //@Param  (int) replicas of number
 //@Return (*Map)
-func NewConsistentHash(replicas int) *Map {
+func New(replicas int) *Map {
 	if replicas <= 0 {
 		replicas = 20
 	}
-	return &Map{_replicas: replicas,
-		_circle: make(map[uint32]interface{})}
+	return &Map{_replicas: replicas, _maps: make(map[uint32]interface{})}
 }
 
 //ErrEmptyCircle Return an empty
@@ -39,14 +39,16 @@ var ErrEmptyCircle = errors.New("empty circle")
 type uInt32Slice []uint32
 
 //Len doc
-//@Method Len @Summary array lenght
+//@Summary array lenght
+//@Method Len
 //@Return (int)
 func (s uInt32Slice) Len() int {
 	return len(s)
 }
 
 //Less doc
-//@Method Less @Summary Compare the size of the array i, j position
+//@Summary Compare the size of the array i, j position
+//@Method Less
 //@Param  (int) array index
 //@Param  (int) array index
 //@Return If the data in the position of the array i is smaller than the data in the j position, it returns True, otherwise it returns False.
@@ -55,7 +57,8 @@ func (s uInt32Slice) Less(i, j int) bool {
 }
 
 //Swap doc
-//@Method Swap @Summary Data exchange between the position of the array i and the data of the j position
+//@Summary Data exchange between the position of the array i and the data of the j position
+//@Method Swap
 //@Param  (int) array index
 //@Param  (int) array index
 func (s uInt32Slice) Swap(i, j int) {
@@ -63,69 +66,121 @@ func (s uInt32Slice) Swap(i, j int) {
 }
 
 //Map doc
-//@Struct Map @Summary Hash consistency load balancing
+//@Summary Hash consistency load balancing
+//@Struct Map
 type Map struct {
-	_replicas     int
-	_sortedHashes uInt32Slice
-	_circle       map[uint32]interface{}
-	sync.RWMutex
+	_replicas int
+	_keys     uInt32Slice
+	_maps     map[uint32]interface{}
+	_nodes    []string
+	sync.Mutex
 }
 
-//UnAdd doc
-//@Method UnAdd @Summary Join an object, not locked
+func (slf *Map) IsEmpty() bool {
+	return len(slf._keys) == 0
+}
+
+//Add doc
+//@Summary Join an object, not locked
+//@Method Add
 //@Param (string) key
 //@Param (interface{}) element value
-func (m *Map) UnAdd(key string, v interface{}) {
-	for i := 0; i < m._replicas; i++ {
-		m._circle[getHash([]byte(strconv.Itoa(i)+key))] = v
+func (slf *Map) Add(key string, v interface{}) {
+	for i := 0; i < slf._replicas; i++ {
+		slf._maps[getHash([]byte(strconv.Itoa(i)+key))] = v
 	}
-	m.updateSortedHashes()
+	idx := slf.getKeyIndex(key)
+	if idx == -1 {
+		slf._nodes = append(slf._nodes, key)
+	} else {
+		slf._nodes[idx] = key
+	}
+	slf.generate()
 }
 
-//UnRemove doc
-//@Method UnRemove @Summary Delete an object, not locked
+//Remove doc
+//@Summary Delete an object, not locked
+//@Method Remove
 //@Param (string) key
-func (m *Map) UnRemove(key string) {
-	for i := 0; i < m._replicas; i++ {
-		delete(m._circle, getHash([]byte(strconv.Itoa(i)+key)))
+func (slf *Map) Remove(key string) interface{} {
+	var v interface{}
+	for i := 0; i < slf._replicas; i++ {
+		if v == nil {
+			v = slf._maps[getHash([]byte(strconv.Itoa(i)+key))]
+		}
+
+		delete(slf._maps, getHash([]byte(strconv.Itoa(i)+key)))
 	}
-	m.updateSortedHashes()
+	slf.rmKey(key)
+	slf.generate()
+	return v
 }
 
-//UnGet doc
-//@Method UnGet @Summary Return an object, not locked
+//Get doc
+//@Summary Return an object, not locked
+//@Method Get
 //@Param  (string) name
 //@Return (interface{}) element value
 //@Return (error)
-func (m *Map) UnGet(name string) (interface{}, error) {
-	if len(m._circle) == 0 {
+func (slf *Map) Get(name string) (interface{}, error) {
+	if len(slf._maps) == 0 {
 		return "", ErrEmptyCircle
 	}
 
 	key := getHash([]byte(name))
-	i := m.sreach(key)
-	return m._circle[m._sortedHashes[i]], nil
+	i := slf.sreach(key)
+	return slf._maps[slf._keys[i]], nil
 }
 
-func (m *Map) sreach(key uint32) (i int) {
-	f := func(x int) bool {
-		return m._sortedHashes[x] > key
+func (slf *Map) GetKeys() []string {
+	r := make([]string, len(slf._nodes))
+	for k, v := range slf._nodes {
+		r[k] = v
 	}
-	i = sort.Search(len(m._sortedHashes), f)
-	if i >= len(m._sortedHashes) {
+
+	return r
+}
+
+func (slf *Map) sreach(key uint32) (i int) {
+	i = sort.Search(len(slf._keys), func(x int) bool { return slf._keys[x] >= key })
+	if i >= len(slf._keys) {
 		i = 0
 	}
 	return
 }
 
-func (m *Map) updateSortedHashes() {
-	hashes := m._sortedHashes[:0]
-	if cap(m._sortedHashes)/(m._replicas*4) > len(m._circle) {
+func (slf *Map) getKeyIndex(key string) int {
+	for k, v := range slf._nodes {
+		if v == key {
+			return k
+		}
+	}
+	return -1
+}
+
+func (slf *Map) rmKey(key string) {
+	for k, v := range slf._nodes {
+		if v == key {
+			if k == 0 {
+				slf._nodes = slf._nodes[1:]
+			} else if k == (len(slf._nodes) - 1) {
+				slf._nodes = slf._nodes[:k-1]
+			} else {
+				slf._nodes = append(slf._nodes[:k], slf._nodes[k+1:]...)
+			}
+			return
+		}
+	}
+}
+
+func (slf *Map) generate() {
+	hashes := slf._keys[:0]
+	if cap(slf._keys)/(slf._replicas*4) > len(slf._maps) {
 		hashes = nil
 	}
-	for k := range m._circle {
+	for k := range slf._maps {
 		hashes = append(hashes, k)
 	}
 	sort.Sort(hashes)
-	m._sortedHashes = hashes
+	slf._keys = hashes
 }
