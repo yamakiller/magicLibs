@@ -28,6 +28,24 @@ type RouteGroup struct {
 	_sync sync.RWMutex
 }
 
+func (slf *RouteGroup) getAddrs() []string {
+	i := 0
+	slf._sync.Lock()
+	addrs := make([]string, len(slf._rmaps))
+	for k := range slf._rmaps {
+		addrs[i] = k
+		i++
+	}
+	slf._sync.Unlock()
+	return addrs
+}
+
+func (slf *RouteGroup) Size() int {
+	slf._sync.Lock()
+	defer slf._sync.Unlock()
+	return len(slf._rmaps)
+}
+
 func (slf *RouteGroup) WithReplicas(replicas int) {
 	slf._replicas = replicas
 }
@@ -37,11 +55,13 @@ func (slf *RouteGroup) Register(addr, key string, ctrl IRouteCtrl) {
 	defer slf._sync.Unlock()
 	if h, ok := slf._rmaps[addr]; ok {
 		h.register(key, ctrl)
+		h.release(ctrl)
 	} else {
 		h := NewHandle(addr, slf._replicas)
 		h.withDelete(slf._delete)
 		h.register(key, ctrl)
 		slf._rmaps[addr] = h
+		h.release(ctrl)
 	}
 }
 
@@ -77,4 +97,24 @@ func (slf *RouteGroup) Call(addr, method string, param, ret interface{}) error {
 	defer v.release(h)
 
 	return h.Call(method, param, ret)
+}
+
+func (slf *RouteGroup) Shutdown() {
+	for {
+		if slf.Size() <= 0 {
+			break
+		}
+
+		addrs := slf.getAddrs()
+		for _, k := range addrs {
+			slf._sync.Lock()
+			if h, ok := slf._rmaps[k]; ok {
+				delete(slf._rmaps, k)
+				slf._sync.Unlock()
+				h.shutdown()
+				continue
+			}
+			slf._sync.Unlock()
+		}
+	}
 }

@@ -75,3 +75,12 @@ func (slf *RouteHandle) release(ctrl IRouteCtrl) {
 		slf._delete(ctrl)
 	}
 }
+
+func (slf *RouteHandle) shutdown() {
+	slf._ctrls.Lock()
+	keys := slf._ctrls.GetKeys()
+	slf._ctrls.Unlock()
+	for _, v := range keys {
+		slf.unregister(v)
+	}
+}
