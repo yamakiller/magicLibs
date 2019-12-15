@@ -50,6 +50,15 @@ func (slf *RouteGroup) WithReplicas(replicas int) {
 	slf._replicas = replicas
 }
 
+func (slf *RouteGroup) IsExist(addr, key string) bool {
+	slf._sync.RLock()
+	defer slf._sync.RUnlock()
+	if h, ok := slf._rmaps[addr]; ok {
+		return h.isexist(key)
+	}
+	return false
+}
+
 func (slf *RouteGroup) Register(addr, key string, ctrl IRouteCtrl) {
 	slf._sync.Lock()
 	defer slf._sync.Unlock()

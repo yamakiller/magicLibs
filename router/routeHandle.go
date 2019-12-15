@@ -20,6 +20,10 @@ func (slf *RouteHandle) getAddr() string {
 	return slf._addr
 }
 
+func (slf *RouteHandle) isexist(key string) bool {
+	return slf._ctrls.IsExits(key)
+}
+
 func (slf *RouteHandle) isempty() bool {
 	slf._ctrls.Lock()
 	defer slf._ctrls.Unlock()

@@ -76,8 +76,20 @@ type Map struct {
 	sync.Mutex
 }
 
+//IsEmtpy doc
+//@Summay is emtpy
+//@Return bool
 func (slf *Map) IsEmpty() bool {
 	return len(slf._keys) == 0
+}
+
+func (slf *Map) IsExits(key string) bool {
+	for _, v := range slf._nodes {
+		if v == key {
+			return true
+		}
+	}
+	return false
 }
 
 //Add doc
@@ -124,7 +136,7 @@ func (slf *Map) Remove(key string) interface{} {
 //@Return (error)
 func (slf *Map) Get(name string) (interface{}, error) {
 	if len(slf._maps) == 0 {
-		return "", ErrEmptyCircle
+		return nil, ErrEmptyCircle
 	}
 
 	key := getHash([]byte(name))
