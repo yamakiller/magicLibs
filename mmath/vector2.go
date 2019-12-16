@@ -1,4 +1,4 @@
-package math
+package mmath
 
 //NewVector2 doc
 //@Method NewVector2 @Summary create vector2 object

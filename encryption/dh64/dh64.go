@@ -1,6 +1,8 @@
 package dh64
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"math/rand"
 )
 
@@ -9,8 +11,8 @@ const (
 	g uint64 = 5
 )
 
-func mul_mod_p(a, b uint64) uint64 {
-	var m uint64 = 0
+func mulModP(a, b uint64) uint64 {
+	var m uint64
 	for b > 0 {
 		if b&1 > 0 {
 			t := p - a
@@ -30,14 +32,14 @@ func mul_mod_p(a, b uint64) uint64 {
 	return m
 }
 
-func pow_mod_p(a, b uint64) uint64 {
+func powModP(a, b uint64) uint64 {
 	if b == 1 {
 		return a
 	}
-	t := pow_mod_p(a, b>>1)
-	t = mul_mod_p(t, t)
+	t := powModP(a, b>>1)
+	t = mulModP(t, t)
 	if b%2 > 0 {
-		t = mul_mod_p(t, a)
+		t = mulModP(t, a)
 	}
 	return t
 }
@@ -52,9 +54,10 @@ func powmodp(a uint64, b uint64) uint64 {
 	if a > p {
 		a %= p
 	}
-	return pow_mod_p(a, b)
+	return powModP(a, b)
 }
 
+//KeyPair Generate public key key pair
 func KeyPair() (privateKey, publicKey uint64) {
 	a := uint64(rand.Uint32())
 	b := uint64(rand.Uint32()) + 1
@@ -63,12 +66,22 @@ func KeyPair() (privateKey, publicKey uint64) {
 	return
 }
 
+//PublicKey private key to public key
 func PublicKey(privateKey uint64) uint64 {
 	return powmodp(g, privateKey)
 }
 
+//Secret Generate Secret to uint64
 func Secret(privateKey, anotherPublicKey uint64) uint64 {
 	return powmodp(anotherPublicKey, privateKey)
+}
+
+//SecretToString Generate Secret to String
+func SecretToString(privateKey, anotherPublicKey uint64) string {
+	secret := Secret(privateKey, anotherPublicKey)
+	tmpBytes := make([]byte, 8)
+	binary.BigEndian.PutUint64(tmpBytes, secret)
+	return hex.EncodeToString(tmpBytes)
 }
 
 //
