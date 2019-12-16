@@ -7,23 +7,28 @@ import (
 )
 
 const (
-	p uint64 = 0xffffffffffffffc5
-	g uint64 = 5
+	DefaultP uint64 = 0xffffffffffffffc5
+	DefaultG uint64 = 5
 )
 
-func mulModP(a, b uint64) uint64 {
+type KeyExchange struct {
+	P uint64
+	G uint64
+}
+
+func (slf *KeyExchange) mulModP(a, b uint64) uint64 {
 	var m uint64
 	for b > 0 {
 		if b&1 > 0 {
-			t := p - a
+			t := slf.P - a
 			if m >= t {
 				m -= t
 			} else {
 				m += a
 			}
 		}
-		if a >= p-a {
-			a = a*2 - p
+		if a >= slf.P-a {
+			a = a*2 - slf.P
 		} else {
 			a = a * 2
 		}
@@ -32,53 +37,53 @@ func mulModP(a, b uint64) uint64 {
 	return m
 }
 
-func powModP(a, b uint64) uint64 {
+func (slf *KeyExchange) powModP(a, b uint64) uint64 {
 	if b == 1 {
 		return a
 	}
-	t := powModP(a, b>>1)
-	t = mulModP(t, t)
+	t := slf.powModP(a, b>>1)
+	t = slf.mulModP(t, t)
 	if b%2 > 0 {
-		t = mulModP(t, a)
+		t = slf.mulModP(t, a)
 	}
 	return t
 }
 
-func powmodp(a uint64, b uint64) uint64 {
+func (slf *KeyExchange) powmodp(a uint64, b uint64) uint64 {
 	if a == 0 {
 		panic("DH64 zero public key")
 	}
 	if b == 0 {
 		panic("DH64 zero private key")
 	}
-	if a > p {
-		a %= p
+	if a > slf.P {
+		a %= slf.P
 	}
-	return powModP(a, b)
-}
-
-//KeyPair Generate public key key pair
-func KeyPair() (privateKey, publicKey uint64) {
-	a := uint64(rand.Uint32())
-	b := uint64(rand.Uint32()) + 1
-	privateKey = (a << 32) | b
-	publicKey = PublicKey(privateKey)
-	return
+	return slf.powModP(a, b)
 }
 
 //PublicKey private key to public key
-func PublicKey(privateKey uint64) uint64 {
-	return powmodp(g, privateKey)
+func (slf *KeyExchange) PublicKey(privateKey uint64) uint64 {
+	return slf.powmodp(slf.G, privateKey)
+}
+
+//KeyPair Generate public key key pair
+func (slf *KeyExchange) KeyPair() (privateKey, publicKey uint64) {
+	a := uint64(rand.Uint32())
+	b := uint64(rand.Uint32()) + 1
+	privateKey = (a << 32) | b
+	publicKey = slf.PublicKey(privateKey)
+	return
 }
 
 //Secret Generate Secret to uint64
-func Secret(privateKey, anotherPublicKey uint64) uint64 {
-	return powmodp(anotherPublicKey, privateKey)
+func (slf *KeyExchange) Secret(privateKey, anotherPublicKey uint64) uint64 {
+	return slf.powmodp(anotherPublicKey, privateKey)
 }
 
 //SecretToString Generate Secret to String
-func SecretToString(privateKey, anotherPublicKey uint64) string {
-	secret := Secret(privateKey, anotherPublicKey)
+func (slf *KeyExchange) SecretToString(privateKey, anotherPublicKey uint64) string {
+	secret := slf.Secret(privateKey, anotherPublicKey)
 	tmpBytes := make([]byte, 8)
 	binary.BigEndian.PutUint64(tmpBytes, secret)
 	return hex.EncodeToString(tmpBytes)
