@@ -1,9 +1,11 @@
 package dh64
 
 import (
+	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
-	"math/rand"
+	"math"
+	"math/big"
 )
 
 const (
@@ -69,8 +71,10 @@ func (slf *KeyExchange) PublicKey(privateKey uint64) uint64 {
 
 //KeyPair Generate public key key pair
 func (slf *KeyExchange) KeyPair() (privateKey, publicKey uint64) {
-	a := uint64(rand.Uint32())
-	b := uint64(rand.Uint32()) + 1
+	tmp, _ := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	a := uint64(tmp.Int64())
+	tmp, _ = rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	b := uint64(tmp.Int64()) + 1
 	privateKey = (a << 32) | b
 	publicKey = slf.PublicKey(privateKey)
 	return
