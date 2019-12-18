@@ -2,74 +2,74 @@ package mmath
 
 //NewVector3 doc
 //@Method NewVector3 @Summary create vector3 object
-//@Param  (float64) x
-//@Param  (float64) y
-//@Param  (float64) z
+//@Param  (FValue) x
+//@Param  (FValue) y
+//@Param  (FValue) z
 //@Return (*Vector3)
-func NewVector3(x, y, z float64) *Vector3 {
+func NewVector3(x, y, z FValue) *Vector3 {
 	return &Vector3{_x: x, _y: y, _z: z}
 }
 
 //Vector3 doc
 //@Struct Vector3 doc
-//@Member (float64) x
-//@Member (float64) y
-//@Member (float64) z
+//@Member (FValue) x
+//@Member (FValue) y
+//@Member (FValue) z
 type Vector3 struct {
-	_x float64
-	_y float64
-	_z float64
+	_x FValue
+	_y FValue
+	_z FValue
 }
 
 //Initial doc
-//@Method Initial @Summary initialization vector3
-//@Param (float64) x
-//@Param (float64) y
-//@Param (float64) z
-func (slf *Vector3) Initial(x, y, z float64) {
+//@Summary initialization vector3
+//@Param (FValue) x
+//@Param (FValue) y
+//@Param (FValue) z
+func (slf *Vector3) Initial(x, y, z FValue) {
 	slf._x = x
 	slf._y = y
 	slf._z = z
 }
 
 //GetX doc
-//@Method GetX @Summary return x
-//@Return (float64) x
-func (slf *Vector3) GetX() float64 {
+//@Summary return x
+//@Return (FValue) x
+func (slf *Vector3) GetX() FValue {
 	return slf._x
 }
 
 //GetY doc
-//@Method GetY @Summary return y
-//@Return (float64) y
-func (slf *Vector3) GetY() float64 {
+//@Summary return y
+//@Return (FValue) y
+func (slf *Vector3) GetY() FValue {
 	return slf._y
 }
 
 //GetZ doc
-//@Method GetZ @Summary return z
-//@Return (float64)
-func (slf *Vector3) GetZ() float64 {
+//@Summary return z
+//@Return (FValue)
+func (slf *Vector3) GetZ() FValue {
 	return slf._z
 }
 
 //SetX doc
-//@Method SetX @Summary Setting x
-//@Param (float64) x
-func (slf *Vector3) SetX(x float64) {
+//@Summary Setting x
+//@Param (FValue) x
+func (slf *Vector3) SetX(x FValue) {
 	slf._x = x
 }
 
 //SetY doc
-//@Method SetY @Summary Setting y
-//@Param (float64) y
-func (slf *Vector3) SetY(y float64) {
+//@Summary Setting y
+//@Param (FValue) y
+func (slf *Vector3) SetY(y FValue) {
 	slf._y = y
 }
 
 //SetZ doc
-//@Method SetZ @Summary Setting z
-//@Param (float64) z
-func (slf *Vector3) SetZ(z float64) {
+//@Summary Setting z
+//@Param (FValue) z
+func (slf *Vector3) SetZ(z FValue) {
 	slf._z = z
 }
