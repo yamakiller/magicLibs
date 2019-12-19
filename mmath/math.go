@@ -23,3 +23,12 @@ func InvSqrt(x FValue) FValue {
 	x = FValue(float64(x) * (float64(1.5) - xhalf*float64(x)*float64(x)))
 	return x
 }
+
+//Abs abs
+func Abs(x FValue) FValue {
+	if x >= 0 {
+		return x
+	}
+
+	return -x
+}

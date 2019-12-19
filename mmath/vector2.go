@@ -54,3 +54,10 @@ func (slf *Vector2) SetX(x FValue) {
 func (slf *Vector2) SetY(y FValue) {
 	slf._y = y
 }
+
+//ToVector3 doc
+//@Summary To Vector3
+//@Return Vector3
+func (slf *Vector2) ToVector3() Vector3 {
+	return Vector3{_x: slf._x, _y: slf._y, _z: 0}
+}

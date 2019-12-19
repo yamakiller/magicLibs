@@ -73,3 +73,7 @@ func (slf *Vector3) SetY(y FValue) {
 func (slf *Vector3) SetZ(z FValue) {
 	slf._z = z
 }
+
+func (slf *Vector3) ToVector2() Vector2 {
+	return Vector2{_x: slf._x, _y: slf._y}
+}

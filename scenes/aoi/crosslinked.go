@@ -2,7 +2,24 @@ package aoi
 
 import (
 	"github.com/yamakiller/magicLibs/mmath"
+	"github.com/yamakiller/magicLibs/st/sets/hashset"
 )
+
+//NewCrossLinked create a cross lnked
+func NewCrossLinked(z bool) *CrossLinked {
+	r := &CrossLinked{_z: z, _head: &CrossNode{_key: "head"}, _tail: &CrossNode{_key: "tail"}}
+	r._head._xNext = r._tail
+	r._head._yNext = r._tail
+
+	r._tail._xPrev = r._head
+	r._tail._yPrev = r._head
+	if z {
+		r._head._zNext = r._tail
+		r._tail._zPrev = r._head
+	}
+
+	return r
+}
 
 //CrossNode cross linked list node
 type CrossNode struct {
@@ -20,7 +37,7 @@ func (slf *CrossNode) GetKey() interface{} {
 
 //CrossLinked cross linked list
 type CrossLinked struct {
-	Isz          bool
+	_z           bool
 	_head, _tail *CrossNode
 	_sz          int
 }
@@ -53,7 +70,7 @@ func (slf *CrossLinked) add(node *CrossNode) {
 	}
 
 	//z
-	if !slf.Isz {
+	if slf._z {
 		cur = slf._head._zNext
 		for cur != nil {
 			if cur._pos.GetZ() > node._pos.GetZ() || cur == slf._tail {
@@ -68,19 +85,19 @@ func (slf *CrossLinked) add(node *CrossNode) {
 }
 
 //Enter enter scenes
-func (slf *CrossLinked) Enter(key interface{}, pos mmath.Vector3) *CrossNode {
+func (slf *CrossLinked) enter(key interface{}, pos mmath.Vector3) *CrossNode {
 	newNode := &CrossNode{_key: key, _pos: pos}
 	slf.add(newNode)
 	return newNode
 }
 
 //Leave leave scenes
-func (slf *CrossLinked) Leave(node *CrossNode) {
+func (slf *CrossLinked) leave(node *CrossNode) {
 	node._xPrev._xNext = node._xNext
 	node._xNext._xPrev = node._xPrev
 	node._yPrev._yPrev = node._yNext
 	node._yNext._yNext = node._yPrev
-	if !slf.Isz {
+	if slf._z {
 		node._zPrev._zNext = node._zNext
 		node._zNext._zPrev = node._zPrev
 	}
@@ -89,14 +106,14 @@ func (slf *CrossLinked) Leave(node *CrossNode) {
 	node._xNext = nil
 	node._yPrev = nil
 	node._yNext = nil
-	if !slf.Isz {
+	if slf._z {
 		node._zPrev = nil
 		node._zNext = nil
 	}
 }
 
 //Move move scenes
-func (slf *CrossLinked) Move(node *CrossNode, pos mmath.Vector3) {
+func (slf *CrossLinked) move(node *CrossNode, pos mmath.Vector3) {
 	//x
 	if node._pos.GetX() != pos.GetX() {
 		if pos.GetX() > node._pos.GetX() {
@@ -172,7 +189,7 @@ func (slf *CrossLinked) Move(node *CrossNode, pos mmath.Vector3) {
 	}
 
 	//z
-	if !slf.Isz {
+	if slf._z {
 		if node._pos.GetZ() != pos.GetZ() {
 			if pos.GetZ() > node._pos.GetZ() {
 
@@ -209,4 +226,73 @@ func (slf *CrossLinked) Move(node *CrossNode, pos mmath.Vector3) {
 			node._pos.SetZ(pos.GetZ())
 		}
 	}
+}
+
+//aoi Returns node relevanter
+func (slf *CrossLinked) aoi(node *CrossNode,
+	relevant *hashset.Set,
+	xAreaLen mmath.FValue,
+	yAreaLen mmath.FValue,
+	zAreaLen mmath.FValue) error {
+	//x
+	//1.Prev
+	cur := node._xPrev
+	for cur != slf._head {
+		if cur._pos.GetX() >= node._pos.GetX()-xAreaLen {
+			relevant.Push(cur._key)
+			continue
+		}
+		break
+	}
+	//2.Next
+	cur = node._xNext
+	for cur != slf._tail {
+		if cur._pos.GetX() <= node._pos.GetX()+xAreaLen {
+			relevant.Push(cur._key)
+			continue
+		}
+		break
+	}
+	//y
+	//1.Prev
+	cur = node._yPrev
+	for cur != slf._head {
+		if cur._pos.GetY() >= node._pos.GetY()-yAreaLen {
+			relevant.Push(cur._key)
+			continue
+		}
+		break
+	}
+	//2.Next
+	cur = node._yNext
+	for cur != slf._tail {
+		if cur._pos.GetY() <= node._pos.GetY()+yAreaLen {
+			relevant.Push(cur._key)
+			continue
+		}
+		break
+	}
+	if slf._z {
+		//z
+		//1.Prev
+		cur = node._zPrev
+		for cur != slf._head {
+			if cur._pos.GetZ() >= node._pos.GetZ()-zAreaLen {
+				relevant.Push(cur._key)
+				continue
+			}
+			break
+		}
+		//2.Next
+		cur = node._zNext
+		for cur != slf._tail {
+			if cur._pos.GetZ() <= node._pos.GetZ()+zAreaLen {
+				relevant.Push(cur._key)
+				continue
+			}
+			break
+		}
+	}
+
+	return nil
 }
