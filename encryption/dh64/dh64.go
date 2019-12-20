@@ -9,10 +9,13 @@ import (
 )
 
 const (
+	//DefaultP default p
 	DefaultP uint64 = 0xffffffffffffffc5
+	//DefaultG default g
 	DefaultG uint64 = 5
 )
 
+//KeyExchange key exchange
 type KeyExchange struct {
 	P uint64
 	G uint64
