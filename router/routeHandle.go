@@ -2,10 +2,12 @@ package router
 
 import "github.com/yamakiller/magicLibs/st/hash"
 
+//NewHandle create a route handle
 func NewHandle(addr string, replicas int) *RouteHandle {
 	return &RouteHandle{_addr: addr, _ctrls: hash.New(replicas)}
 }
 
+//RouteHandle route handle
 type RouteHandle struct {
 	_delete func(ctrl IRouteCtrl)
 	_addr   string

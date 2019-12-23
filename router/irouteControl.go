@@ -1,5 +1,6 @@
 package router
 
+//IRouteCtrl route control interface
 type IRouteCtrl interface {
 	GetName() string
 	IncRef()

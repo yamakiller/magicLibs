@@ -15,17 +15,20 @@ var (
 )
 
 //New new an Router Group
-func New(del func(p IRouteCtrl), replicas int) *RouteGroup {
-	return &RouteGroup{_delete: del, _replicas: replicas, _rmaps: make(map[string]*RouteHandle)}
+func New(del func(p IRouteCtrl),
+	replicas int) *RouteGroup {
+	return &RouteGroup{_delete: del,
+		_replicas: replicas,
+		_rmaps:    make(map[string]*RouteHandle)}
 }
 
+//RouteGroup route group
 type RouteGroup struct {
 	_delete   func(p IRouteCtrl)
 	_replicas int
 	_serkey   int
 	_rmaps    map[string]*RouteHandle
-
-	_sync sync.RWMutex
+	_sync     sync.RWMutex
 }
 
 func (slf *RouteGroup) getAddrs() []string {
@@ -40,16 +43,19 @@ func (slf *RouteGroup) getAddrs() []string {
 	return addrs
 }
 
+//Size Return Group size
 func (slf *RouteGroup) Size() int {
 	slf._sync.Lock()
 	defer slf._sync.Unlock()
 	return len(slf._rmaps)
 }
 
+//WithReplicas Set replicas
 func (slf *RouteGroup) WithReplicas(replicas int) {
 	slf._replicas = replicas
 }
 
+//IsExist addrss is exist
 func (slf *RouteGroup) IsExist(addr, key string) bool {
 	slf._sync.RLock()
 	defer slf._sync.RUnlock()
@@ -59,6 +65,7 @@ func (slf *RouteGroup) IsExist(addr, key string) bool {
 	return false
 }
 
+//Register register router address and control
 func (slf *RouteGroup) Register(addr, key string, ctrl IRouteCtrl) {
 	slf._sync.Lock()
 	defer slf._sync.Unlock()
@@ -74,6 +81,7 @@ func (slf *RouteGroup) Register(addr, key string, ctrl IRouteCtrl) {
 	}
 }
 
+//UnRegister unregister a router
 func (slf *RouteGroup) UnRegister(addr, key string) {
 	slf._sync.Lock()
 	if h, ok := slf._rmaps[addr]; ok {
@@ -89,6 +97,7 @@ func (slf *RouteGroup) UnRegister(addr, key string) {
 	slf._sync.Unlock()
 }
 
+//Call Address Call remote function
 func (slf *RouteGroup) Call(addr, method string, param, ret interface{}) error {
 	slf._sync.RLock()
 	if _, ok := slf._rmaps[addr]; ok {
@@ -108,6 +117,7 @@ func (slf *RouteGroup) Call(addr, method string, param, ret interface{}) error {
 	return h.Call(method, param, ret)
 }
 
+//Shutdown shutdown route system
 func (slf *RouteGroup) Shutdown() {
 	for {
 		if slf.Size() <= 0 {
