@@ -384,7 +384,7 @@ type MySQLDB struct {
 //@Param (int) mysql connection idle of number
 //@Param (int) mysql connection life time[util/sec]
 //@Return (error) fail:return error, success: return nil
-func (slf *MySQLDB) Initial(dsn string, maxConn int, maxIdleConn, lifeSec int) error {
+func (slf *MySQLDB) Initial(dsn string, maxConn, maxIdleConn, lifeSec int) error {
 	var err error
 	slf._db, err = sql.Open("mysql", dsn)
 	util.AssertEmpty(slf._db, fmt.Sprintf("mysql open fail:%+v", err))
