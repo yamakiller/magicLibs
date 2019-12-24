@@ -75,11 +75,11 @@ func RandStr(length int) string {
 	return string(b)
 }
 
-//IsPWDValidity doc
-//@Method IsPWDValidity @Summary Verify password is valid
+//VerifyPasswordFormat doc
+//@Summary Verify password is valid
 //@Param (string) password
 //@Return (bool) is valid
-func IsPWDValidity(pwd string) bool {
+func VerifyPasswordFormat(pwd string) bool {
 	b, e := regexp.MatchString("^([a-zA-Z_-].*)([0-9].*)$", pwd)
 	if e != nil {
 		panic(e)
@@ -95,11 +95,11 @@ func IsPWDValidity(pwd string) bool {
 	return false
 }
 
-//IsAccountValidity doc
-//@Method IsACCValidity @Summary Verify account is valid
+//VerifyAccountFormat doc
+//@Summary Verify account is valid
 //@Param (string) account
 //@Return (bool) is valid
-func IsAccountValidity(account string) bool {
+func VerifyAccountFormat(account string) bool {
 	b, e := regexp.MatchString("^[a-zA-Z0-9_-]{8,16}$", account)
 	if e != nil {
 		panic(e)
@@ -107,14 +107,35 @@ func IsAccountValidity(account string) bool {
 	return b
 }
 
-//IsCaptchaValidity doc
-//@Method IsCaptchaValidity @Summary Verify captcha is valid
+//VerifyCaptchaFormat doc
+//@Summary Verify captcha is valid
 //@Param (string) captcha
 //@Return (bool) is valid
-func IsCaptchaValidity(captcha string) bool {
+func VerifyCaptchaFormat(captcha string) bool {
 	b, e := regexp.MatchString("^[0-9]{6,6}", captcha)
 	if e != nil {
 		panic(e)
 	}
 	return b
+}
+
+//VerifyEmailFormat doc
+//@Summary Verify is email
+//@Param (string) email
+//@Return (bool) is valid
+func VerifyEmailFormat(email string) bool {
+	pattern := `^[0-9a-z][_.0-9a-z-]{0,31}@([0-9a-z][0-9a-z-]{0,30}[0-9a-z]\.){1,4}[a-z]{2,4}$`
+
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(email)
+}
+
+//VerifyMobileFormat doc
+//@Summary Verify is mobile
+//@Param (string) mobile
+//@Return (bool) is valid
+func VerifyMobileFormat(mobileNum string) bool {
+	regular := "^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\\d{8}$"
+	reg := regexp.MustCompile(regular)
+	return reg.MatchString(mobileNum)
 }

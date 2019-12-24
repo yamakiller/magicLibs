@@ -19,6 +19,6 @@ type MySQLGormDeploy struct {
 //@Param  (*MySQLDB) mysql object
 //@Param  (*MySQLDeploy) mysql config informat
 //@Return (error) register mysql success/fail
-func DoMySQLGormDeploy(Db *MySQLGORM, deploy *MySQLDeploy) error {
+func DoMySQLGormDeploy(Db *MySQLGORM, deploy *MySQLGormDeploy) error {
 	return Db.Initial(deploy.DSN, deploy.Max, deploy.Idle, deploy.Life)
 }
