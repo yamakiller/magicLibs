@@ -8,7 +8,7 @@ package dbs
 //@Member (int) mysql connection life time (sec)
 type MySQLGormDeploy struct {
 	DSN  string `xml:"dsn" yaml:"dsn" json:"dsn"`
-	Max  int    `xml:"max" yaml:"max conn" json:"max"`
+	Max  int    `xml:"max" yaml:"max" json:"max"`
 	Idle int    `xml:"idle" yaml:"idle" json:"idle"`
 	Life int    `xml:"life" yaml:"life" json:"life"`
 }
