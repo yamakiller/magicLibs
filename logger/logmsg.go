@@ -7,7 +7,7 @@ package logger
 //@Member (string) log prefix informat
 //@Member (string) log message
 type LogMessage struct {
-	_level   uint32
-	_prefix  string
-	_message string
+	Level   uint32
+	Prefix  string
+	Message string
 }

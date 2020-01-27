@@ -113,21 +113,21 @@ func (slf *LogContext) exit() {
 }
 
 func (slf *LogContext) write(msg *LogMessage) {
-	switch msg._level {
+	switch msg.Level {
 	case uint32(logrus.ErrorLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Errorln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Errorln(msg.Message)
 	case uint32(logrus.InfoLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Infoln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Infoln(msg.Message)
 	case uint32(logrus.TraceLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Traceln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Traceln(msg.Message)
 	case uint32(logrus.DebugLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Debugln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Debugln(msg.Message)
 	case uint32(logrus.WarnLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Warningln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Warningln(msg.Message)
 	case uint32(logrus.FatalLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Fatalln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Fatalln(msg.Message)
 	case uint32(logrus.PanicLevel):
-		slf._logHandle.WithFields(logrus.Fields{"prefix": msg._prefix}).Panicln(msg._message)
+		slf._logHandle.WithFields(logrus.Fields{"prefix": msg.Prefix}).Panicln(msg.Message)
 	}
 }
 
@@ -210,9 +210,6 @@ func (slf *LogContext) Close() {
 	close(slf._logStop)
 	slf._logWait.Wait()
 	close(slf._logMailbox)
-	/*if slf._filHandle != nil {
-		slf._filHandle.Close()
-	}*/
 }
 
 //Error doc
@@ -286,5 +283,5 @@ func (slf *LogContext) Trace(owner uint32, fmrt string, args ...interface{}) {
 }
 
 func spawnMessage(level uint32, prefix string, message string) LogMessage {
-	return LogMessage{_level: level, _prefix: prefix, _message: message}
+	return LogMessage{Level: level, Prefix: prefix, Message: message}
 }
