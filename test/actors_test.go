@@ -1,7 +1,9 @@
 package test
 
 import (
+	"fmt"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -19,7 +21,6 @@ func (slf *TActor) Receive(ctx *actors.Context) {
 
 func TestActorsClose(t *testing.T) {
 	//
-
 	hlog := logrus.New()
 	formatter := new(prefixed.TextFormatter)
 	formatter.FullTimestamp = true
@@ -45,9 +46,54 @@ func TestActorsClose(t *testing.T) {
 
 	PID1.Stop()
 
-	//logSystem.Out("测试Out")
 	logSystem.Info("", "测试1")
 	engine.Close()
 	logSystem.Close()
 
+}
+
+type NewTest struct {
+	_engine *actors.Core
+	_gw     sync.WaitGroup
+}
+
+func (slf *NewTest) run() {
+	defer slf._gw.Done()
+	for i := 0; i < 100; i++ {
+		PID1, err := slf._engine.New(func() actors.Actor {
+			return &TActor{}
+		})
+		if err != nil {
+			fmt.Printf("创建失败:%+v", err)
+		}
+
+		PID1.Stop()
+	}
+}
+
+func TestActorsSyncNew(t *testing.T) {
+	hlog := logrus.New()
+	formatter := new(prefixed.TextFormatter)
+	formatter.FullTimestamp = true
+	formatter.TimestampFormat = "2006-01-02 15:04:05"
+	formatter.SetColorScheme(&prefixed.ColorScheme{
+		PrefixStyle:    "white+h",
+		TimestampStyle: "black+h"})
+	hlog.SetFormatter(formatter)
+	hlog.SetOutput(os.Stdout)
+
+	logSystem := &log.DefaultAgent{}
+	logSystem.WithHandle(hlog)
+
+	engine := actors.New(nil)
+	engine.WithLogger(logSystem)
+
+	testA := &NewTest{_engine: engine}
+	testA._gw.Add(2)
+	go testA.run()
+	go testA.run()
+	testA._gw.Wait()
+
+	engine.Close()
+	logSystem.Close()
 }
