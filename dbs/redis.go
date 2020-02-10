@@ -2,6 +2,7 @@ package dbs
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -16,6 +17,7 @@ import (
 type RedisDB struct {
 	_c    *redis.Pool
 	_host string
+	_pwd  string
 	_db   int
 }
 
@@ -32,6 +34,12 @@ func (slf *RedisDB) Initial(host string, db int, maxIdle int, maxActive int, idl
 	slf._host = host
 	slf._db = db
 
+	if strings.Index(host, "@") > 0 {
+		tmp := strings.Split(host, "@")
+		slf._host = tmp[0]
+		slf._pwd = tmp[1]
+	}
+
 	slf._c = &redis.Pool{
 		MaxIdle:     maxIdle,
 		MaxActive:   maxActive,
@@ -41,9 +49,19 @@ func (slf *RedisDB) Initial(host string, db int, maxIdle int, maxActive int, idl
 			if err != nil {
 				return nil, err
 			}
-			_, derr := c.Do("SELECT", db)
-			if derr != nil {
-				panic(fmt.Sprintln("redis select db error:", derr))
+
+			if slf._pwd != "" {
+				if err = c.Send("AUTH", slf._pwd); err != nil {
+					c.Close()
+					return nil, fmt.Errorf("redis auth error:%+v", err)
+				}
+
+			}
+
+			_, err = c.Do("SELECT", db)
+			if err != nil {
+				c.Close()
+				return nil, fmt.Errorf("redis select db error:%+v", err)
 			}
 			return c, nil
 		},
