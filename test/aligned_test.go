@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/yamakiller/magicLibs/math"
+	"github.com/yamakiller/magicLibs/mmath"
 )
 
 func TestAligned(t *testing.T) {
-	fmt.Println(math.Aligned(129))
+	fmt.Println(mmath.Aligned(129))
 }

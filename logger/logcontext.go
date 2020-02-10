@@ -54,14 +54,6 @@ func (slf *LogContext) SetLevel(v logrus.Level) {
 	slf._logLevel = v
 }
 
-/*//SetFilHandle doc
-//@Summary Setting log file handle
-//@Method SetFilHandle
-//@Param (*os.File) log file
-func (slf *LogContext) SetFilHandle(v *os.File) {
-	slf._filHandle = v
-}*/
-
 //SetHandle doc
 //@SummarySetting log object
 //@Method SetHandle
