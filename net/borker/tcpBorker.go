@@ -88,6 +88,11 @@ Exit:
 	return err
 }
 
+//Listener Returns listenner object
+func (slf *TCPBorker) Listener() listener.Listener {
+	return slf._listen
+}
+
 //Shutdown 关闭服务
 func (slf *TCPBorker) Shutdown() {
 	slf._closed <- true

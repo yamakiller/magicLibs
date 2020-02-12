@@ -79,6 +79,11 @@ func (slf *WSSBorker) onWSS(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Listener Returns listenner object
+func (slf *WSSBorker) Listener() listener.Listener {
+	return slf._listen
+}
+
 //Shutdown 关闭服务
 func (slf *WSSBorker) Shutdown() {
 	slf._httpListen.Close()
