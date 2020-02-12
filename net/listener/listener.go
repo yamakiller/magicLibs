@@ -5,6 +5,7 @@ import "net"
 //Listener 监听接口
 type Listener interface {
 	Addr() net.Addr
-	Wait()
+	Accept([]interface{}) (interface{}, error)
 	Close() error
+	ToString() string
 }

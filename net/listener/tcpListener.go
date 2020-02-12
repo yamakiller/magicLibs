@@ -5,15 +5,20 @@ import (
 	"sync"
 )
 
-//TCPListener TCP Socket Listener
+//SpawnTCPListener create an tcp listener
+func SpawnTCPListener(l net.Listener) Listener {
+	return &TCPListener{_l: l}
+}
+
+//TCPListener TCP listener
 type TCPListener struct {
-	net.Listener
+	_l  net.Listener
 	_wg sync.WaitGroup
 }
 
-//Accept 接受链接
-func (slf *TCPListener) Accept() (net.Conn, error) {
-	c, err := slf.Listener.Accept()
+//Accept tcp accept connection
+func (slf *TCPListener) Accept([]interface{}) (interface{}, error) {
+	c, err := slf._l.Accept()
 	if err != nil {
 		return nil, err
 	}
@@ -22,18 +27,33 @@ func (slf *TCPListener) Accept() (net.Conn, error) {
 	return &TCPConn{Conn: c, _wg: &slf._wg}, nil
 }
 
-//Wait 等待所有客户端结束
-func (slf *TCPListener) Wait() {
-	slf._wg.Wait()
+//Addr Returns  address
+func (slf *TCPListener) Addr() net.Addr {
+	return slf._l.Addr()
 }
 
-//TCPConn TCP Accept client
+//Close close listener
+func (slf *TCPListener) Close() error {
+	if err := slf._l.Close(); err != nil {
+		return err
+	}
+
+	slf._wg.Wait()
+	return nil
+}
+
+//ToString ....
+func (slf *TCPListener) ToString() string {
+	return "tcp listener"
+}
+
+//TCPConn tcp connection
 type TCPConn struct {
 	net.Conn
 	_wg *sync.WaitGroup
 }
 
-//Close ...
+//Close TCP 连接关闭
 func (slf *TCPConn) Close() error {
 	if slf._wg != nil {
 		slf._wg.Done()
