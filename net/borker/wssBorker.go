@@ -35,7 +35,7 @@ func (slf *WSSBorker) ListenAndServe(addr string) error {
 	}
 
 	slf._httpHandler = http.NewServeMux()
-	slf._httpHandler.HandleFunc(slf._wsPath, slf.onWSS)
+	slf._httpHandler.HandleFunc(slf.WSPath, slf.onWSS)
 
 	address, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
