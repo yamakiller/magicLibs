@@ -84,7 +84,7 @@ func (slf *Context) Post(pid *PID, message interface{}) {
 
 //Request 请求消息
 func (slf *Context) Request(pid *PID, message interface{}) {
-	e := &MessagePack{
+	e := &Pack{
 		Header:  nil,
 		Message: message,
 		Sender:  slf.Self(),
@@ -156,7 +156,7 @@ func (slf *Context) processMessage(m interface{}) {
 	slf._message = nil
 }
 
-func (slf *Context) receive(pack *MessagePack) {
+func (slf *Context) receive(pack *Pack) {
 	slf._message = pack
 	slf.defaultReceive()
 	slf._message = nil
