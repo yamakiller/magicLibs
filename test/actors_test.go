@@ -37,7 +37,7 @@ func TestActorsClose(t *testing.T) {
 	engine := actors.New(nil)
 	engine.WithLogger(logSystem)
 
-	PID1, err := engine.New(func() actors.Actor {
+	PID1, err := engine.New(func(pid *actors.PID) actors.Actor {
 		return &TActor{}
 	})
 	if err != nil {
@@ -60,7 +60,7 @@ type NewTest struct {
 func (slf *NewTest) run() {
 	defer slf._gw.Done()
 	for i := 0; i < 100; i++ {
-		PID1, err := slf._engine.New(func() actors.Actor {
+		PID1, err := slf._engine.New(func(pid *actors.PID) actors.Actor {
 			return &TActor{}
 		})
 		if err != nil {

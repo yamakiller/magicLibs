@@ -44,7 +44,7 @@ type Core struct {
 }
 
 //New 创建一个Actor
-func (slf *Core) New(f func() Actor) (*PID, error) {
+func (slf *Core) New(f func(*PID) Actor) (*PID, error) {
 	pid, err := slf._pidSets.Next()
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (slf *Core) New(f func() Actor) (*PID, error) {
 
 	pid._parent = slf
 
-	actor := f()
+	actor := f(&pid)
 	ctx := spawnContext(slf, actor, &pid)
 	hl := spawnHandle(ctx, slf._sch)
 
