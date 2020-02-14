@@ -2,5 +2,5 @@ package actors
 
 //Actor 对象
 type Actor interface {
-	Receive(ctx *Context)
+	Receive(*Context)
 }
