@@ -77,6 +77,16 @@ func (slf *Context) Warning(sfmt string, args ...interface{}) {
 	slf._parent._log.Warning(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
+//Fatal ...
+func (slf *Context) Fatal(sfmt string, args ...interface{}) {
+	slf._parent._log.Fatal(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+}
+
+//Panic ...
+func (slf *Context) Panic(sfmt string, args ...interface{}) {
+	slf._parent._log.Panic(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+}
+
 //Post 提交用户消息
 func (slf *Context) Post(pid *PID, message interface{}) {
 	slf.postUsrMessage(pid, message)
@@ -172,6 +182,6 @@ func (slf *Context) defaultReceive() {
 }
 
 func (slf *Context) escalateFailure(reason interface{}, message interface{}) {
-	slf.Error("%+v, message:%+v", reason, message)
+	slf.Fatal("%+v, message:%+v", reason, message)
 	slf.Self().postSysMessage(messages.SuspendMessage)
 }

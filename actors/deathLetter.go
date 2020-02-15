@@ -59,6 +59,10 @@ func (slf *deathLetter) close() {
 	slf._wait.Wait()
 }
 
+func (slf *deathLetter) overloadUsrMessage() int {
+	return 0
+}
+
 func (slf *deathLetter) postUsrMessage(pid *PID, message interface{}) {
 	_, msg, sender := UnWrapPack(message)
 	slf._sub <- &Death{

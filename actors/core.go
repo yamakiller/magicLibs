@@ -52,15 +52,15 @@ func (slf *Core) New(f func(*PID) Actor) (*PID, error) {
 
 	pid._parent = slf
 
-	actor := f(&pid)
-	ctx := spawnContext(slf, actor, &pid)
+	actor := f(pid)
+	ctx := spawnContext(slf, actor, pid)
 	hl := spawnHandle(ctx, slf._sch)
 
 	slf._syn.Lock()
 	if _, ok := slf._hs[pid.ID]; ok {
 		slf._syn.Unlock()
 		errID := pid.ID
-		slf._pidSets.Remove(&pid)
+		slf._pidSets.Remove(pid)
 
 		return nil, fmt.Errorf("pid[[.%08x]] repeat", errID)
 	}
@@ -70,7 +70,7 @@ func (slf *Core) New(f func(*PID) Actor) (*PID, error) {
 	slf._gw.Add(1)
 	pid.postSysMessage(messages.StartedMessage)
 
-	return &pid, nil
+	return pid, nil
 }
 
 //Delete 删除一个actor

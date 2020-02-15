@@ -17,7 +17,7 @@ type PIDSet struct {
 }
 
 //Next 生成新的PID
-func (slf *PIDSet) Next() (PID, error) {
+func (slf *PIDSet) Next() (*PID, error) {
 	slf.lock()
 	defer slf.unlock()
 
@@ -28,11 +28,11 @@ func (slf *PIDSet) Next() (PID, error) {
 			slf._seq = key + 1
 			slf._ars[hash].ID = uint32(key)
 			slf._sz++
-			return slf._ars[hash], nil
+			return &slf._ars[hash], nil
 		}
 	}
 
-	return PID{}, errors.New("full error")
+	return &PID{}, errors.New("full error")
 }
 
 //Remove 移出ID
@@ -51,15 +51,15 @@ func (slf *PIDSet) Remove(pid *PID) error {
 }
 
 //Values 获取所有的PID
-func (slf *PIDSet) Values() []PID {
+func (slf *PIDSet) Values() []*PID {
 	slf.lock()
 	defer slf.unlock()
 
 	icur := 0
-	result := make([]PID, slf._sz)
+	result := make([]*PID, slf._sz)
 	for i := 0; i < math.MaxUint16; i++ {
 		if slf._ars[i].ID > 0 {
-			result[icur] = slf._ars[i]
+			result[icur] = &slf._ars[i]
 			icur++
 			if icur >= slf._sz {
 				break

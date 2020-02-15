@@ -45,12 +45,13 @@ func (slf *mailbox) schedule() {
 
 func (slf *mailbox) run() {
 	var msg interface{}
-	//异常处理
+	//Begin=>致命性异常处理
 	defer func() {
 		if r := recover(); r != nil {
 			slf._invoker.escalateFailure(r, msg)
 		}
 	}()
+	//End=>致命性异常处理结束
 
 	i := 0
 	for {

@@ -20,6 +20,7 @@ func spawnHandle(in invoker, sch Scheduler) handle {
 }
 
 type handle interface {
+	overloadUsrMessage() int
 	postUsrMessage(pid *PID, message interface{})
 	postSysMessage(pid *PID, message interface{})
 	Stop(pid *PID)
@@ -28,6 +29,11 @@ type handle interface {
 type actorHandle struct {
 	_mailbox mailbox
 	_death   int32
+}
+
+//overloadUsrMessage Returns user message overload warring
+func (slf *actorHandle) overloadUsrMessage() int {
+	return slf._mailbox._usrMailbox.Overload()
 }
 
 // postUsrMessage Send user level messages

@@ -1,7 +1,9 @@
 package args
 
 import (
+	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -63,6 +65,8 @@ func (slf *Args) Parse() {
 			idx++
 		}
 	}
+
+	fmt.Println(slf.m)
 }
 
 //GetString doc
@@ -85,15 +89,17 @@ func (slf *Args) GetString(name string, def string) string {
 //@Return (int) value
 func (slf *Args) GetInt(name string, def int) int {
 	if _, ok := slf.m[name]; !ok {
+		fmt.Println("k:", name)
 		return def
 	}
 
 	v := slf.m[name]
-	if _, ok := v.(int); !ok {
+	r, err := strconv.Atoi(v.(string))
+	if err != nil {
 		return def
 	}
 
-	return v.(int)
+	return r
 }
 
 //GetInt64 doc
@@ -107,11 +113,11 @@ func (slf *Args) GetInt64(name string, def int64) int64 {
 	}
 
 	v := slf.m[name]
-	if _, ok := v.(int64); !ok {
+	r, err := strconv.ParseInt(v.(string), 10, 64)
+	if err != nil {
 		return def
 	}
-
-	return v.(int64)
+	return r
 }
 
 //GetBoolean doc
@@ -128,8 +134,11 @@ func (slf *Args) GetBoolean(name string, def bool) bool {
 	if _, ok := v.(bool); !ok {
 		return def
 	}
-
-	return v.(bool)
+	r, err := strconv.ParseBool(v.(string))
+	if err != nil {
+		return def
+	}
+	return r
 }
 
 //GetFloat doc
@@ -143,11 +152,11 @@ func (slf *Args) GetFloat(name string, def float32) float32 {
 	}
 
 	v := slf.m[name]
-	if _, ok := v.(float32); !ok {
+	r, err := strconv.ParseFloat(v.(string), 32)
+	if err != nil {
 		return def
 	}
-
-	return v.(float32)
+	return float32(r)
 }
 
 //GetDouble doc
@@ -161,9 +170,9 @@ func (slf *Args) GetDouble(name string, def float64) float64 {
 	}
 
 	v := slf.m[name]
-	if _, ok := v.(float64); !ok {
+	r, err := strconv.ParseFloat(v.(string), 64)
+	if err != nil {
 		return def
 	}
-
-	return v.(float64)
+	return r
 }

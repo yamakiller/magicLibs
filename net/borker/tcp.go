@@ -19,6 +19,10 @@ type TCPBorker struct {
 
 //ListenAndServe 监听并启动服务
 func (slf *TCPBorker) ListenAndServe(addr string) error {
+	if slf._closed == nil {
+		slf._closed = make(chan bool, 1)
+	}
+
 	address, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
 		return err
@@ -30,9 +34,6 @@ func (slf *TCPBorker) ListenAndServe(addr string) error {
 	}
 
 	slf._listen = listener.SpawnTCPListener(lst)
-	if slf._closed == nil {
-		slf._closed = make(chan bool)
-	}
 
 	slf._wg.Add((1))
 	go slf.Serve()
@@ -96,8 +97,10 @@ func (slf *TCPBorker) Listener() listener.Listener {
 //Shutdown 关闭服务
 func (slf *TCPBorker) Shutdown() {
 	slf._closed <- true
-	slf._listen.Close()
-	slf._listen = nil
+	if slf._listen != nil {
+		slf._listen.Close()
+		slf._listen = nil
+	}
 	slf._wg.Wait()
 	close(slf._closed)
 }

@@ -16,4 +16,6 @@ type LogAgent interface {
 	Debug(prefix, fmrt string, args ...interface{})
 	Warning(prefix, fmrt string, args ...interface{})
 	Trace(prefix, fmrt string, args ...interface{})
+	Fatal(prefix, fmrt string, args ...interface{})
+	Panic(prefix, fmrt string, args ...interface{})
 }

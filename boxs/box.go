@@ -8,10 +8,18 @@ import (
 )
 
 //SpawnBox create an box
-func SpawnBox(pid actors.PID) *Box {
+func SpawnBox(pid *actors.PID) *Box {
+	if pid != nil {
+		return &Box{
+			_pid:     pid,
+			_events:  make(map[interface{}]Method),
+			_started: make(chan bool),
+			_stopped: make(chan bool),
+		}
+	}
+
 	return &Box{
-		_pid:     pid,
-		_events:  make(map[interface{}]interface{}),
+		_events:  make(map[interface{}]Method),
 		_started: make(chan bool),
 		_stopped: make(chan bool),
 	}
@@ -19,19 +27,19 @@ func SpawnBox(pid actors.PID) *Box {
 
 //Box container for executing logic
 type Box struct {
-	_pid     actors.PID
-	_events  map[interface{}]interface{}
+	_pid     *actors.PID
+	_events  map[interface{}]Method
 	_started chan bool
 	_stopped chan bool
 }
 
 //GetPID Returns pid
 func (slf *Box) GetPID() *actors.PID {
-	return &slf._pid
+	return slf._pid
 }
 
 //WithPID setting pid
-func (slf *Box) WithPID(pid actors.PID) {
+func (slf *Box) WithPID(pid *actors.PID) {
 	slf._pid = pid
 }
 
@@ -57,7 +65,7 @@ func (slf *Box) ShutdownWait() {
 }
 
 //Register register event
-func (slf *Box) Register(key, value interface{}) {
+func (slf *Box) Register(key interface{}, value Method) {
 	slf._events[key] = value
 }
 
@@ -82,7 +90,7 @@ func (slf *Box) Receive(context *actors.Context) {
 	}
 
 	if f, ok := slf._events[reflect.TypeOf(message)]; ok {
-		f.(Method)(context)
+		f(context)
 		goto end
 	}
 
@@ -111,5 +119,5 @@ func (slf *Box) onStoppedAfter(context *actors.Context) {
 }
 
 func (slf *Box) onError(context *actors.Context) {
-	context.Error("Box %+v message is undefined", context, context.Message())
+	context.Error("Box %+v message is undefined", context.Message())
 }

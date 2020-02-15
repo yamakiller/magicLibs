@@ -79,3 +79,25 @@ func (slf *DefaultAgent) Trace(prefix, fmrt string, args ...interface{}) {
 
 	slf._handle.Traceln(fmt.Sprintf(fmrt, args...))
 }
+
+//Fatal 输出Fatal级日志
+func (slf *DefaultAgent) Fatal(prefix, fmrt string, args ...interface{}) {
+	if prefix != "" {
+		slf._handle.WithFields(logrus.Fields{"prefix": prefix}).
+			Fatalln(fmt.Sprintf(fmrt, args...))
+		return
+	}
+
+	slf._handle.Fatalln(fmt.Sprintf(fmrt, args...))
+}
+
+//Panic 输出Panic级日志
+func (slf *DefaultAgent) Panic(prefix, fmrt string, args ...interface{}) {
+	if prefix != "" {
+		slf._handle.WithFields(logrus.Fields{"prefix": prefix}).
+			Panicln(fmt.Sprintf(fmrt, args...))
+		return
+	}
+
+	slf._handle.Panicln(fmt.Sprintf(fmrt, args...))
+}
