@@ -12,14 +12,14 @@ func SpawnBox(pid *actors.PID) *Box {
 	if pid != nil {
 		return &Box{
 			_pid:     pid,
-			_events:  make(map[interface{}]Method),
+			_events:  make(map[interface{}][]Method),
 			_started: make(chan bool),
 			_stopped: make(chan bool),
 		}
 	}
 
 	return &Box{
-		_events:  make(map[interface{}]Method),
+		_events:  make(map[interface{}][]Method),
 		_started: make(chan bool),
 		_stopped: make(chan bool),
 	}
@@ -28,7 +28,8 @@ func SpawnBox(pid *actors.PID) *Box {
 //Box container for executing logic
 type Box struct {
 	_pid     *actors.PID
-	_events  map[interface{}]Method
+	_events  map[interface{}][]Method
+	_context Context
 	_started chan bool
 	_stopped chan bool
 }
@@ -54,6 +55,7 @@ func (slf *Box) StartedWait() {
 //Shutdown shutdown box
 func (slf *Box) Shutdown() {
 	slf._pid.Stop()
+	slf._context.Context = nil
 }
 
 //ShutdownWait Close the box and wait for resources to be released
@@ -62,15 +64,19 @@ func (slf *Box) ShutdownWait() {
 	select {
 	case <-slf._stopped:
 	}
+	slf._context.Context = nil
 }
 
 //Register register event
-func (slf *Box) Register(key interface{}, value Method) {
-	slf._events[key] = value
+func (slf *Box) Register(key interface{}, args ...Method) {
+	var ms []Method
+	ms = append(ms, args...)
+	slf._events[key] = ms
 }
 
 //Receive event receive proccess
 func (slf *Box) Receive(context *actors.Context) {
+	slf._context.Context = context
 	message := context.Message()
 	switch msg := message.(type) {
 	case *actors.Pack:
@@ -89,8 +95,10 @@ func (slf *Box) Receive(context *actors.Context) {
 	default:
 	}
 
-	if f, ok := slf._events[reflect.TypeOf(message)]; ok {
-		f(context)
+	if f, ok := slf._events[reflect.TypeOf(message)]; ok && len(f) > 0 {
+		slf._context._funs = f
+		slf._context._idx = 0
+		slf._context._funs[0](&slf._context)
 		goto end
 	}
 
@@ -98,26 +106,25 @@ func (slf *Box) Receive(context *actors.Context) {
 		goto end
 	}
 
-	slf.onError(context)
+	slf.onError(&slf._context)
 end:
 	if after != nil {
 		//default event before function
-		after(context)
+		after(&slf._context)
 	}
 }
 
-func (slf *Box) onStartedAfter(context *actors.Context) {
+func (slf *Box) onStartedAfter(context *Context) {
 	slf._started <- true
 }
 
-func (slf *Box) onStoppingAfter(context *actors.Context) {
-
+func (slf *Box) onStoppingAfter(context *Context) {
 }
 
-func (slf *Box) onStoppedAfter(context *actors.Context) {
+func (slf *Box) onStoppedAfter(context *Context) {
 	close(slf._stopped)
 }
 
-func (slf *Box) onError(context *actors.Context) {
+func (slf *Box) onError(context *Context) {
 	context.Error("Box %+v message is undefined", context.Message())
 }

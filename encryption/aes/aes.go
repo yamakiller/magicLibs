@@ -1,4 +1,4 @@
-package util
+package aes
 
 import (
 	"crypto/aes"
@@ -9,13 +9,13 @@ import (
 	"io"
 )
 
-//AesEncrypt doc
-//@Method AesEncrypt @Summary aes encrypt
+//Encrypt doc
+//Summary aes encrypt
 //@Param (string) key
 //@Param (string) plaintext
 //@Return (string)  ciphertext
 //@Return (error)
-func AesEncrypt(key string, plaintext string) (string, error) {
+func Encrypt(key string, plaintext string) (string, error) {
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
 		return "", err
@@ -31,13 +31,13 @@ func AesEncrypt(key string, plaintext string) (string, error) {
 	return hex.EncodeToString(ciphertext), nil
 }
 
-//AesDecrypt doc
-//@Method AesDecrypt @Summary aes decrypt
+//Decrypt doc
+//@Summary aes decrypt
 //@Param (string) key
 //@Param (string) ciphertext
 //@Return (string) plaintext
 //@Return (error)
-func AesDecrypt(key string, d string) (string, error) {
+func Decrypt(key string, d string) (string, error) {
 	ciphertext, err := hex.DecodeString(d)
 	if err != nil {
 		return "", err

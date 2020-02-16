@@ -12,7 +12,7 @@ import (
 type RedisMethodDo func(commandName string, args ...interface{}) (interface{}, error)
 
 //RedisMutex doc
-//@Struct RedisMutex @Summary redis mutex object
+//@Summary redis mutex object
 //@Member (string) resource
 //@Member (string) token
 //@Member (int)    timeout
@@ -48,7 +48,7 @@ func (slf *RedisMutex) Unlock() (err error) {
 }
 
 //AddTimeOut doc
-//@Method AddTimeOut @Summary rest/append lock timeout time
+//@Summary rest/append lock timeout time
 //@Param (int64) setting/append time
 //@Return (bool)
 //@reutrn (error)
@@ -70,7 +70,7 @@ func (slf *RedisMutex) AddTimeOut(exTime int64) (ok bool, err error) {
 }
 
 //TryRedisLock Try to acquire a lock
-//@Method TryRedisLock @Summary Try to acquire a locking
+//@Summary Try to acquire a locking
 //@Param (RedisMethodDo) redis do function
 //@Param (string) lock object(key/name)
 //@Param (string) lock token
@@ -86,7 +86,7 @@ func TryRedisLock(doFun RedisMethodDo,
 }
 
 //TryRedisLockWithTimeOut doc
-//@Method TryRedisLockWithTimeOut @Summary Try to acquire the lock and set the lock timeout
+//@Summary Try to acquire the lock and set the lock timeout
 //@Param (RedisMethodDo) redis do function
 //@Param (string) lock object(key/name)
 //@Param (string) lock token
