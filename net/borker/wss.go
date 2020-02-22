@@ -88,6 +88,6 @@ func (slf *WSSBorker) Listener() listener.Listener {
 func (slf *WSSBorker) Shutdown() {
 	slf._httpListen.Close()
 	slf._listen.Close()
-	slf._listen = nil
 	slf._wg.Wait()
+	slf._listen = nil
 }

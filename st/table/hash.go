@@ -3,6 +3,7 @@ package table
 import (
 	"errors"
 
+	"github.com/yamakiller/magicLibs/mmath"
 	"github.com/yamakiller/magicLibs/st/comparator"
 )
 
@@ -21,34 +22,33 @@ type HashTable struct {
 	_arrays []interface{}
 }
 
-//Initial doc
-//@Method Initial @Summary Initialize the hashtable
-func (ht *HashTable) Initial() {
-	ht._arrays = make([]interface{}, ht.Max)
-	ht._seqID = 1
+//Initial 初始化Hash表
+func (slf *HashTable) Initial() {
+	slf._arrays = make([]interface{}, slf.Max)
+	slf._seqID = 1
+	if !mmath.IsPower(int(slf.Max)) {
+		panic("parameter Max must be a power of two")
+	}
 }
 
-//Size doc
-//@Method Size @Summary Returns the hashtable is number
-//@Return (int) size
-func (ht *HashTable) Size() int {
-	return ht._sz
+//Size 返回元素个数
+func (slf *HashTable) Size() int {
+	return slf._sz
 }
 
-//Push doc
-//@Method Push @Summary Insert an value
-//@Param (interface{}) value
-//@Return (int32) insert an value, hash value
-//@Return (error)
-func (ht *HashTable) Push(v interface{}) (uint32, error) {
+//Push 插入一个元素并分配一个ID
+func (slf *HashTable) Push(v interface{}) (uint32, error) {
 	var i uint32
-	for i = 0; i < ht.Max; i++ {
-		key := ((i + ht._seqID) & ht.Mask)
-		hash := key & (ht.Max - 1)
-		if ht._arrays[hash] == nil {
-			ht._seqID = key + 1
-			ht._arrays[hash] = v
-			ht._sz++
+	for i = 0; i < slf.Max; i++ {
+		key := ((i + slf._seqID) & slf.Mask)
+		if key == 0 {
+			key = 1
+		}
+		hash := key & (slf.Max - 1)
+		if slf._arrays[hash] == nil {
+			slf._seqID = key + 1
+			slf._arrays[hash] = v
+			slf._sz++
 			return uint32(key), nil
 		}
 	}
@@ -56,31 +56,24 @@ func (ht *HashTable) Push(v interface{}) (uint32, error) {
 	return 0, ErrHashTableFulled
 }
 
-//Get doc
-//@Summary Returns the one elements from the hashtable
-//@Method Get
-//@Param  (uint32) hash value
-//@Return (interface{})
-func (ht *HashTable) Get(key uint32) interface{} {
-	hash := key & uint32(ht.Max-1)
-	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
-		return ht._arrays[hash]
+//Get 返回一个元素
+func (slf *HashTable) Get(key uint32) interface{} {
+	hash := key & uint32(slf.Max-1)
+	if slf._arrays[hash] != nil && slf.Comp(slf._arrays[hash], key) == 0 {
+		return slf._arrays[hash]
 	}
 	return nil
 }
 
-//GetValues doc
-//@Summary Returns the elements of all from hashtable
-//@Method GetValues
-//@Return ([]interface{}) Returns all value
-func (ht *HashTable) GetValues() []interface{} {
-	if ht._sz == 0 {
+//GetValues 返回所有元素
+func (slf *HashTable) GetValues() []interface{} {
+	if slf._sz == 0 {
 		return nil
 	}
 
 	i := 0
-	result := make([]interface{}, ht._sz)
-	for _, v := range ht._arrays {
+	result := make([]interface{}, slf._sz)
+	for _, v := range slf._arrays {
 		if v == nil {
 			continue
 		}
@@ -91,15 +84,12 @@ func (ht *HashTable) GetValues() []interface{} {
 	return result
 }
 
-//Remove doc
-//@Method Remove @Summary removes one elements in the hashtable
-//@Param  (uint32) hash value
-//@Return (bool)
-func (ht *HashTable) Remove(key uint32) bool {
-	hash := uint32(key) & uint32(ht.Max-1)
-	if ht._arrays[hash] != nil && ht.Comp(ht._arrays[hash], key) == 0 {
-		ht._arrays[hash] = nil
-		ht._sz--
+//Remove 删除一个元素
+func (slf *HashTable) Remove(key uint32) bool {
+	hash := uint32(key) & uint32(slf.Max-1)
+	if slf._arrays[hash] != nil && slf.Comp(slf._arrays[hash], key) == 0 {
+		slf._arrays[hash] = nil
+		slf._sz--
 		return true
 	}
 

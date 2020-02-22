@@ -21,11 +21,7 @@ func getHash(str []byte) uint32 {
 	return hash
 }
 
-//New doc
-//@Summary Create a hash consistent loader
-//@Method New
-//@Param  (int) replicas of number
-//@Return (*Map)
+//New 创建一个一致性Hash表
 func New(replicas int) *Map {
 	if replicas <= 0 {
 		replicas = 20
@@ -38,10 +34,7 @@ var ErrEmptyCircle = errors.New("empty circle")
 
 type uInt32Slice []uint32
 
-//Len doc
-//@Summary array lenght
-//@Method Len
-//@Return (int)
+//Len　返回元素个数
 func (s uInt32Slice) Len() int {
 	return len(s)
 }
@@ -76,13 +69,12 @@ type Map struct {
 	sync.Mutex
 }
 
-//IsEmtpy doc
-//@Summay is emtpy
-//@Return bool
+//IsEmpty 是否空
 func (slf *Map) IsEmpty() bool {
 	return len(slf._keys) == 0
 }
 
+//IsExits 是否存在这个Key
 func (slf *Map) IsExits(key string) bool {
 	for _, v := range slf._nodes {
 		if v == key {
@@ -92,11 +84,7 @@ func (slf *Map) IsExits(key string) bool {
 	return false
 }
 
-//Add doc
-//@Summary Join an object, not locked
-//@Method Add
-//@Param (string) key
-//@Param (interface{}) element value
+//Add 增加一个元素
 func (slf *Map) Add(key string, v interface{}) {
 	for i := 0; i < slf._replicas; i++ {
 		slf._maps[getHash([]byte(strconv.Itoa(i)+key))] = v
@@ -110,10 +98,7 @@ func (slf *Map) Add(key string, v interface{}) {
 	slf.generate()
 }
 
-//Remove doc
-//@Summary Delete an object, not locked
-//@Method Remove
-//@Param (string) key
+//Remove 删除一个元素
 func (slf *Map) Remove(key string) interface{} {
 	var v interface{}
 	for i := 0; i < slf._replicas; i++ {
@@ -128,12 +113,7 @@ func (slf *Map) Remove(key string) interface{} {
 	return v
 }
 
-//Get doc
-//@Summary Return an object, not locked
-//@Method Get
-//@Param  (string) name
-//@Return (interface{}) element value
-//@Return (error)
+//Get 获取一个元素[平均返回]
 func (slf *Map) Get(name string) (interface{}, error) {
 	if len(slf._maps) == 0 {
 		return nil, ErrEmptyCircle
@@ -144,6 +124,7 @@ func (slf *Map) Get(name string) (interface{}, error) {
 	return slf._maps[slf._keys[i]], nil
 }
 
+//GetKeys 返回所有的Key
 func (slf *Map) GetKeys() []string {
 	r := make([]string, len(slf._nodes))
 	for k, v := range slf._nodes {

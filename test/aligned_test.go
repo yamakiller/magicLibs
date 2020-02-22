@@ -8,5 +8,6 @@ import (
 )
 
 func TestAligned(t *testing.T) {
-	fmt.Println(mmath.Aligned(129))
+	fmt.Println(mmath.Aligned(1400))
+	fmt.Println(mmath.Align(1401, 4))
 }

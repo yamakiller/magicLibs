@@ -99,8 +99,8 @@ func (slf *TCPBorker) Shutdown() {
 	slf._closed <- true
 	if slf._listen != nil {
 		slf._listen.Close()
-		slf._listen = nil
 	}
 	slf._wg.Wait()
+	slf._listen = nil
 	close(slf._closed)
 }

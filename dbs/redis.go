@@ -45,7 +45,7 @@ func (slf *RedisDB) Initial(host string, db int, maxIdle int, maxActive int, idl
 		MaxActive:   maxActive,
 		IdleTimeout: time.Duration(idleSec) * time.Second,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", host)
+			c, err := redis.Dial("tcp", slf._host)
 			if err != nil {
 				return nil, err
 			}

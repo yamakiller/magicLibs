@@ -15,3 +15,21 @@ func Aligned(n int) int {
 
 	return n
 }
+
+//IsPower doc
+//@Summary 检测数据是否是２的幂
+func IsPower(n int) bool {
+	if n < 2 {
+		return false
+	}
+
+	if (n & (n - 1)) == 0 {
+		return true
+	}
+	return false
+}
+
+//Align 对齐字节数
+func Align(n uint32, align uint32) uint32 {
+	return (n + align - 1) & (^(align - 1))
+}
