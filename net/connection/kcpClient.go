@@ -1,13 +1,14 @@
 package connection
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"net"
 	"sync"
 	"time"
 
 	"github.com/yamakiller/magicLibs/mmath"
+	"github.com/yamakiller/magicLibs/net/middle"
 	"github.com/yamakiller/magicLibs/util"
 	"github.com/yamakiller/mgokcp/mkcp"
 )
@@ -16,6 +17,11 @@ import (
 type KCPSeria interface {
 	UnSeria([]byte) (interface{}, error)
 	Seria(interface{}, *mkcp.KCP) (int, error)
+}
+
+type recvData struct {
+	_data []byte
+	_len  int
 }
 
 //KCPClient KCP(UDP)协议客户端
@@ -33,6 +39,9 @@ type KCPClient struct {
 	S              KCPSeria
 	E              Exception
 	Mtu            int
+	Middleware     middle.KCMiddleware
+	Allocator      func(int) []byte
+	Releaser       func([]byte)
 
 	_c    *net.UDPConn
 	_id   uint32
@@ -40,21 +49,18 @@ type KCPClient struct {
 	_sync sync.Mutex
 	_addr *net.UDPAddr
 
-	_closed  chan bool
+	//_closed  chan bool
+	_cancel  context.CancelFunc
+	_ctx     context.Context
 	_sdQueue chan interface{}
-	_rdQueue chan []byte
+	_rdQueue chan *recvData
 
 	_buffer     []byte
 	_wTotal     int
 	_rTotal     int
 	_lastActive int64
-	_wwg        sync.WaitGroup
-	_rwg        sync.WaitGroup
-}
 
-//WithID 临时使用后续删除
-func (slf *KCPClient) WithID(id uint32) {
-	slf._id = id
+	_wg sync.WaitGroup
 }
 
 //Connect 连接服务器
@@ -73,15 +79,19 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
+	slf._c = c
 
-	//握手获取ID
+	if slf.Middleware != nil {
+		conv, err := slf.Middleware.Subscribe(c, udpAddr, timeout)
+		if err != nil {
+			return err
+		}
+		slf._id = conv.(uint32)
+	}
 
 	slf._addr = udpAddr
 	slf._sdQueue = make(chan interface{}, slf.WriteWaitQueue)
-	slf._rdQueue = make(chan []byte, slf.ReadWaitQueue)
-	if slf._closed == nil {
-		slf._closed = make(chan bool, 1)
-	}
+	slf._rdQueue = make(chan *recvData, slf.ReadWaitQueue)
 
 	slf._buffer = make([]byte, mmath.Align(uint32(slf.Mtu), 4))
 	slf._kcp = mkcp.New(slf._id, slf)
@@ -95,10 +105,11 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 	if slf.FastResend > 0 {
 		slf._kcp.SetFastResend(slf.FastResend)
 	}
-	slf._c = c
 
-	slf._wwg.Add(1)
-	slf._rwg.Add(1)
+	slf._wg.Add(2)
+	ctx, cancel := context.WithCancel(context.Background())
+	slf._cancel = cancel
+	slf._ctx = ctx
 	go slf.writeServe()
 	go slf.readServe()
 
@@ -107,12 +118,7 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 
 func (slf *KCPClient) writeServe() {
 	defer func() {
-		slf._rwg.Wait()
-		close(slf._sdQueue)
-		slf._sync.Lock()
-		mkcp.Free(slf._kcp)
-		slf._kcp = nil
-		slf._sync.Unlock()
+		slf._wg.Done()
 	}()
 
 	var current int64
@@ -120,7 +126,7 @@ func (slf *KCPClient) writeServe() {
 	active:
 		current = util.Timestamp()
 		select {
-		case <-slf._closed:
+		case <-slf._ctx.Done():
 			goto exit
 		case <-time.After(time.Duration(slf.Interval) * time.Millisecond):
 		case msg, ok := <-slf._sdQueue:
@@ -151,14 +157,13 @@ exit:
 
 func (slf *KCPClient) readServe() {
 	defer func() {
-		close(slf._rdQueue)
-		slf._rwg.Done()
+		slf._wg.Done()
 	}()
 
 	for {
 	active:
 		select {
-		case <-slf._closed:
+		case <-slf._ctx.Done():
 			goto exit
 		default:
 			n, _, err := slf._c.ReadFromUDP(slf._buffer)
@@ -183,9 +188,15 @@ func (slf *KCPClient) readServe() {
 					break
 				}
 				//需要修改池化
-				tmpByte := make([]byte, n)
-				copy(tmpByte, slf._buffer[:n])
-				slf._rdQueue <- tmpByte
+				var tmpBuf []byte
+				if slf.Allocator != nil {
+					tmpBuf = slf.Allocator(n)
+				} else {
+					tmpBuf = make([]byte, n)
+				}
+
+				copy(tmpBuf, slf._buffer[:n])
+				slf._rdQueue <- &recvData{_data: tmpBuf, _len: n}
 			}
 		}
 	}
@@ -194,15 +205,24 @@ exit:
 
 //Parse 解析数据, 需要修改
 func (slf *KCPClient) Parse() (interface{}, error) {
+	slf._wg.Add(1)
+	defer slf._wg.Done()
+
 	select {
-	case <-slf._closed:
+	case <-slf._ctx.Done():
 		return nil, errors.New("closed")
-	case data, ok := <-slf._rdQueue:
+	case d, ok := <-slf._rdQueue:
 		if !ok {
 			return nil, errors.New("closed")
 		}
 
-		msg, err := slf.S.UnSeria(data)
+		defer func() {
+			if slf.Releaser != nil {
+				slf.Releaser(d._data)
+			}
+		}()
+
+		msg, err := slf.S.UnSeria(d._data[:d._len])
 		if err != nil {
 			return nil, err
 		}
@@ -213,8 +233,11 @@ func (slf *KCPClient) Parse() (interface{}, error) {
 
 //SendTo 发送数据
 func (slf *KCPClient) SendTo(msg interface{}) error {
+	slf._wg.Add(1)
+	defer slf._wg.Done()
+
 	select {
-	case <-slf._closed:
+	case <-slf._ctx.Done():
 		return errors.New("closed")
 	default:
 	}
@@ -225,17 +248,37 @@ func (slf *KCPClient) SendTo(msg interface{}) error {
 
 //Close 关闭
 func (slf *KCPClient) Close() error {
-	if slf._closed != nil {
-		select {
-		case <-slf._closed:
-		default:
-			close(slf._closed)
-		}
+	if slf._cancel != nil {
+		slf._cancel()
 	}
 
 	err := slf._c.Close()
-	slf._wwg.Wait()
-	slf._rwg.Wait()
+	slf._wg.Wait()
+
+	if slf._rdQueue != nil {
+		close(slf._rdQueue)
+		for d := range slf._rdQueue {
+			if d == nil {
+				break
+			}
+			if slf.Releaser != nil {
+				slf.Releaser(d._data)
+			}
+
+		}
+		slf._rdQueue = nil
+	}
+
+	if slf._sdQueue != nil {
+
+		close(slf._sdQueue)
+		slf._sdQueue = nil
+	}
+
+	if slf._kcp != nil {
+		mkcp.Free(slf._kcp)
+		slf._kcp = nil
+	}
 
 	return err
 }
@@ -243,6 +286,5 @@ func (slf *KCPClient) Close() error {
 func output(buff []byte, user interface{}) int32 {
 	client := user.(*KCPClient)
 	client._c.Write(buff)
-	fmt.Println(len(buff))
 	return 0
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/yamakiller/magicLibs/mmath"
 	"github.com/yamakiller/magicLibs/net/listener"
+	"github.com/yamakiller/magicLibs/net/middle"
 	"github.com/yamakiller/magicLibs/util"
 )
 
@@ -22,6 +23,7 @@ type KCPBorker struct {
 	RxMinRto      int32
 	FastResend    int32
 	Mtu           int
+	Middleware    middle.KSMiddleware
 
 	Spawn func(*listener.KCPConn) error
 
@@ -59,6 +61,7 @@ func (slf *KCPBorker) ListenAndServe(addr string) error {
 	slf._listen.Nc = slf.Nc
 	slf._listen.RxMinRto = slf.RxMinRto
 	slf._listen.FastResend = slf.FastResend
+	slf._listen.Middleware = slf.Middleware
 
 	if slf._closed == nil {
 		slf._closed = make(chan bool, 1)

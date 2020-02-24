@@ -2,6 +2,7 @@ package connection
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"io"
 	"net"
@@ -18,14 +19,15 @@ type TCPClient struct {
 	E               Exception
 
 	_c          io.ReadWriteCloser
-	_closed     chan bool
+	_cancel     context.CancelFunc
+	_ctx        context.Context
 	_queue      chan interface{}
 	_reader     *bufio.Reader
 	_writer     *bufio.Writer
 	_wTotal     int
 	_rTotal     int
 	_lastActive int64
-	_wwg        sync.WaitGroup
+	_wg         sync.WaitGroup
 }
 
 //Connect 连接远程地址
@@ -52,11 +54,9 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 	slf._writer = bufio.NewWriterSize(slf._c, slf.WriteBufferSize)
 	slf._queue = make(chan interface{}, slf.WriteWaitQueue)
 
-	if slf._closed == nil {
-		slf._closed = make(chan bool, 1)
-	}
+	slf._ctx, slf._cancel = context.WithCancel(context.Background())
 
-	slf._wwg.Add(1)
+	slf._wg.Add(1)
 	go slf.writeServe()
 
 	return nil
@@ -64,14 +64,13 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 
 func (slf *TCPClient) writeServe() {
 	defer func() {
-		close(slf._queue)
-		slf._wwg.Done()
+		slf._wg.Done()
 	}()
 
 	for {
 	active:
 		select {
-		case <-slf._closed:
+		case <-slf._ctx.Done():
 			goto exit
 		case msg := <-slf._queue:
 			n, err := slf.S.Seria(msg, slf._writer)
@@ -97,6 +96,13 @@ exit:
 
 //Parse 解析数据
 func (slf *TCPClient) Parse() (interface{}, error) {
+	slf._wg.Add(1)
+	defer slf._wg.Done()
+
+	if err := slf.checkDone(); err != nil {
+		return nil, err
+	}
+
 	m, n, err := slf.S.UnSeria(slf._reader)
 	if err != nil {
 		return nil, err
@@ -108,10 +114,11 @@ func (slf *TCPClient) Parse() (interface{}, error) {
 
 //SendTo 发送数据
 func (slf *TCPClient) SendTo(msg interface{}) error {
-	select {
-	case <-slf._closed:
-		return errors.New("closed")
-	default:
+	slf._wg.Add(1)
+	defer slf._wg.Done()
+
+	if err := slf.checkDone(); err != nil {
+		return err
 	}
 
 	slf._queue <- msg
@@ -120,15 +127,23 @@ func (slf *TCPClient) SendTo(msg interface{}) error {
 
 //Close 关闭连接
 func (slf *TCPClient) Close() error {
-	if slf._closed != nil {
-		select {
-		case <-slf._closed:
-		default:
-			close(slf._closed)
-		}
+	if slf._cancel != nil {
+		slf._cancel()
 	}
 	err := slf._c.Close()
-	slf._wwg.Wait()
+	slf._wg.Wait()
+	if slf._queue != nil {
+		close(slf._queue)
+	}
 
 	return err
+}
+
+func (slf *TCPClient) checkDone() error {
+	select {
+	case <-slf._ctx.Done():
+		return errors.New("closed")
+	default:
+		return nil
+	}
 }

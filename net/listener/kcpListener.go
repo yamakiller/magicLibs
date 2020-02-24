@@ -1,16 +1,14 @@
 package listener
 
 import (
-	"encoding/binary"
 	"errors"
-	"fmt"
 	"net"
 	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
 
-	"github.com/yamakiller/magicLibs/net/contractor"
+	"github.com/yamakiller/magicLibs/net/middle"
 	"github.com/yamakiller/mgokcp/mkcp"
 )
 
@@ -45,7 +43,7 @@ func SpawnKCPListener(l *net.UDPConn, mtu int) *KCPListener {
 
 func output(buff []byte, user interface{}) int32 {
 	conn := user.(*KCPConn)
-	fmt.Println(conn._parent._l.WriteToUDP(buff, conn._addr))
+	conn._parent._l.WriteToUDP(buff, conn._addr)
 	return 0
 }
 
@@ -60,7 +58,7 @@ type KCPListener struct {
 	Nc            int32
 	RxMinRto      int32
 	FastResend    int32
-	Reser         contractor.Conv
+	Middleware    middle.KSMiddleware
 
 	_l        *net.UDPConn
 	_buffer   []byte
@@ -79,84 +77,41 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	//TODO:有问题的数据包
+	var conn *KCPConn
+	var conv uint32
+	var apt bool
 	if n < kcpHeaderLength {
-		if slf.Reser == nil {
+		if slf.Middleware == nil {
 			return nil, nil
 		}
 
-		if n != 9 {
-			return nil, nil
-		}
-
-		switch slf._buffer[0] {
-		case 0x01:
-			id, key, err := slf.Reser.Reserve(binary.BigEndian.Uint64(slf._buffer[1:]))
+		cr, err := slf.Middleware.Subscribe(slf._buffer[:n], slf._l, addr)
+		if err != nil || cr == nil {
 			if err != nil {
-				return nil, nil
+				slf.Middleware.Error(err)
 			}
-			slf._buffer[0] = 0x01
-			binary.BigEndian.PutUint32(slf._buffer[1:], id)
-			binary.BigEndian.PutUint64(slf._buffer[5:], key)
-			slf._l.WriteToUDP(slf._buffer[:13], addr)
-			return nil, nil
-		case 0x02:
-			if !slf.Reser.Confirm(slf._buffer[1:]) {
-				slf._buffer[0] = 0x12
-				slf._l.WriteToUDP(slf._buffer[:1], addr)
-				return nil, nil
-			}
-			slf._buffer[0] = 0x02
-			slf._l.WriteToUDP(slf._buffer[:1], addr)
-			return nil, nil
-		default:
 			return nil, nil
 		}
+
+		conv = cr.(uint32)
+		conn = slf.get(conv)
+		if conn == nil {
+			conn = slf.spawConn(cr.(uint32), addr)
+			return conn, nil
+		}
+
+		return nil, nil
 	}
 
-	conv := mkcp.GetConv(slf._buffer)
-
-	if slf.Reser != nil {
-		if !slf.Reser.Authorized(conv) {
-			//未预约ID无法通信
+	conv = mkcp.GetConv(slf._buffer)
+	conn = slf.get(conv)
+	if slf.Middleware != nil {
+		if conn == nil {
 			return nil, nil
 		}
-	}
-
-	conn := slf.get(conv)
-	//TODO: 连接不存在重新创建
-	isAccept := false
-	if conn == nil {
-		slf._wg.Add(1)
-		conn = &KCPConn{
-			_id:     conv,
-			_addr:   addr,
-			_parent: slf,
-			/*_sync: mutex.SpinLock{
-				Deplay: time.Millisecond,
-				Check:  8,
-			}，*/
-			_wg: &slf._wg,
-		}
-
-		conn._kcp = mkcp.New(conv, conn)
-		conn._kcp.WithOutput(output)
-		conn._kcp.WndSize(slf.RecvWndSize, slf.SendWndSize)
-		conn._kcp.NoDelay(slf.NoDelay, slf.Interval, slf.Resend, slf.Nc)
-		conn._kcp.SetMTU(int32(slf._mtu))
-		conn._recv = make(chan *KCPData, slf.RecvQueueSize)
-		conn._destored = make(chan bool, 1)
-		if slf.RxMinRto > 0 {
-			conn._kcp.SetRxMinRto(slf.RxMinRto)
-		}
-
-		if slf.FastResend > 0 {
-			conn._kcp.SetFastResend(slf.FastResend)
-		}
-
-		conn._addr = addr
-		slf.join(conn)
-		isAccept = true
+	} else if conn == nil {
+		apt = true
+		conn = slf.spawConn(conv, addr)
 	}
 
 	conn._sync.Lock()
@@ -197,7 +152,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		break
 	}
 
-	if isAccept {
+	if apt {
 		return conn, nil
 	}
 	return nil, nil
@@ -206,6 +161,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 //Update 更新连接状态
 func (slf *KCPListener) Update(tss int64) int {
 	current := uint32(tss & 0xffffffff)
+	var r int
 	var convs []uint32
 	slf._convSync.Lock()
 	n := len(slf._convUsed)
@@ -220,7 +176,8 @@ func (slf *KCPListener) Update(tss int64) int {
 	slf._convSync.Unlock()
 
 	if convs == nil {
-		return -1
+		r = -1
+		goto exit
 	}
 
 	for _, v := range convs {
@@ -247,9 +204,11 @@ func (slf *KCPListener) Update(tss int64) int {
 				break
 			}
 
+			if slf.Middleware != nil {
+				slf.Middleware.UnSubscribe(con._id)
+			}
 			slf.unjoin(con._id)
 			con._wg.Done()
-			fmt.Println("remove complate")
 			continue
 		}
 
@@ -259,8 +218,11 @@ func (slf *KCPListener) Update(tss int64) int {
 		}
 		con._sync.Unlock()
 	}
-
-	return 0
+exit:
+	if slf.Middleware != nil {
+		slf.Middleware.Update()
+	}
+	return r
 }
 
 //Addr Returns  address
@@ -284,6 +246,36 @@ func (slf *KCPListener) Close() error {
 	slf._convSync.Unlock()
 	slf._wg.Wait()
 	return nil
+}
+
+func (slf *KCPListener) spawConn(conv uint32, addr *net.UDPAddr) *KCPConn {
+	slf._wg.Add(1)
+	conn := &KCPConn{
+		_id:     conv,
+		_addr:   addr,
+		_parent: slf,
+		_wg:     &slf._wg,
+	}
+
+	conn._kcp = mkcp.New(conv, conn)
+	conn._kcp.WithOutput(output)
+	conn._kcp.WndSize(slf.RecvWndSize, slf.SendWndSize)
+	conn._kcp.NoDelay(slf.NoDelay, slf.Interval, slf.Resend, slf.Nc)
+	conn._kcp.SetMTU(int32(slf._mtu))
+	conn._recv = make(chan *KCPData, slf.RecvQueueSize)
+	conn._destored = make(chan bool, 1)
+	if slf.RxMinRto > 0 {
+		conn._kcp.SetRxMinRto(slf.RxMinRto)
+	}
+
+	if slf.FastResend > 0 {
+		conn._kcp.SetFastResend(slf.FastResend)
+	}
+
+	conn._addr = addr
+	slf.join(conn)
+
+	return conn
 }
 
 func (slf *KCPListener) reallocate() {
@@ -420,6 +412,7 @@ func (slf *KCPConn) Close() error {
 	if slf._closed {
 		return errors.New("Repeatedly closed")
 	}
+
 	slf._closed = true
 	return nil
 }
