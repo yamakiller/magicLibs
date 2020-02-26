@@ -7,7 +7,7 @@ import (
 
 //KSMiddleware KCP 服务端中间件
 type KSMiddleware interface {
-	Middleware
+	Exception
 	Subscribe([]byte, *net.UDPConn, *net.UDPAddr) (interface{}, error)
 	UnSubscribe(uint32)
 	Update()

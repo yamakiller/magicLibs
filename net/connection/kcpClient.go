@@ -49,7 +49,6 @@ type KCPClient struct {
 	_sync sync.Mutex
 	_addr *net.UDPAddr
 
-	//_closed  chan bool
 	_cancel  context.CancelFunc
 	_ctx     context.Context
 	_sdQueue chan interface{}
@@ -87,6 +86,7 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 			return err
 		}
 		slf._id = conv.(uint32)
+		c.SetReadDeadline(time.Time{})
 	}
 
 	slf._addr = udpAddr
@@ -248,6 +248,13 @@ func (slf *KCPClient) SendTo(msg interface{}) error {
 
 //Close 关闭
 func (slf *KCPClient) Close() error {
+	select {
+	case <-slf._ctx.Done():
+		slf._wg.Wait()
+		return errors.New("closed")
+	default:
+	}
+
 	if slf._cancel != nil {
 		slf._cancel()
 	}

@@ -161,7 +161,6 @@ func (slf *SnkMiddleServe) apt(packet []byte, a *net.UDPAddr) error {
 	}
 	slf._sns.Unlock()
 
-	fmt.Println("a:", snk._epubKey, ",b,", epubKey, "|", snk._conv)
 	if snk._epubKey != epubKey {
 		if snk._state != stateIdle {
 			return ErrUnAuthorized
@@ -182,7 +181,6 @@ func (slf *SnkMiddleServe) apt(packet []byte, a *net.UDPAddr) error {
 			return err
 		}
 
-		fmt.Println("生成秘钥")
 		atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&snk._rc4)),
 			unsafe.Pointer(cipher))
 		snk._state = stateAccepted
@@ -359,9 +357,12 @@ func (slf *SnkMiddleCli) doSubscribe(c *net.UDPConn, timeout time.Duration) (uin
 			return 0, err
 		}
 
+		fmt.Printf("\n")
+		fmt.Println("timeout:", timeout)
 		c.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err = c.ReadFromUDP(tmpBuf)
 		if err != nil {
+			fmt.Println(err)
 			goto error_check
 		}
 
@@ -417,9 +418,12 @@ func (slf *SnkMiddleCli) doAck(c *net.UDPConn,
 			return 0, err
 		}
 
+		fmt.Printf("\n")
+		fmt.Println("2 timeout:", timeout)
 		c.SetReadDeadline(time.Now().Add(timeout))
 		n, _, err = c.ReadFromUDP(tmpBuf)
 		if err != nil {
+			fmt.Println("2,", err)
 			goto error_check
 		}
 
@@ -455,8 +459,6 @@ func (slf *SnkMiddleCli) toToken(cipher *rc4.Cipher, unconv uint32) (token uint3
 	binary.BigEndian.PutUint32(tmpBuf[4:], unconv)
 	cipher.XORKeyStream(tmpBuf, tmpBuf[4:])
 	token = binary.BigEndian.Uint32(tmpBuf)
-	fmt.Println(tmpBuf[:4])
-	fmt.Println(tmpBuf[4:])
 	return
 }
 
