@@ -128,6 +128,14 @@ func (slf *WSSClient) Close() error {
 	if slf._cancel != nil {
 		slf._cancel()
 	}
+
+	select {
+	case <-slf._ctx.Done():
+		slf._wg.Wait()
+		return errors.New("closed")
+	default:
+	}
+
 	err := slf._c.Close()
 	slf._wg.Wait()
 	if slf._queue != nil {
