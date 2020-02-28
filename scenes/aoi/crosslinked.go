@@ -85,14 +85,14 @@ func (slf *CrossLinked) add(node *CrossNode) {
 }
 
 //Enter enter scenes
-func (slf *CrossLinked) enter(key interface{}, pos mmath.Vector3) *CrossNode {
+func (slf *CrossLinked) Enter(key interface{}, pos mmath.Vector3) *CrossNode {
 	newNode := &CrossNode{_key: key, _pos: pos}
 	slf.add(newNode)
 	return newNode
 }
 
 //Leave leave scenes
-func (slf *CrossLinked) leave(node *CrossNode) {
+func (slf *CrossLinked) Leave(node *CrossNode) {
 	node._xPrev._xNext = node._xNext
 	node._xNext._xPrev = node._xPrev
 	node._yPrev._yPrev = node._yNext
@@ -113,7 +113,7 @@ func (slf *CrossLinked) leave(node *CrossNode) {
 }
 
 //Move move scenes
-func (slf *CrossLinked) move(node *CrossNode, pos mmath.Vector3) {
+func (slf *CrossLinked) Move(node *CrossNode, pos mmath.Vector3) {
 	//x
 	if node._pos.GetX() != pos.GetX() {
 		if pos.GetX() > node._pos.GetX() {
@@ -228,8 +228,8 @@ func (slf *CrossLinked) move(node *CrossNode, pos mmath.Vector3) {
 	}
 }
 
-//aoi Returns node relevanter
-func (slf *CrossLinked) aoi(node *CrossNode,
+//Aoi Returns node relevanter
+func (slf *CrossLinked) Aoi(node *CrossNode,
 	relevant *hashset.Set,
 	xAreaLen mmath.FValue,
 	yAreaLen mmath.FValue,
