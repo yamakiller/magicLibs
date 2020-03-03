@@ -13,14 +13,14 @@ func SpawnBox(pid *actors.PID) *Box {
 		return &Box{
 			_pid:     pid,
 			_events:  make(map[interface{}][]Method),
-			_started: make(chan bool),
+			_started: make(chan bool, 1),
 			_stopped: make(chan bool),
 		}
 	}
 
 	return &Box{
 		_events:  make(map[interface{}][]Method),
-		_started: make(chan bool),
+		_started: make(chan bool, 1),
 		_stopped: make(chan bool),
 	}
 }

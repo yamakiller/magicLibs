@@ -55,7 +55,6 @@ func (slf *mailbox) run() {
 
 	i := 0
 	for {
-
 		if i > 0 {
 			i = 0
 			runtime.Gosched()

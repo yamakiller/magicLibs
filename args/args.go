@@ -65,8 +65,6 @@ func (slf *Args) Parse() {
 			idx++
 		}
 	}
-
-	fmt.Println(slf.m)
 }
 
 //GetString doc
