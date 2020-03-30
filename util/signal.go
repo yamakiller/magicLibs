@@ -22,7 +22,7 @@ func (slf *SignalWatch) Initial(f func()) {
 	slf._f = f
 	slf._c = make(chan os.Signal)
 	slf._e = sync.WaitGroup{}
-	signal.Notify(slf._c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	signal.Notify(slf._c, os.Interrupt, os.Kill, syscall.SIGTERM)
 }
 
 //Watch doc
@@ -33,7 +33,7 @@ func (slf *SignalWatch) Watch() {
 		defer slf._e.Done()
 		for s := range slf._c {
 			switch s {
-			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
+			case os.Interrupt, os.Kill, syscall.SIGTERM:
 				slf._f()
 				return
 			default:
