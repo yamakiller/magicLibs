@@ -83,6 +83,7 @@ func (slf *Core) Delete(pid *PID) error {
 	if _, ok := slf._hs[id]; ok {
 		delete(slf._hs, id)
 	}
+
 	slf._gw.Done()
 	return nil
 }

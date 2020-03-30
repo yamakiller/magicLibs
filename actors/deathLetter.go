@@ -2,6 +2,7 @@ package actors
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -39,7 +40,7 @@ func (slf *deathLetter) run() {
 				if deathLetter.Sender != nil {
 					slf._parent._log.Error(fmt.Sprintf("[%s]", deathLetter.Sender.ToString()), "Death Dest PID :%s Message:%+v", deathLetter.PID.ToString(), deathLetter.Message)
 				} else {
-					slf._parent._log.Error("", "Death Dest PID: %s Message:%+v", deathLetter.PID.ToString(), deathLetter.Message)
+					slf._parent._log.Error("", "Death Dest PID: %s Message:%+v", deathLetter.PID.ToString(), reflect.TypeOf(deathLetter.Message))
 				}
 			}
 		}
