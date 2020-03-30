@@ -9,6 +9,11 @@ func TimestampFormat() string {
 	return time.Now().Format("2006-01-02 15:04:05")
 }
 
+//ToTimeFormat Returns 时间转换为字符串
+func ToTimeFormat(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
+}
+
 //Timestamp Returns 当前时间毫秒
 func Timestamp() int64 {
 	return time.Now().UnixNano() / 1e6
