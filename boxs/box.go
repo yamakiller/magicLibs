@@ -2,6 +2,7 @@ package boxs
 
 import (
 	"reflect"
+	"sync"
 
 	"github.com/yamakiller/magicLibs/actors"
 	"github.com/yamakiller/magicLibs/actors/messages"
@@ -29,6 +30,7 @@ func SpawnBox(pid *actors.PID) *Box {
 type Box struct {
 	_pid     *actors.PID
 	_events  map[interface{}][]Method
+	_evmutx  sync.Mutex
 	_context Context
 	_started chan bool
 	_stopped chan bool
@@ -71,6 +73,8 @@ func (slf *Box) ShutdownWait() {
 func (slf *Box) Register(key interface{}, args ...Method) {
 	var ms []Method
 	ms = append(ms, args...)
+	slf._evmutx.Lock()
+	defer slf._evmutx.Unlock()
 	slf._events[key] = ms
 }
 
@@ -95,12 +99,15 @@ func (slf *Box) Receive(context *actors.Context) {
 	default:
 	}
 
+	slf._evmutx.Lock()
 	if f, ok := slf._events[reflect.TypeOf(message)]; ok && len(f) > 0 {
+		slf._evmutx.Unlock()
 		slf._context._funs = f
 		slf._context._idx = 0
 		slf._context._funs[0](&slf._context)
 		goto end
 	}
+	slf._evmutx.Unlock()
 
 	if after != nil {
 		goto end
