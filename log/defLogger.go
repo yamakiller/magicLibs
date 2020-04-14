@@ -48,6 +48,11 @@ func SpawnFileLogrus(level logrus.Level,
 		return nil, err
 	}
 
+	fileformatter := new(prefixed.TextFormatter)
+	fileformatter.FullTimestamp = true
+	fileformatter.TimestampFormat = "2006-01-02 15:04:05"
+	fileformatter.DisableColors = true
+
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
 		logrus.DebugLevel: writer, // 为不同级别设置不同的输出目的
 		logrus.InfoLevel:  writer,
@@ -55,7 +60,7 @@ func SpawnFileLogrus(level logrus.Level,
 		logrus.ErrorLevel: writer,
 		logrus.FatalLevel: writer,
 		logrus.PanicLevel: writer,
-	}, formatter)
+	}, fileformatter)
 	hlog.AddHook(lfHook)
 
 	return hlog, nil
