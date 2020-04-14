@@ -43,7 +43,7 @@ type Daemon struct {
 
 //Open 打开Daemon
 func (slf *Daemon) Open() (string, error) {
-
+	//TODO: 需要增加，对core文件的收集
 	if len(os.Args) > 1 {
 		command := os.Args[1]
 		switch command {
