@@ -26,6 +26,10 @@ func (slf *MySQLGORM) Initial(dsn string, maxConn, maxIdleConn, lifeSec int) err
 
 //DB Returns Gorm db
 func (slf *MySQLGORM) DB() *gorm.DB {
+	if err := slf._dba.DB().Ping(); err != nil {
+		//TODO: 提供一个重连方法
+	}
+
 	return slf._dba
 }
 

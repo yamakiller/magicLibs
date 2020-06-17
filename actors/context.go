@@ -2,6 +2,7 @@ package actors
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/yamakiller/magicLibs/actors/messages"
 )
@@ -183,5 +184,9 @@ func (slf *Context) defaultReceive() {
 
 func (slf *Context) escalateFailure(reason interface{}, message interface{}) {
 	slf.Fatal("%+v, message:%+v", reason, message)
+	buf := make([]byte, 4096)
+	n := runtime.Stack(buf, false)
+	stackInfo := fmt.Sprintf("%s", buf[:n])
+	slf.Fatal("stack:\n %s\n", stackInfo)
 	slf.Self().postSysMessage(messages.SuspendMessage)
 }
