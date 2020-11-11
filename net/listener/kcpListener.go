@@ -28,8 +28,8 @@ type KCPData struct {
 func SpawnKCPListener(l *net.UDPConn, mtu int) *KCPListener {
 
 	return &KCPListener{_l: l,
-		_buffer: make([]byte, mtu),
-		_mtu:    mtu,
+		_b:   make([]byte, mtu),
+		_mtu: mtu,
 		_pool: sync.Pool{
 			New: func() interface{} {
 				return &KCPData{
@@ -61,7 +61,7 @@ type KCPListener struct {
 	Middleware    middle.KSMiddleware
 
 	_l        *net.UDPConn
-	_buffer   []byte
+	_b        []byte
 	_mtu      int
 	_convSz   int
 	_convUsed map[uint32]*KCPConn
@@ -72,7 +72,7 @@ type KCPListener struct {
 
 //Accept kcp accept connection
 func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
-	n, addr, err := slf._l.ReadFromUDP(slf._buffer)
+	n, addr, err := slf._l.ReadFromUDP(slf._b)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 			return nil, nil
 		}
 
-		cr, err := slf.Middleware.Subscribe(slf._buffer[:n], slf._l, addr)
+		cr, err := slf.Middleware.Subscribe(slf._b[:n], slf._l, addr)
 		if err != nil || cr == nil {
 			if err != nil {
 				slf.Middleware.Error(err)
@@ -103,7 +103,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		return nil, nil
 	}
 
-	conv = mkcp.GetConv(slf._buffer)
+	conv = mkcp.GetConv(slf._b)
 	conn = slf.get(conv)
 	if slf.Middleware != nil {
 		if conn == nil {
@@ -117,7 +117,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 	conn._sync.Lock()
 	conn._addr = addr
 	if conn._kcp != nil {
-		conn._kcp.Input(slf._buffer, int32(n))
+		conn._kcp.Input(slf._b, int32(n))
 	}
 	conn._sync.Unlock()
 
@@ -128,7 +128,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 			break
 		}
 
-		n := int(conn._kcp.Recv(slf._buffer, int32(len(slf._buffer))))
+		n := int(conn._kcp.Recv(slf._b, int32(len(slf._b))))
 		if n < 0 {
 			conn._sync.Unlock()
 			break
@@ -136,7 +136,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		conn._sync.Unlock()
 
 		data := slf._pool.Get().(*KCPData)
-		copy(data.Data, slf._buffer[:n])
+		copy(data.Data, slf._b[:n])
 		data.Length = n
 		select {
 		case <-conn._destored:
@@ -279,7 +279,7 @@ func (slf *KCPListener) spawConn(conv uint32, addr *net.UDPAddr) *KCPConn {
 }
 
 func (slf *KCPListener) reallocate() {
-	slf._buffer = make([]byte, slf._mtu*2)
+	slf._b = make([]byte, slf._mtu*2)
 }
 
 //ToString ....

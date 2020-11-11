@@ -51,7 +51,7 @@ func (slf *TCPBorker) Serve() error {
 	for {
 		select {
 		case <-slf._closed:
-			goto Exit
+			goto exit
 		default:
 			c, e := slf._listen.Accept(nil)
 			if e != nil {
@@ -75,7 +75,7 @@ func (slf *TCPBorker) Serve() error {
 				}
 
 				err = e
-				goto Exit
+				goto exit
 			}
 
 			tmpDelay = time.Duration(1) * time.Millisecond
@@ -85,7 +85,7 @@ func (slf *TCPBorker) Serve() error {
 			}
 		}
 	}
-Exit:
+exit:
 	return err
 }
 

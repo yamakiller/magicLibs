@@ -5,6 +5,7 @@ import (
 
 	"github.com/yamakiller/magicLibs/files"
 )
+
 //YAMLEnv docS
 //@Summary yaml fromat Environment variable loading interface
 //@Struct XMLEnv

@@ -79,13 +79,15 @@ func (slf *KCPBorker) Serve() error {
 		slf._wg.Done()
 	}()
 
+	var err error
 	for {
 		select {
 		case <-slf._closed:
 			goto exit
 		default:
-			c, err := slf._listen.Accept(nil)
-			if err != nil {
+			c, e := slf._listen.Accept(nil)
+			if e != nil {
+				err = e
 				goto exit
 			}
 
@@ -100,7 +102,7 @@ func (slf *KCPBorker) Serve() error {
 		}
 	}
 exit:
-	return nil
+	return err
 }
 
 func (slf *KCPBorker) update() {

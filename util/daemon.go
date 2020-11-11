@@ -21,7 +21,8 @@ type Application interface {
 //SpawnDaemon 创建一个Daemon
 func SpawnDaemon(app Application) *Daemon {
 	d, err := daemon.New(app.Name(),
-		app.Desc())
+		app.Desc(),
+		daemon.SystemDaemon)
 
 	if err != nil {
 		return nil
