@@ -32,7 +32,7 @@ func (slf *UDPListener) Accept([]interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	return &UDPReport{_addr: addr, _message: b, _length: n}, nil
+	return &UDPReport{_addr: *addr, _message: b, _length: n}, nil
 }
 
 //Wait ...
@@ -48,7 +48,7 @@ func (slf *UDPListener) Wait() (int, error) {
 		if !ok {
 			return -1, nil
 		}
-		return slf._l.WriteToUDP(d._message, d._addr)
+		return slf._l.WriteToUDP(d._message, &d._addr)
 	}
 	return 0, errors.New("closed udp listener")
 }
@@ -73,7 +73,7 @@ func (slf *UDPListener) WriteTo(addr net.UDPAddr, buffer []byte) (int32, error) 
 		if n, err := b.Write(buffer); err != nil {
 			return int32(n), err
 		}
-		slf._o <- &UDPTo{_addr: &addr, _message: b.Bytes()}
+		slf._o <- &UDPTo{_addr: addr, _message: b.Bytes()}
 	}
 
 	return int32(size), nil
@@ -99,20 +99,20 @@ func (slf *UDPListener) ToString() string {
 
 //UDPTo udp send packet
 type UDPTo struct {
-	_addr    *net.UDPAddr //source udp address
-	_message []byte       //data message
+	_addr    net.UDPAddr //source udp address
+	_message []byte      //data message
 }
 
 //UDPReport tcp connection
 type UDPReport struct {
-	_addr    *net.UDPAddr //source udp address
-	_message []byte       //data message
+	_addr    net.UDPAddr //source udp address
+	_message []byte      //data message
 	_length  int
 }
 
 //Addr udp address
 func (slf *UDPReport) Addr() *net.UDPAddr {
-	return slf._addr
+	return &slf._addr
 }
 
 //Recv recvice data
