@@ -18,7 +18,8 @@ const (
 )
 
 //NewList doc
-//@Method NewList @Summary instantiates a new list and adds the passed values, if any, to the list
+//@Method NewList
+//@Summary instantiates a new list and adds the passed values, if any, to the list
 //@Param (...interface{}) elements
 //@Return (*List)
 func NewList(values ...interface{}) *List {
