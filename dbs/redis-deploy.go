@@ -10,6 +10,7 @@ package dbs
 //@Member (int) Redis Connection idle time from json "idle-time" util/sec
 type RedisDeploy struct {
 	Host      string `xml:"host" yaml:"host" json:"host"`
+	Pwd       string `xml:"password"  yaml:"host" json:"host"`
 	DB        int    `xml:"db" yaml:"db" json:"db"`
 	MaxIdle   int    `xml:"idle" yaml:"idle" json:"idle"`
 	MaxActive int    `xml:"active" yaml:"active" json:"active"`
@@ -31,5 +32,5 @@ type RedisDeployArray struct {
 //@Param  (*MySQLDeployArray) mysql config informat
 //@Return (error) register mysql success/fail
 func DoRedisDeploy(Db *RedisDB, deploy *RedisDeploy) error {
-	return Db.Initial(deploy.Host, deploy.DB, deploy.MaxIdle, deploy.MaxActive, deploy.IdleTime)
+	return Db.Initial(deploy.Host, deploy.Pwd, deploy.DB, deploy.MaxIdle, deploy.MaxActive, deploy.IdleTime)
 }
