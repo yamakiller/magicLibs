@@ -69,7 +69,7 @@ func (slf *UDPListener) WriteTo(addr net.UDPAddr, buffer []byte) (int32, error) 
 	case <-slf._closed:
 		return 0, errors.New("udp listener closed")
 	default:
-		b := bytes.NewBuffer(make([]byte, size))
+		b := bytes.NewBuffer([]byte{})
 		if n, err := b.Write(buffer); err != nil {
 			return int32(n), err
 		}
