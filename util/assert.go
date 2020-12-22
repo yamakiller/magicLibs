@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-//Assert doc
-//@Method Assert @Summary Assert boolean and output error message
+//Assert Assert boolean and output error message
+//@Method Assert
 //@Param (bool) false assert
 //@Param (string) error message
 func Assert(isAs bool, errMsg string) {
@@ -17,8 +17,15 @@ func Assert(isAs bool, errMsg string) {
 	}
 }
 
-//AssertEmpty doc
-//@Method AssertEmtpy @Summary Assert Nil and output an error message
+//AssertError Assert error is null
+func AssertError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+//AssertEmpty Assert Nil and output an error message
+//@Method AssertEmtpy
 //@Param (interface{}) is null assert
 //@Param (string) error message
 func AssertEmpty(isNull interface{}, errMsg string) {
@@ -28,8 +35,8 @@ func AssertEmpty(isNull interface{}, errMsg string) {
 	}
 }
 
-//GetStack doc
-//@Method GetStack @Summary Return current stack information
+//GetStack Return current stack information
+//@Method GetStack
 //@Return (string)
 func GetStack() string {
 	var name, file string
