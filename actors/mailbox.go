@@ -52,7 +52,6 @@ func (slf *mailbox) run() {
 		}
 	}()
 	//End=>致命性异常处理结束
-
 	i := 0
 	for {
 		if i > 0 {

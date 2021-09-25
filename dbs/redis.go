@@ -230,6 +230,10 @@ func (slf *RedisDB) Del(key string) error {
 	return err
 }
 
+func (slf *RedisDB) GetKeys(key string) ([]string, error) {
+	return redis.Strings(slf.Do("KEYS", slf.getKey(key)))
+}
+
 // Flush 清空当前数据库中的所有 key，慎用！
 func (slf *RedisDB) Flush() error {
 	_, err := slf.Do("FLUSHDB")

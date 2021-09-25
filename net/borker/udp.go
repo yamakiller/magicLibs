@@ -1,6 +1,8 @@
 package borker
 
 import (
+	"crypto/tls"
+	"errors"
 	"net"
 	"sync"
 
@@ -40,6 +42,10 @@ func (slf *UDPBorker) ListenAndServe(addr string) error {
 	go slf.Serve()
 	go slf.update()
 	return nil
+}
+
+func (slf *UDPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
+	return errors.New("undefined tls")
 }
 
 //Serve udp recv

@@ -1,6 +1,7 @@
 package borker
 
 import (
+	"crypto/tls"
 	"net"
 	"strings"
 	"sync"
@@ -29,6 +30,25 @@ func (slf *TCPBorker) ListenAndServe(addr string) error {
 	}
 
 	lst, err := net.ListenTCP("tcp", address)
+
+	if err != nil {
+		return err
+	}
+
+	slf._listen = listener.SpawnTCPListener(lst)
+
+	slf._wg.Add((1))
+	go slf.Serve()
+	return nil
+}
+
+func (slf *TCPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
+	if slf._closed == nil {
+		slf._closed = make(chan bool, 1)
+	}
+
+	lst, err := tls.Listen("tcp", addr, ptls)
+
 	if err != nil {
 		return err
 	}

@@ -1,7 +1,6 @@
 package args
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -87,7 +86,6 @@ func (slf *Args) GetString(name string, def string) string {
 //@Return (int) value
 func (slf *Args) GetInt(name string, def int) int {
 	if _, ok := slf.m[name]; !ok {
-		fmt.Println("k:", name)
 		return def
 	}
 
@@ -129,7 +127,8 @@ func (slf *Args) GetBoolean(name string, def bool) bool {
 	}
 
 	v := slf.m[name]
-	if _, ok := v.(bool); !ok {
+
+	if _, ok := v.(string); !ok {
 		return def
 	}
 	r, err := strconv.ParseBool(v.(string))

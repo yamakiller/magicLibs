@@ -1,6 +1,8 @@
 package borker
 
 import (
+	"crypto/tls"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -57,6 +59,10 @@ func (slf *WSSBorker) ListenAndServe(addr string) error {
 	go slf.Serve()
 
 	return nil
+}
+
+func (slf *WSSBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
+	return errors.New("undefined tls")
 }
 
 //Serve accept connection

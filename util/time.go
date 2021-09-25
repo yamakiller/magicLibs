@@ -14,6 +14,14 @@ func ToTimeFormat(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
 }
 
+func ToTimeFormatPoint(t *time.Time) string {
+	if t == nil {
+		return "0000-00-00 00:00:00"
+	}
+
+	return t.Format("2006-01-02 15:04:05")
+}
+
 //Timestamp Returns 当前时间毫秒
 func Timestamp() int64 {
 	return time.Now().UnixNano() / 1e6
@@ -21,6 +29,14 @@ func Timestamp() int64 {
 
 //ToTimestamp Returns 返回这个时间的毫秒数
 func ToTimestamp(t time.Time) int64 {
+	return t.UnixNano() / 1e6
+}
+
+//ToTimestampPoint Returns 返回这个时间的毫秒数
+func ToTimestampPoint(t *time.Time) int64 {
+	if t == nil {
+		return 0
+	}
 	return t.UnixNano() / 1e6
 }
 

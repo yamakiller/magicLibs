@@ -17,6 +17,7 @@ import (
 //@Member int  connection/operation/close time out unit/second
 type MongoDB struct {
 	_c       *mongo.Client
+	_opt     *options.ClientOptions
 	_db      *mongo.Database
 	_timeOut time.Duration
 }
@@ -24,8 +25,9 @@ type MongoDB struct {
 //Initial doc
 //@Summary initialization mongo db
 //@Method Initial
-//@Param []string hosts
 //@Param string   uri
+//@Param string   user
+//@Param string   password
 //@Param string   db name
 //@Param int      max pool
 //@Param int      min pool
@@ -34,38 +36,41 @@ type MongoDB struct {
 //@Param int      connection time out unit/second
 //@Param int      connection idle time unit/second
 //@Return (error) initialization fail return error
-func (slf *MongoDB) Initial(hosts []string,
-	uri string,
-	dbName string,
-	poolMax int,
-	poolMin int,
-	timeOut int,
-	heartRate int,
-	connTimeOut int,
-	idleTime int) error {
-	slf._timeOut = time.Duration(timeOut) * time.Millisecond
-	opt := options.ClientOptions{}
+func (slf *MongoDB) Initial(url string,
+	user string,
+	password string,
+	dbname string,
+	max int,
+	min int,
+	timeout int) error {
+
+	mongoUrl := "mongodb://" + user + ":" + password + "@" + url
+
+	slf._timeOut = time.Duration(timeout) * time.Second
+	slf._opt = options.Client().ApplyURI(mongoUrl)
 	ctx, cancel := context.WithTimeout(context.Background(), slf._timeOut)
 	defer cancel()
-	c, err := mongo.Connect(ctx,
-		opt.ApplyURI(uri),
-		opt.SetHosts(hosts),
-		opt.SetHeartbeatInterval(time.Duration(heartRate)*time.Second),
-		opt.SetMaxPoolSize(uint64(poolMax)),
-		opt.SetMinPoolSize(uint64(poolMin)),
-		opt.SetMaxConnIdleTime(time.Duration(idleTime)*time.Second),
-		opt.SetSocketTimeout(time.Duration(connTimeOut)*time.Second))
+
+	slf._opt.SetMaxPoolSize(uint64(max))
+	slf._opt.SetMinPoolSize(uint64(min))
+
+	c, err := mongo.Connect(ctx, slf._opt)
 	if err != nil {
 		return err
 	}
 
-	slf._db = c.Database(dbName)
-	if slf._db == nil {
-		c.Disconnect(ctx)
-		return fmt.Errorf("mongoDB Database %s does not exist", dbName)
+	if err := c.Ping(context.TODO(), nil); err != nil {
+		c.Disconnect(context.TODO())
+		return err
 	}
 
+	slf._db = c.Database(dbname)
+	if slf._db == nil {
+		c.Disconnect(context.TODO())
+		return fmt.Errorf("mongoDB Database %s does not exist", dbname)
+	}
 	slf._c = c
+
 	return nil
 }
 
@@ -185,6 +190,19 @@ func (slf *MongoDB) UpdateOne(name string, filter interface{}, update interface{
 	defer cancel()
 
 	r, rerr := slf._db.Collection(name).UpdateOne(ctx, filter, update)
+	if rerr != nil {
+		return 0, 0, 0, nil, rerr
+	}
+
+	return r.MatchedCount, r.ModifiedCount, r.UpsertedCount, r.UpsertedID, nil
+}
+
+func (slf *MongoDB) UpdateOrInsert(name string, filter interface{}, update interface{}) (int64, int64, int64, interface{}, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), slf._timeOut)
+	defer cancel()
+
+	updateOpts := options.Update().SetUpsert(true)
+	r, rerr := slf._db.Collection(name).UpdateOne(ctx, filter, update, updateOpts)
 	if rerr != nil {
 		return 0, 0, 0, nil, rerr
 	}
@@ -364,13 +382,24 @@ func (slf *MongoDB) Distinct(name string, fieldName string, filter interface{}) 
 	return r, nil
 }
 
+func (slf *MongoDB) SpawnIndex(name string, idx mongo.IndexModel) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), slf._timeOut)
+	defer cancel()
+
+	if _, err := slf._db.Collection(name).Indexes().CreateOne(ctx, idx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 //Drop @Summary
 //@Summary Delete set/table
 //@Method Drop
 //@Param  (string) set/table name
 //@Return (error)
 func (slf *MongoDB) Drop(name string) error {
-
 	ctx, cancel := context.WithTimeout(context.Background(), slf._timeOut)
 	defer cancel()
 

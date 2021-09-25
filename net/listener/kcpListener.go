@@ -2,7 +2,9 @@ package listener
 
 import (
 	"errors"
+	"fmt"
 	"net"
+	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -71,7 +73,7 @@ type KCPListener struct {
 }
 
 //Accept kcp accept connection
-func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
+func (slf *KCPListener) Accept(params []interface{}) (interface{}, error) {
 	n, addr, err := slf._l.ReadFromUDP(slf._b)
 	if err != nil {
 		return nil, err
@@ -80,6 +82,8 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 	var conn *KCPConn
 	var conv uint32
 	var apt bool
+	//If it is not KCP protocol data, judge whether it is handshake data.
+	//If it does not support handshake protocol, discard illegal packets
 	if n < kcpHeaderLength {
 		if slf.Middleware == nil {
 			return nil, nil
@@ -97,7 +101,13 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		conn = slf.get(conv)
 		if conn == nil {
 			conn = slf.spawConn(cr.(uint32), addr)
-			return conn, nil
+			if len(params) > 0 && params[0] != nil {
+				if err = params[0].(func(*KCPConn) error)(conn); err != nil {
+					return nil, err
+				}
+			}
+
+			return nil, nil
 		}
 
 		return nil, nil
@@ -105,6 +115,7 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 
 	conv = mkcp.GetConv(slf._b)
 	conn = slf.get(conv)
+
 	if slf.Middleware != nil {
 		if conn == nil {
 			return nil, nil
@@ -120,6 +131,14 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		conn._kcp.Input(slf._b, int32(n))
 	}
 	conn._sync.Unlock()
+
+	if apt {
+		if len(params) > 0 && params[0] != nil {
+			if err = params[0].(func(*KCPConn) error)(conn); err != nil {
+				return nil, err
+			}
+		}
+	}
 
 	for {
 		conn._sync.Lock()
@@ -152,9 +171,6 @@ func (slf *KCPListener) Accept([]interface{}) (interface{}, error) {
 		break
 	}
 
-	if apt {
-		return conn, nil
-	}
 	return nil, nil
 }
 
@@ -213,7 +229,7 @@ func (slf *KCPListener) Update(tss int64) int {
 		}
 
 		con._sync.Lock()
-		if con._kcp.Check(current) >= con._kcp.Check(current) {
+		if con._kcp.Check(current) == current {
 			con._kcp.Update(current)
 		}
 		con._sync.Unlock()
@@ -335,10 +351,12 @@ func (slf *KCPConn) SetReadDeadline(t time.Time) {
 func (slf *KCPConn) Recv(buffer []byte, size int32) (int32, error) {
 	if slf._deathtime != nil {
 		timeout := slf._deathtime.Sub(time.Now())
+		fmt.Fprintf(os.Stderr, "begin time out %+v\n", timeout)
 		select {
 		case <-slf._destored:
 			return -1, errors.New("closed")
 		case <-time.After(timeout):
+			fmt.Fprintf(os.Stderr, "time out %+v\n", timeout)
 			return -1, errors.New("reader timeout")
 		case data := <-slf._recv:
 			if data == nil {
@@ -351,6 +369,7 @@ func (slf *KCPConn) Recv(buffer []byte, size int32) (int32, error) {
 
 			n := int32(data.Length)
 			copy(buffer, data.Data[:n])
+			fmt.Fprintf(os.Stderr, "recvice ============\n")
 			return n, nil
 		}
 	} else {

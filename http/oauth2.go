@@ -25,7 +25,7 @@ type OAuth2 struct {
 	_refreshTokenExp   int
 	_isGenerateRefresh bool
 	_s256KeyValue      string
-	_accessURI         string
+	//_accessURI         string
 }
 
 //SetTokenExp doc
@@ -60,13 +60,14 @@ func (slf *OAuth2) SetKey(v string) {
 	slf._s256KeyValue = v
 }
 
+/*
 //SetURI doc
 //@Summary Setting oauth2 access address
 //@Method SetURI
 //@Param (string) oauth2 access address
 func (slf *OAuth2) SetURI(v string) {
 	slf._accessURI = v
-}
+}*/
 
 //Initial doc
 //@Summary
@@ -99,16 +100,25 @@ func (slf *OAuth2) Initial() {
 	slf._m.SetRefreshTokenCfg(manage.DefaultRefreshTokenCfg)
 }
 
-//onRequestAuth doc
+//OnRequestAuth doc
 //@Summary http request method
 //@Method onRequestAuth
 //@Param (http.ResponseWriter)
 //@Param (http.Request)
-func (slf *OAuth2) onRequestAuth(w http.ResponseWriter, r *http.Request) {
+func (slf *OAuth2) OnRequestAuth(w http.ResponseWriter, r *http.Request) {
 	err := slf._s.HandleTokenRequest(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+}
+
+func (slf *OAuth2) OnRequestAuthorization(w http.ResponseWriter, r *http.Request) error {
+	err := slf._s.HandleAuthorizeRequest(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return err
+	}
+	return nil
 }
 
 //AddAuthClient doc

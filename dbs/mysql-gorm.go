@@ -18,17 +18,21 @@ func (slf *MySQLGORM) Initial(dsn string, maxConn, maxIdleConn, lifeSec int) err
 		return err
 	}
 	slf._dba = db
-	slf._dba.DB().SetMaxIdleConns(maxIdleConn)
+
 	slf._dba.DB().SetMaxOpenConns(maxConn)
+	slf._dba.DB().SetMaxIdleConns(maxIdleConn)
 	slf._dba.DB().SetConnMaxLifetime(time.Duration(lifeSec) * time.Millisecond)
+	if err := slf._dba.DB().Ping(); err != nil {
+		return err
+	}
 	return nil
 }
 
 //DB Returns Gorm db
 func (slf *MySQLGORM) DB() *gorm.DB {
-	if err := slf._dba.DB().Ping(); err != nil {
+	/*if err := slf._dba.DB().Ping(); err != nil {
 		//TODO: 提供一个重连方法
-	}
+	}*/
 
 	return slf._dba
 }

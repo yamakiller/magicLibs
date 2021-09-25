@@ -1,6 +1,8 @@
 package borker
 
 import (
+	"crypto/tls"
+	"errors"
 	"net"
 	"sync"
 	"time"
@@ -73,6 +75,10 @@ func (slf *KCPBorker) ListenAndServe(addr string) error {
 	return nil
 }
 
+func (slf *KCPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
+	return errors.New("undefined tls")
+}
+
 //Serve 启动服务
 func (slf *KCPBorker) Serve() error {
 	defer func() {
@@ -80,25 +86,26 @@ func (slf *KCPBorker) Serve() error {
 	}()
 
 	var err error
+	params := [1]interface{}{slf.Spawn}
 	for {
 		select {
 		case <-slf._closed:
 			goto exit
 		default:
-			c, e := slf._listen.Accept(nil)
+			_, e := slf._listen.Accept(params[:])
 			if e != nil {
 				err = e
 				goto exit
 			}
 
-			if c == nil {
+			/*if c == nil {
 				continue
 			}
 
 			if e := slf.Spawn(c.(*listener.KCPConn)); e != nil {
 				c.(*listener.KCPConn).Close()
 				continue
-			}
+			}*/
 		}
 	}
 exit:
