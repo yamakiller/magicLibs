@@ -8,12 +8,12 @@ import (
 	"github.com/yamakiller/magicLibs/mutex"
 )
 
-//PIDSet PID 集
+//DPIDSet PID 集
 type PIDSet struct {
-	_ars []PID
-	_seq int
-	_sz  int
-	_syn mutex.SpinLock
+	_pids []PID
+	_seq  int
+	_sz   int
+	_syn  mutex.SpinLock
 }
 
 //Next 生成新的PID
@@ -24,11 +24,11 @@ func (slf *PIDSet) Next() (*PID, error) {
 	for i := 0; i < math.MaxUint16; i++ {
 		key := ((i + slf._seq) & math.MaxUint16)
 		hash := key & (math.MaxUint16 - 1)
-		if slf._ars[hash].ID == 0 {
+		if slf._pids[hash].ID == 0 {
 			slf._seq = key + 1
-			slf._ars[hash].ID = uint32(key)
+			slf._pids[hash].ID = uint32(key)
 			slf._sz++
-			return &slf._ars[hash], nil
+			return &slf._pids[hash], nil
 		}
 	}
 
@@ -41,8 +41,8 @@ func (slf *PIDSet) Remove(pid *PID) error {
 	defer slf.unlock()
 
 	hash := uint32(pid.ID) & uint32(math.MaxUint16-1)
-	if slf._ars[hash].ID != 0 && slf._ars[hash].ID == pid.ID {
-		slf._ars[hash].ID = 0
+	if slf._pids[hash].ID != 0 && slf._pids[hash].ID == pid.ID {
+		slf._pids[hash].ID = 0
 		slf._sz--
 		return nil
 	}
@@ -58,8 +58,8 @@ func (slf *PIDSet) Values() []*PID {
 	icur := 0
 	result := make([]*PID, slf._sz)
 	for i := 0; i < math.MaxUint16; i++ {
-		if slf._ars[i].ID > 0 {
-			result[icur] = &slf._ars[i]
+		if slf._pids[i].ID > 0 {
+			result[icur] = &slf._pids[i]
 			icur++
 			if icur >= slf._sz {
 				break

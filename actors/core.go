@@ -13,7 +13,7 @@ import (
 //New 创建Actor内核
 func New(sch Scheduler) *Core {
 	c := &Core{
-		_pidSets: &PIDSet{_ars: make([]PID, math.MaxUint16),
+		_pidSets: &PIDSet{_pids: make([]PID, math.MaxUint16),
 			_seq: 1,
 		},
 		_hs:  make(map[uint32]handle),
