@@ -23,7 +23,7 @@ require (
 	github.com/takama/daemon v1.0.0
 	github.com/tebeka/strftime v0.1.5 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
-	github.com/yamakiller/mgokcp v0.0.0-20200222140718-6b0595df611e
+	github.com/yamakiller/mgokcp v1.0.1
 	github.com/yamakiller/mgolua v1.0.0
 	go.mongodb.org/mongo-driver v1.7.2
 	gopkg.in/oauth2.v3 v3.12.0
