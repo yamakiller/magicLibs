@@ -1,2 +1,0 @@
-# magicLibs
-DB library
