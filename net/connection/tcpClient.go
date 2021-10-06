@@ -3,6 +3,7 @@ package connection
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
 	"errors"
 	"io"
 	"net"
@@ -62,19 +63,14 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 	return nil
 }
 
-func (slf *TCPClient) ConnectTls(addr string, timeout time.Duration, ptls *tls.Config) error {
+func (slf *TCPClient) ConnectTls(addr string, timeout time.Duration, config *tls.Config) error {
 	var err error
 	var c net.Conn
 
 	if timeout == 0 {
-		tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
-		if err != nil {
-			return err
-		}
-
-		c, err = tls.DialTCP("tcp", nil, tcpAddr)
+		c, err = tls.Dial("tcp", addr, config)
 	} else {
-		c, err = net.DialTimeout("tcp", addr, timeout)
+		c, err = tls.DialWithDialer(&net.Dialer{Timeout: timeout}, "tcp", addr, config)
 	}
 	if err != nil {
 		return err

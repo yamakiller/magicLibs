@@ -3,6 +3,7 @@ package connection
 import (
 	"io"
 	"time"
+	"crypto/tls"
 )
 
 //Client 客户端接口

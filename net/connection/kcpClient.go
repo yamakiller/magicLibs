@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"net"
 	"sync"
@@ -116,7 +117,7 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 	return nil
 }
 
-func (slf *KCPClient) ConnectTls(string, time.Duration, *tls.Config) error {
+func (slf *KCPClient) ConnectTls(addr string, timeout time.Duration, config *tls.Config) error {
 	return nil
 }
 

@@ -2,6 +2,7 @@ package connection
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"sync"
 	"time"
@@ -49,7 +50,7 @@ func (slf *WSSClient) Connect(url string, timeout time.Duration) error {
 	return nil
 }
 
-func (slf *WSSClient) ConnectTls(string, time.Duration, *tls.Config) error {
+func (slf *WSSClient) ConnectTls(addr string, timeout time.Duration, config *tls.Config) error {
 	return nil
 }
 
