@@ -121,8 +121,8 @@ func (slf *KCPClient) ConnectTls(addr string, timeout time.Duration, config *tls
 	return nil
 }
 
-func (slf *KCPClient) IsConnected() bool {
-	return false
+func (slf *KCPClient) IsConnected() interface{} {
+	return nil
 }
 
 func (slf *KCPClient) writeServe() {

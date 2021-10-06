@@ -6,20 +6,11 @@ import (
 	"time"
 )
 
-type CLIENT_STATUS uint8
-
-const (
-	CS_UNCONNECT = CLIENT_STATUS(0)
-	CS_CONNECTING = CLIENT_STATUS(1)
-	CS_CONNECTED = CLIENT_STATUS(2)
-	CS_CLOSING   = CLIENT_STATUS(3)
-)
-
 //Client 客户端接口
 type Client interface {
 	Connect(string, time.Duration) error
 	ConnectTls(string, time.Duration, *tls.Config) error
-	IsConnected() bool
+	IsConnected() interface{}
 	Parse() (interface{}, error)
 	SendTo(interface{}) error
 	Close() error
