@@ -24,6 +24,7 @@ type WSSClient struct {
 	_wTotal     int
 	_rTotal     int
 	_lastActive int64
+	_status     CLIENT_STATUS
 	_wg         sync.WaitGroup
 }
 
@@ -33,19 +34,22 @@ func (slf *WSSClient) Connect(url string, timeout time.Duration) error {
 	if timeout > 0 {
 		d.HandshakeTimeout = timeout
 	}
+	slf._status = CS_CONNECTING
 	c, _, err := d.Dial(url, nil)
 
 	if err != nil {
 		return nil
 	}
 
-	slf._queue = make(chan interface{}, slf.WriteWaitQueue)
+	
+	slf._queue  = make(chan interface{}, slf.WriteWaitQueue)
 	slf._c = c
 
 	slf._ctx, slf._cancel = context.WithCancel(context.Background())
 
 	slf._wg.Add(1)
 	go slf.writeServe()
+	slf._status = CS_CONNECTED
 
 	return nil
 }
@@ -54,8 +58,16 @@ func (slf *WSSClient) ConnectTls(addr string, timeout time.Duration, config *tls
 	return nil
 }
 
+func (slf *WSSClient) IsConnected() bool {
+	if (slf._status == CS_CONNECTED || slf._status == CS_CONNECTING) {
+		return true 
+	}
+	return false
+}
+
 func (slf *WSSClient) writeServe() {
 	defer func() {
+		slf._status = CS_CLOSING
 		slf._wg.Done()
 	}()
 
@@ -146,6 +158,7 @@ func (slf *WSSClient) Close() error {
 	if slf._queue != nil {
 		close(slf._queue)
 	}
+	slf._status = CS_UNCONNECT
 
 	return err
 }

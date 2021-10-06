@@ -28,6 +28,7 @@ type TCPClient struct {
 	_wTotal     int
 	_rTotal     int
 	_lastActive int64
+	_status     CLIENT_STATUS
 	_wg         sync.WaitGroup
 }
 
@@ -36,9 +37,11 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 	var err error
 	var c net.Conn
 
+	slf._status = CS_CONNECTING
 	if timeout == 0 {
 		tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
 		if err != nil {
+			slf._status = CS_UNCONNECT
 			return err
 		}
 
@@ -47,6 +50,7 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 		c, err = net.DialTimeout("tcp", addr, timeout)
 	}
 	if err != nil {
+		slf._status = CS_UNCONNECT
 		return err
 	}
 
@@ -54,11 +58,13 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 	slf._reader = bufio.NewReaderSize(slf._c, slf.ReadBufferSize)
 	slf._writer = bufio.NewWriterSize(slf._c, slf.WriteBufferSize)
 	slf._queue = make(chan interface{}, slf.WriteWaitQueue)
+	
 
 	slf._ctx, slf._cancel = context.WithCancel(context.Background())
 
 	slf._wg.Add(1)
 	go slf.writeServe()
+	slf._status = CS_CONNECTED
 
 	return nil
 }
@@ -67,12 +73,14 @@ func (slf *TCPClient) ConnectTls(addr string, timeout time.Duration, config *tls
 	var err error
 	var c net.Conn
 
+	slf._status = CS_CONNECTING
 	if timeout == 0 {
 		c, err = tls.Dial("tcp", addr, config)
 	} else {
 		c, err = tls.DialWithDialer(&net.Dialer{Timeout: timeout}, "tcp", addr, config)
 	}
 	if err != nil {
+		slf._status = CS_UNCONNECT
 		return err
 	}
 
@@ -85,11 +93,20 @@ func (slf *TCPClient) ConnectTls(addr string, timeout time.Duration, config *tls
 
 	slf._wg.Add(1)
 	go slf.writeServe()
+	slf._status = CS_CONNECTED
 	return nil
+}
+
+func (slf *TCPClient) IsConnected() bool {
+	if (slf._status == CS_CONNECTED || slf._status == CS_CONNECTING) {
+		return true 
+	}
+	return false
 }
 
 func (slf *TCPClient) writeServe() {
 	defer func() {
+		slf._status = CS_CLOSING
 		slf._wg.Done()
 	}()
 
@@ -169,6 +186,7 @@ func (slf *TCPClient) Close() error {
 	if slf._queue != nil {
 		close(slf._queue)
 	}
+	slf._status = CS_UNCONNECT
 
 	return err
 }
