@@ -62,6 +62,36 @@ func (slf *TCPClient) Connect(addr string, timeout time.Duration) error {
 	return nil
 }
 
+func (slf *TCPClient) ConnectTls(addr string, timeout time.Duration, ptls *tls.Config) error {
+	var err error
+	var c net.Conn
+
+	if timeout == 0 {
+		tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
+		if err != nil {
+			return err
+		}
+
+		c, err = tls.DialTCP("tcp", nil, tcpAddr)
+	} else {
+		c, err = net.DialTimeout("tcp", addr, timeout)
+	}
+	if err != nil {
+		return err
+	}
+
+	slf._c = c.(io.ReadWriteCloser)
+	slf._reader = bufio.NewReaderSize(slf._c, slf.ReadBufferSize)
+	slf._writer = bufio.NewWriterSize(slf._c, slf.WriteBufferSize)
+	slf._queue = make(chan interface{}, slf.WriteWaitQueue)
+
+	slf._ctx, slf._cancel = context.WithCancel(context.Background())
+
+	slf._wg.Add(1)
+	go slf.writeServe()
+	return nil
+}
+
 func (slf *TCPClient) writeServe() {
 	defer func() {
 		slf._wg.Done()

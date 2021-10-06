@@ -49,6 +49,10 @@ func (slf *WSSClient) Connect(url string, timeout time.Duration) error {
 	return nil
 }
 
+func (slf *WSSClient) ConnectTls(string, time.Duration, *tls.Config) error {
+	return nil
+}
+
 func (slf *WSSClient) writeServe() {
 	defer func() {
 		slf._wg.Done()

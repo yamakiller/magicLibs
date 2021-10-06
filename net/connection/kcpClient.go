@@ -116,6 +116,10 @@ func (slf *KCPClient) Connect(addr string, timeout time.Duration) error {
 	return nil
 }
 
+func (slf *KCPClient) ConnectTls(string, time.Duration, *tls.Config) error {
+	return nil
+}
+
 func (slf *KCPClient) writeServe() {
 	defer func() {
 		slf._wg.Done()

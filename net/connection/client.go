@@ -7,7 +7,8 @@ import (
 
 //Client 客户端接口
 type Client interface {
-	Connect(addr string, timeout time.Duration) error
+	Connect(string, time.Duration) error
+	ConnectTls(string, time.Duration, *tls.Config) error
 	Parse() (interface{}, error)
 	SendTo(interface{}) error
 	Close() error
