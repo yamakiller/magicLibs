@@ -49,7 +49,7 @@ func (slf *UDPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
 }
 
 //Serve udp recv
-func (slf *UDPBorker) Serve() error {
+func (slf *UDPBorker) Serve() {
 	defer func() {
 		slf._wg.Done()
 	}()
@@ -77,7 +77,10 @@ func (slf *UDPBorker) Serve() error {
 		}
 	}
 exit:
-	return err
+	if err != nil {
+		paint(err)
+	}
+	return
 }
 
 func (slf *UDPBorker) update() {

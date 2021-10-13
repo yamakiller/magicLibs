@@ -80,7 +80,7 @@ func (slf *KCPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
 }
 
 //Serve 启动服务
-func (slf *KCPBorker) Serve() error {
+func (slf *KCPBorker) Serve() {
 	defer func() {
 		slf._wg.Done()
 	}()
@@ -109,6 +109,9 @@ func (slf *KCPBorker) Serve() error {
 		}
 	}
 exit:
+	if err != nil {
+		paint(err)
+	}
 	return err
 }
 

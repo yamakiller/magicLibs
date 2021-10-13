@@ -61,7 +61,7 @@ func (slf *TCPBorker) ListenAndServeTls(addr string, ptls *tls.Config) error {
 }
 
 //Serve accept services
-func (slf *TCPBorker) Serve() error {
+func (slf *TCPBorker) Serve() {
 	defer func() {
 		slf._wg.Done()
 	}()
@@ -106,7 +106,10 @@ func (slf *TCPBorker) Serve() error {
 		}
 	}
 exit:
-	return err
+	if err != nil {
+		paint(err)
+	}
+	return
 }
 
 //Listener Returns listenner object

@@ -11,6 +11,6 @@ type Borker interface {
 	ListenAndServe(string) error
 	ListenAndServeTls(string, *tls.Config) error
 	Listener() listener.Listener
-	Serve() error
+	Serve()
 	Shutdown()
 }
