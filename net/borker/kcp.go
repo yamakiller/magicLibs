@@ -112,7 +112,7 @@ exit:
 	if err != nil {
 		panic(err)
 	}
-	return err
+	return
 }
 
 func (slf *KCPBorker) update() {
