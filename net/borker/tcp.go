@@ -107,7 +107,7 @@ func (slf *TCPBorker) Serve() {
 	}
 exit:
 	if err != nil {
-		paint(err)
+		panic(err)
 	}
 	return
 }
