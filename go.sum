@@ -226,6 +226,8 @@ github.com/yamakiller/mgokcp v1.1.0 h1:gSxxhJl7hzZSAyKzKb+0YJmnCzT9+5f65viL7uRjZ
 github.com/yamakiller/mgokcp v1.1.0/go.mod h1:zV0iMj3V4FshBi8f7KFUudRSbekeJdTnfzJkcAyyPv8=
 github.com/yamakiller/mgokcp v1.2.0 h1:KeCu5vSu77nlKiKp8945ZZN7+Os9v3zTkOnckfvsbq0=
 github.com/yamakiller/mgokcp v1.2.0/go.mod h1:zV0iMj3V4FshBi8f7KFUudRSbekeJdTnfzJkcAyyPv8=
+github.com/yamakiller/mgokcp v1.2.1 h1:rv21nIzs9EXzEdADP466KxC1DP8nWicL5VR6N5qD4SY=
+github.com/yamakiller/mgokcp v1.2.1/go.mod h1:zV0iMj3V4FshBi8f7KFUudRSbekeJdTnfzJkcAyyPv8=
 github.com/yamakiller/mgolua v1.0.0 h1:KvMt/CxFShECtUOuPiDymc2SOP2lj80KHkwn1QqJrVM=
 github.com/yamakiller/mgolua v1.0.0/go.mod h1:xc/MbQI88anEMTW1Zq7UgB1BedqJNVGDJjJ0ILA0euc=
 github.com/yamakiller/mgolua v1.1.0 h1:atuSG5JDrOk2o7zmez7tRBkEIFz44F//OnqsKSUJ7eI=
