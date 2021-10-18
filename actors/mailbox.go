@@ -14,12 +14,18 @@ const (
 	running
 )
 
+const (
+	PriorityNomal int32 = iota
+	PriorityHigh
+)
+
 type mailbox struct {
 	_usrMailbox      *queue
 	_sysMailbox      *queue
 	_usrMessages     int32
 	_sysMessages     int32
 	_schedulerStatus int32
+	_priority        int32
 	_dispatcher      *dispatcher
 	_invoker         invoker
 	_suspended       int32
@@ -54,7 +60,7 @@ func (slf *mailbox) run() {
 	//End=>致命性异常处理结束
 	i := 0
 	for {
-		if i > 0 {
+		if i > 0 && slf._priority == PriorityNomal {
 			i = 0
 			runtime.Gosched()
 		}

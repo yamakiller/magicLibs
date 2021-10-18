@@ -39,7 +39,7 @@ func TestActorsClose(t *testing.T) {
 
 	PID1, err := engine.New(func(pid *actors.PID) actors.Actor {
 		return &TActor{}
-	})
+	}, actors.PriorityNomal)
 	if err != nil {
 		logSystem.Info("", "创建Actor错误")
 	}
@@ -62,7 +62,7 @@ func (slf *NewTest) run() {
 	for i := 0; i < 100; i++ {
 		PID1, err := slf._engine.New(func(pid *actors.PID) actors.Actor {
 			return &TActor{}
-		})
+		}, actors.PriorityNomal)
 		if err != nil {
 			fmt.Printf("创建失败:%+v", err)
 		}

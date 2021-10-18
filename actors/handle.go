@@ -6,11 +6,12 @@ import (
 	"github.com/yamakiller/magicLibs/actors/messages"
 )
 
-func spawnHandle(in invoker, sch Scheduler) handle {
+func spawnHandle(in invoker, sch Scheduler, priority int32) handle {
 	return &actorHandle{
 		_mailbox: mailbox{
 			_usrMailbox: spawnQueue(8),
 			_sysMailbox: spawnQueue(4),
+			_priority:   priority,
 			_dispatcher: &dispatcher{
 				_sch: sch,
 			},
