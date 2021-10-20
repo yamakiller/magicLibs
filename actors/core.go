@@ -35,7 +35,7 @@ func New(sch Scheduler) *Core {
 //Core actors 核心模块
 type Core struct {
 	_pidSets    *PIDSet
-	_log        log.LogAgent
+	_loger      log.LogAgent
 	_hs         map[uint32]handle
 	_gw         sync.WaitGroup
 	_sch        Scheduler
@@ -90,7 +90,11 @@ func (slf *Core) Delete(pid *PID) error {
 
 //WithLogger 设置日志接口
 func (slf *Core) WithLogger(log log.LogAgent) {
-	slf._log = log
+	slf._loger = log
+}
+
+func (slf *Core) GetLogger() {
+	return slf._loger
 }
 
 //Close 关闭
