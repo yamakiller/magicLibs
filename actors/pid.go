@@ -62,32 +62,32 @@ func (slf *PID) postSysMessage(message interface{}) {
 
 //Info ...
 func (slf *PID) Info(sfmt string, args ...interface{}) {
-	slf._parent._log.Info(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Info(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Debug ...
 func (slf *PID) Debug(sfmt string, args ...interface{}) {
-	slf._parent._log.Debug(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Debug(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Error ...
 func (slf *PID) Error(sfmt string, args ...interface{}) {
-	slf._parent._log.Error(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Error(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Warning ...
 func (slf *PID) Warning(sfmt string, args ...interface{}) {
-	slf._parent._log.Warning(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Warning(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Fatal ...
 func (slf *PID) Fatal(sfmt string, args ...interface{}) {
-	slf._parent._log.Fatal(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Fatal(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Panic ...
 func (slf *PID) Panic(sfmt string, args ...interface{}) {
-	slf._parent._log.Panic(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
+	slf._parent._loger.Panic(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
 //Stop 停止
