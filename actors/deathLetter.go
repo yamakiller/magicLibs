@@ -38,9 +38,9 @@ func (slf *deathLetter) run() {
 		case msg = <-slf._sub:
 			if deathLetter, ok := msg.(*Death); ok {
 				if deathLetter.Sender != nil {
-					slf._parent._log.Error(fmt.Sprintf("[%s]", deathLetter.Sender.ToString()), "Death Dest PID :%s Message:%+v", deathLetter.PID.ToString(), deathLetter.Message)
+					slf._parent._loger.Error(fmt.Sprintf("[%s]", deathLetter.Sender.ToString()), "Death Dest PID :%s Message:%+v", deathLetter.PID.ToString(), deathLetter.Message)
 				} else {
-					slf._parent._log.Error("", "Death Dest PID: %s Message:%+v", deathLetter.PID.ToString(), reflect.TypeOf(deathLetter.Message))
+					slf._parent._loger.Error("", "Death Dest PID: %s Message:%+v", deathLetter.PID.ToString(), reflect.TypeOf(deathLetter.Message))
 				}
 			}
 		}

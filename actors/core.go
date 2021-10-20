@@ -89,11 +89,11 @@ func (slf *Core) Delete(pid *PID) error {
 }
 
 //WithLogger 设置日志接口
-func (slf *Core) WithLogger(log log.LogAgent) {
-	slf._loger = log
+func (slf *Core) WithLogger(loger log.LogAgent) {
+	slf._loger = loger
 }
 
-func (slf *Core) GetLogger() {
+func (slf *Core) GetLogger() log.LogAgent {
 	return slf._loger
 }
 

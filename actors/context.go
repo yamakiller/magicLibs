@@ -60,32 +60,32 @@ func (slf *Context) MessageHeader() ReadOnlyMessageHeader {
 
 //Info ...
 func (slf *Context) Info(sfmt string, args ...interface{}) {
-	slf._parent._log.Info(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Info(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Debug ...
 func (slf *Context) Debug(sfmt string, args ...interface{}) {
-	slf._parent._log.Debug(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Debug(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Error ...
 func (slf *Context) Error(sfmt string, args ...interface{}) {
-	slf._parent._log.Error(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Error(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Warning ...
 func (slf *Context) Warning(sfmt string, args ...interface{}) {
-	slf._parent._log.Warning(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Warning(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Fatal ...
 func (slf *Context) Fatal(sfmt string, args ...interface{}) {
-	slf._parent._log.Fatal(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Fatal(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Panic ...
 func (slf *Context) Panic(sfmt string, args ...interface{}) {
-	slf._parent._log.Panic(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
+	slf._parent._loger.Panic(fmt.Sprintf("[%s]", slf._pid.ToString()), sfmt, args...)
 }
 
 //Post 提交用户消息
