@@ -53,6 +53,8 @@ func (slf *Daemon) Open() (string, error) {
 				return slf._d.Install()
 			}
 			return slf._d.Install(os.Args[2:]...)
+		case "uninstall":
+			return slf._d.Remove()
 		case "remove":
 			return slf._d.Remove()
 		case "start":
