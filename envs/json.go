@@ -5,29 +5,28 @@ import (
 	"github.com/yamakiller/magicLibs/util"
 )
 
-//JSONEnv doc
-//@Summary  json fromat Environment variable loading interface
-//@Struct JSONEnv
+// JSONEnv doc
+// @Summary  json fromat Environment variable loading interface
+// @Struct JSONEnv
 type JSONEnv struct {
 	en map[string]interface{}
 }
 
-//Initial doc
-//@Method Initial @Summary Initial json environment variable manager
+// Initial doc
+// @Method Initial @Summary Initial json environment variable manager
 func (slf *JSONEnv) Initial() {
 	slf.en = make(map[string]interface{})
 }
 
-//Load doc
-//@Summary file load to json env
-//@Method Load
-//@Param  (string) map key
-//@Param  (string) file name
-//@Param  (interface{}) env object
-//@Return (error) load fail return error
+// Load doc
+// @Summary file load to json env
+// @Method Load
+// @Param  (string) map key
+// @Param  (string) file name
+// @Param  (interface{}) env object
+// @Return (error) load fail return error
 func (slf *JSONEnv) Load(key string, fileName string, out interface{}) error {
-	fullPathName := files.Instance().GetFullPathForFilename(fileName)
-	d, e := files.Instance().GetDataFromFile(fullPathName)
+	d, e := files.Instance().GetDataFromFile(fileName)
 	if e != nil {
 		goto fail
 	}
@@ -44,28 +43,28 @@ fail:
 	return e
 }
 
-//UnLoad doc
-//@Summary
-//@Method UnLoad
+// UnLoad doc
+// @Summary
+// @Method UnLoad
 func (slf *JSONEnv) UnLoad() {
 	slf.en = nil
 }
 
-//Remove doc
-//@Summary remove environment variable object
-//@Method Remove
-//@Param  (string) map key
+// Remove doc
+// @Summary remove environment variable object
+// @Method Remove
+// @Param  (string) map key
 func (slf *JSONEnv) Remove(key string) {
 	if _, ok := slf.en[key]; ok {
 		delete(slf.en, key)
 	}
 }
 
-//Get doc
-//@Summary Returns environment variable object
-//@Method Get
-//@Param  (string) map key
-//@Return (interface{}) environment variable object
+// Get doc
+// @Summary Returns environment variable object
+// @Method Get
+// @Param  (string) map key
+// @Return (interface{}) environment variable object
 func (slf *JSONEnv) Get(key string) interface{} {
 	v, ok := slf.en[key]
 	if !ok {
