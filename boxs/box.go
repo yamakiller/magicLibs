@@ -12,31 +12,34 @@ import (
 func SpawnBox(pid *actors.PID) *Box {
 	if pid != nil {
 		return &Box{
-			_pid:          pid,
-			_events:       make(map[interface{}][]Method),
-			_started:      make(chan bool, 1),
-			_stopped:      make(chan bool),
-			_stoppedAfter: nil,
+			_pid:           pid,
+			_events:        make(map[interface{}][]Method),
+			_started:       make(chan bool, 1),
+			_stopped:       make(chan bool, 1),
+			_stoppingAfter: nil,
+			_stoppedAfter:  nil,
 		}
 	}
 
 	return &Box{
-		_events:       make(map[interface{}][]Method),
-		_started:      make(chan bool, 1),
-		_stopped:      make(chan bool),
-		_stoppedAfter: nil,
+		_events:        make(map[interface{}][]Method),
+		_started:       make(chan bool, 1),
+		_stopped:       make(chan bool, 1),
+		_stoppingAfter: nil,
+		_stoppedAfter:  nil,
 	}
 }
 
 // Box container for executing logic
 type Box struct {
-	_pid          *actors.PID
-	_events       map[interface{}][]Method
-	_evmutx       sync.Mutex
-	_context      Context
-	_started      chan bool
-	_stopped      chan bool
-	_stoppedAfter func(context *Context)
+	_pid           *actors.PID
+	_events        map[interface{}][]Method
+	_evmutx        sync.Mutex
+	_context       Context
+	_started       chan bool
+	_stopped       chan bool
+	_stoppingAfter func(context *Context)
+	_stoppedAfter  func(context *Context)
 }
 
 // GetPID Returns pid
@@ -49,7 +52,14 @@ func (slf *Box) WithPID(pid *actors.PID) {
 	slf._pid = pid
 }
 
-// WithStoppedAfterCallback setting stopped after callback
+// WithStoppingAfterCallback You can set the handler during the execution stop process
+func (slf *Box) WithStoppingAfterCallback(cb func(context *Context)) {
+	slf._stoppingAfter = cb
+}
+
+// WithStoppedAfterCallback setting stopped after callback If this callback function does not exist,
+// it will be automatically destroyed. Otherwise, you need to call Destory at the corresponding location
+// to manually destroy it.
 func (slf *Box) WithStoppedAfterCallback(cb func(context *Context)) {
 	slf._stoppedAfter = cb
 }
@@ -65,16 +75,32 @@ func (slf *Box) StartedWait() {
 // Shutdown shutdown box
 func (slf *Box) Shutdown() {
 	slf._pid.Stop()
-	slf._context.Context = nil
 }
 
-// ShutdownWait Close the box and wait for resources to be released
-func (slf *Box) ShutdownWait() {
-	slf._pid.Stop()
+// WaitStopped wait stopped
+func (slf *Box) StoppedWait() {
 	select {
 	case <-slf._stopped:
 	}
+}
+
+// Destory resources to be released
+func (slf *Box) Destory() {
+	if slf._started != nil {
+		close(slf._started)
+		slf._started = nil
+	}
+
+	if slf._stopped != nil {
+		close(slf._stopped)
+		slf._stopped = nil
+	}
+
+	slf._events = nil
 	slf._context.Context = nil
+	slf._context._funs = nil
+	slf._stoppingAfter = nil
+	slf._stoppedAfter = nil
 }
 
 // Register register event
@@ -134,12 +160,17 @@ func (slf *Box) onStartedAfter(context *Context) {
 }
 
 func (slf *Box) onStoppingAfter(context *Context) {
+	if slf._stoppingAfter != nil {
+		slf._stoppingAfter(context)
+	}
 }
 
 func (slf *Box) onStoppedAfter(context *Context) {
-	close(slf._stopped)
+	slf._stopped <- true
 	if slf._stoppedAfter != nil {
 		slf._stoppedAfter(context)
+	} else { // 自我销毁
+		slf.Destory()
 	}
 }
 
