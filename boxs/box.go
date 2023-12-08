@@ -72,6 +72,16 @@ func (slf *Box) StartedWait() {
 	}
 }
 
+// Suspend Suspend Box in run
+func (slf *Box) Suspend() {
+	slf._pid.Suspend()
+}
+
+// Resume Resume Box in run
+func (slf *Box) Resume() {
+	slf._pid.Resume()
+}
+
 // Shutdown shutdown box
 func (slf *Box) Shutdown() {
 	slf._pid.Stop()
