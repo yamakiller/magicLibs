@@ -8,45 +8,53 @@ import (
 	"github.com/yamakiller/magicLibs/actors/messages"
 )
 
-//SpawnBox create an box
+// SpawnBox create an box
 func SpawnBox(pid *actors.PID) *Box {
 	if pid != nil {
 		return &Box{
-			_pid:     pid,
-			_events:  make(map[interface{}][]Method),
-			_started: make(chan bool, 1),
-			_stopped: make(chan bool),
+			_pid:          pid,
+			_events:       make(map[interface{}][]Method),
+			_started:      make(chan bool, 1),
+			_stopped:      make(chan bool),
+			_stoppedAfter: nil,
 		}
 	}
 
 	return &Box{
-		_events:  make(map[interface{}][]Method),
-		_started: make(chan bool, 1),
-		_stopped: make(chan bool),
+		_events:       make(map[interface{}][]Method),
+		_started:      make(chan bool, 1),
+		_stopped:      make(chan bool),
+		_stoppedAfter: nil,
 	}
 }
 
-//Box container for executing logic
+// Box container for executing logic
 type Box struct {
-	_pid     *actors.PID
-	_events  map[interface{}][]Method
-	_evmutx  sync.Mutex
-	_context Context
-	_started chan bool
-	_stopped chan bool
+	_pid          *actors.PID
+	_events       map[interface{}][]Method
+	_evmutx       sync.Mutex
+	_context      Context
+	_started      chan bool
+	_stopped      chan bool
+	_stoppedAfter func(context *Context)
 }
 
-//GetPID Returns pid
+// GetPID Returns pid
 func (slf *Box) GetPID() *actors.PID {
 	return slf._pid
 }
 
-//WithPID setting pid
+// WithPID setting pid
 func (slf *Box) WithPID(pid *actors.PID) {
 	slf._pid = pid
 }
 
-//StartedWait wait box started
+// WithStoppedAfterCallback setting stopped after callback
+func (slf *Box) WithStoppedAfterCallback(cb func(context *Context)) {
+	slf._stoppedAfter = cb
+}
+
+// StartedWait wait box started
 func (slf *Box) StartedWait() {
 	select {
 	case <-slf._started:
@@ -54,13 +62,13 @@ func (slf *Box) StartedWait() {
 	}
 }
 
-//Shutdown shutdown box
+// Shutdown shutdown box
 func (slf *Box) Shutdown() {
 	slf._pid.Stop()
 	slf._context.Context = nil
 }
 
-//ShutdownWait Close the box and wait for resources to be released
+// ShutdownWait Close the box and wait for resources to be released
 func (slf *Box) ShutdownWait() {
 	slf._pid.Stop()
 	select {
@@ -69,7 +77,7 @@ func (slf *Box) ShutdownWait() {
 	slf._context.Context = nil
 }
 
-//Register register event
+// Register register event
 func (slf *Box) Register(key interface{}, args ...Method) {
 	var ms []Method
 	ms = append(ms, args...)
@@ -78,7 +86,7 @@ func (slf *Box) Register(key interface{}, args ...Method) {
 	slf._events[key] = ms
 }
 
-//Receive event receive proccess
+// Receive event receive proccess
 func (slf *Box) Receive(context *actors.Context) {
 	slf._context.Context = context
 	message := context.Message()
@@ -130,6 +138,9 @@ func (slf *Box) onStoppingAfter(context *Context) {
 
 func (slf *Box) onStoppedAfter(context *Context) {
 	close(slf._stopped)
+	if slf._stoppedAfter != nil {
+		slf._stoppedAfter(context)
+	}
 }
 
 func (slf *Box) onError(context *Context) {
