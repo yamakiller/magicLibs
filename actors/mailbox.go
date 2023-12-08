@@ -128,26 +128,26 @@ type queue struct {
 	_sync   sync.Mutex
 }
 
-//Push Insert an object
-//@Param (interface{}) item
+// Push Insert an object
+// @Param (interface{}) item
 func (slf *queue) Push(item interface{}) {
 	slf._sync.Lock()
 	defer slf._sync.Unlock()
 	slf.unpush(item)
 }
 
-//Pop doc
-//@Method Pop @Summary Take an object, If empty return nil
-//@Return (interface{}) return object
-//@Return (bool)
+// Pop doc
+// @Method Pop @Summary Take an object, If empty return nil
+// @Return (interface{}) return object
+// @Return (bool)
 func (slf *queue) Pop() (interface{}, bool) {
 	slf._sync.Lock()
 	defer slf._sync.Unlock()
 	return slf.unpop()
 }
 
-//Overload Detecting queues exceeding the limit [mainly used for warning records]
-//@Return (int)
+// Overload Detecting queues exceeding the limit [mainly used for warning records]
+// @Return (int)
 func (slf *queue) Overload() int {
 	if slf._overload != 0 {
 		overload := slf._overload
@@ -157,8 +157,8 @@ func (slf *queue) Overload() int {
 	return 0
 }
 
-//Length Length of the queue
-//@Return (int) length
+// Length Length of the queue
+// @Return (int) length
 func (slf *queue) Length() int {
 	var (
 		head int

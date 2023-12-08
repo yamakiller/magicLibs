@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"sync/atomic"
 
+	"github.com/yamakiller/magicLibs/actors/messages"
 	"github.com/yamakiller/magicLibs/mutex"
 )
 
-//PID 外部接口
+// PID 外部接口
 type PID struct {
 	ID      uint32
 	_h      handle
@@ -15,7 +16,7 @@ type PID struct {
 	_sync   mutex.SpinLock
 }
 
-//ToString 返回ID字符串
+// ToString 返回ID字符串
 func (slf *PID) ToString() string {
 	return fmt.Sprintf(".%08x", slf.ID)
 }
@@ -41,7 +42,7 @@ func (slf *PID) ref() handle {
 	return ref
 }
 
-//Post 发送消息
+// Post 发送消息
 func (slf *PID) Post(message interface{}) {
 	slf.postUsrMessage(message)
 }
@@ -60,37 +61,46 @@ func (slf *PID) postSysMessage(message interface{}) {
 	slf.ref().postSysMessage(slf, message)
 }
 
-//Info ...
+// Info ...
 func (slf *PID) Info(sfmt string, args ...interface{}) {
 	slf._parent._loger.Info(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Debug ...
+// Debug ...
 func (slf *PID) Debug(sfmt string, args ...interface{}) {
 	slf._parent._loger.Debug(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Error ...
+// Error ...
 func (slf *PID) Error(sfmt string, args ...interface{}) {
 	slf._parent._loger.Error(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Warning ...
+// Warning ...
 func (slf *PID) Warning(sfmt string, args ...interface{}) {
 	slf._parent._loger.Warning(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Fatal ...
+// Fatal ...
 func (slf *PID) Fatal(sfmt string, args ...interface{}) {
 	slf._parent._loger.Fatal(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Panic ...
+// Panic ...
 func (slf *PID) Panic(sfmt string, args ...interface{}) {
 	slf._parent._loger.Panic(fmt.Sprintf("[%s]", slf.ToString()), sfmt, args...)
 }
 
-//Stop 停止
+// Suspend 挂起
+func (slf *PID) Suspend() {
+	slf.postSysMessage(messages.SuspendMessage)
+}
+
+func (slf *PID) Resume() {
+	slf.postSysMessage(messages.ResumeMessage)
+}
+
+// Stop 停止
 func (slf *PID) Stop() {
 	slf.ref().Stop(slf)
 }
